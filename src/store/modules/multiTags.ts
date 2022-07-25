@@ -6,7 +6,7 @@ import { storageLocal } from "/@/utils/storage";
 import { multiType, positionType } from "./types";
 
 export const useMultiTagsStore = defineStore({
-  id: "pure-multiTags",
+  id: "gwdc-multiTags",
   state: () => ({
     // 存储标签页信息（路由信息）
     multiTags: storageLocal.getItem("responsive-configure").multiTagsCache

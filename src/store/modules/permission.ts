@@ -7,7 +7,7 @@ import { RouteConfigs } from "/@/layout/types";
 import { ascending, filterTree } from "/@/router/utils";
 
 export const usePermissionStore = defineStore({
-  id: "pure-permission",
+  id: "gwdc-permission",
   state: () => ({
     // 静态路由生成的菜单
     constantMenus,

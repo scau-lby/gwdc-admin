@@ -1,10 +1,10 @@
 import Axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import {
   resultType,
-  PureHttpError,
+  HttpError,
   RequestMethods,
-  PureHttpResponse,
-  PureHttpRequestConfig
+  HttpResponse,
+  HttpRequestConfig
 } from "./types.d";
 import qs from "qs";
 import NProgress from "../progress";
@@ -33,21 +33,21 @@ const defaultConfig: AxiosRequestConfig = {
   paramsSerializer: params => qs.stringify(params, { indices: false })
 };
 
-class PureHttp {
+class GwdcHttp {
   constructor() {
     this.httpInterceptorsRequest();
     this.httpInterceptorsResponse();
   }
   // 初始化配置对象
-  private static initConfig: PureHttpRequestConfig = {};
+  private static initConfig: HttpRequestConfig = {};
 
   // 保存当前Axios实例对象
   private static axiosInstance: AxiosInstance = Axios.create(defaultConfig);
 
   // 请求拦截
   private httpInterceptorsRequest(): void {
-    PureHttp.axiosInstance.interceptors.request.use(
-      (config: PureHttpRequestConfig) => {
+    GwdcHttp.axiosInstance.interceptors.request.use(
+      (config: HttpRequestConfig) => {
         const $config = config;
         // 开启进度条动画
         NProgress.start();
@@ -56,8 +56,8 @@ class PureHttp {
           config.beforeRequestCallback($config);
           return $config;
         }
-        if (PureHttp.initConfig.beforeRequestCallback) {
-          PureHttp.initConfig.beforeRequestCallback($config);
+        if (GwdcHttp.initConfig.beforeRequestCallback) {
+          GwdcHttp.initConfig.beforeRequestCallback($config);
           return $config;
         }
         const token = getToken();
@@ -89,9 +89,9 @@ class PureHttp {
 
   // 响应拦截
   private httpInterceptorsResponse(): void {
-    const instance = PureHttp.axiosInstance;
+    const instance = GwdcHttp.axiosInstance;
     instance.interceptors.response.use(
-      (response: PureHttpResponse) => {
+      (response: HttpResponse) => {
         const $config = response.config;
         // 关闭进度条动画
         NProgress.done();
@@ -100,13 +100,13 @@ class PureHttp {
           $config.beforeResponseCallback(response);
           return response.data;
         }
-        if (PureHttp.initConfig.beforeResponseCallback) {
-          PureHttp.initConfig.beforeResponseCallback(response);
+        if (GwdcHttp.initConfig.beforeResponseCallback) {
+          GwdcHttp.initConfig.beforeResponseCallback(response);
           return response.data;
         }
         return response.data;
       },
-      (error: PureHttpError) => {
+      (error: HttpError) => {
         const $error = error;
         $error.isCancelRequest = Axios.isCancel($error);
         // 关闭进度条动画
@@ -122,18 +122,18 @@ class PureHttp {
     method: RequestMethods,
     url: string,
     param?: AxiosRequestConfig,
-    axiosConfig?: PureHttpRequestConfig
+    axiosConfig?: HttpRequestConfig
   ): Promise<T> {
     const config = {
       method,
       url,
       ...param,
       ...axiosConfig
-    } as PureHttpRequestConfig;
+    } as HttpRequestConfig;
 
     // 单独处理自定义请求/响应回掉
     return new Promise((resolve, reject) => {
-      PureHttp.axiosInstance
+      GwdcHttp.axiosInstance
         .request(config)
         .then((response: undefined) => {
           resolve(response);
@@ -148,7 +148,7 @@ class PureHttp {
   public post<T, P>(
     url: string,
     params?: T,
-    config?: PureHttpRequestConfig
+    config?: HttpRequestConfig
   ): Promise<P> {
     return this.request<P>("post", url, params, config);
   }
@@ -157,10 +157,10 @@ class PureHttp {
   public get<T, P>(
     url: string,
     params?: T,
-    config?: PureHttpRequestConfig
+    config?: HttpRequestConfig
   ): Promise<P> {
     return this.request<P>("get", url, params, config);
   }
 }
 
-export const http = new PureHttp();
+export const http = new GwdcHttp();

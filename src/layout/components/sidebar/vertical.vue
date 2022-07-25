@@ -15,12 +15,12 @@ const showLogo = ref(
   storageLocal.getItem("responsive-configure")?.showLogo ?? true
 );
 
-const { pureApp, isCollapse, menuSelect } = useNav();
+const { gwdcApp, isCollapse, menuSelect } = useNav();
 
 let subMenuData = ref([]);
 
 const menuData = computed(() => {
-  return pureApp.layout === "mix"
+  return gwdcApp.layout === "mix"
     ? subMenuData.value
     : usePermissionStoreHook().wholeMenus;
 });

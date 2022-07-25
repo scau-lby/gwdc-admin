@@ -101,6 +101,7 @@ function onBack() {
             clearable
             v-model="ruleForm.verifyCode"
             placeholder="短信验证码"
+            autocomplete="false"
           />
           <el-button
             :disabled="isDisabled"
@@ -133,6 +134,7 @@ function onBack() {
           v-model="ruleForm.repeatPassword"
           placeholder="确认密码"
           :prefix-icon="useRenderIcon('lock')"
+          autocomplete="false"
         />
       </el-form-item>
     </Motion>

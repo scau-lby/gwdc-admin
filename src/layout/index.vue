@@ -28,7 +28,7 @@ import Vertical from "./components/sidebar/vertical.vue";
 import Horizontal from "./components/sidebar/horizontal.vue";
 
 const isMobile = deviceDetection();
-const pureSetting = useSettingStoreHook();
+const gwdcSetting = useSettingStoreHook();
 const instance = getCurrentInstance().appContext.app.config.globalProperties;
 
 // 清空缓存后从serverConfig.json读取默认配置并赋值到storage中
@@ -83,7 +83,7 @@ const set: setType = reactive({
   }),
 
   fixedHeader: computed(() => {
-    return pureSetting.fixedHeader;
+    return gwdcSetting.fixedHeader;
   }),
 
   classes: computed(() => {
@@ -152,9 +152,9 @@ onMounted(() => {
 });
 
 function onFullScreen() {
-  pureSetting.hiddenSideBar
-    ? pureSetting.changeSetting({ key: "hiddenSideBar", value: false })
-    : pureSetting.changeSetting({ key: "hiddenSideBar", value: true });
+  gwdcSetting.hiddenSideBar
+    ? gwdcSetting.changeSetting({ key: "hiddenSideBar", value: false })
+    : gwdcSetting.changeSetting({ key: "hiddenSideBar", value: true });
 }
 
 const layoutHeader = defineComponent({
@@ -171,11 +171,11 @@ const layoutHeader = defineComponent({
       },
       {
         default: () => [
-          !pureSetting.hiddenSideBar &&
+          !gwdcSetting.hiddenSideBar &&
           (layout.value.includes("vertical") || layout.value.includes("mix"))
             ? h(navbar)
             : h("div"),
-          !pureSetting.hiddenSideBar && layout.value.includes("horizontal")
+          !gwdcSetting.hiddenSideBar && layout.value.includes("horizontal")
             ? h(Horizontal)
             : h("div"),
           h(
@@ -188,7 +188,7 @@ const layoutHeader = defineComponent({
                   { onClick: onFullScreen },
                   {
                     default: () => [
-                      !pureSetting.hiddenSideBar ? h(fullScreen) : h(exitScreen)
+                      !gwdcSetting.hiddenSideBar ? h(fullScreen) : h(exitScreen)
                     ]
                   }
                 )
@@ -215,14 +215,14 @@ const layoutHeader = defineComponent({
     />
     <Vertical
       v-show="
-        !pureSetting.hiddenSideBar &&
+        !gwdcSetting.hiddenSideBar &&
         (layout.includes('vertical') || layout.includes('mix'))
       "
     />
     <div
       :class="[
         'main-container',
-        pureSetting.hiddenSideBar ? 'main-hidden' : ''
+        gwdcSetting.hiddenSideBar ? 'main-hidden' : ''
       ]"
     >
       <div v-if="set.fixedHeader">

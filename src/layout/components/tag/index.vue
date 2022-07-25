@@ -41,7 +41,7 @@ const translateX = ref<number>(0);
 const activeIndex = ref<number>(-1);
 let refreshButton = "refresh-button";
 const instance = getCurrentInstance();
-const pureSetting = useSettingStoreHook();
+const gwdcSetting = useSettingStoreHook();
 const tabDom = templateRef<HTMLElement | null>("tabDom", null);
 const containerDom = templateRef<HTMLElement | null>("containerDom", null);
 const scrollbarDom = templateRef<HTMLElement | null>("scrollbarDom", null);
@@ -543,7 +543,7 @@ function openMenu(tag, e) {
   } else {
     buttonLeft.value = left;
   }
-  pureSetting.hiddenSideBar
+  gwdcSetting.hiddenSideBar
     ? (buttonTop.value = e.clientY)
     : (buttonTop.value = e.clientY - 40);
   setTimeout(() => {

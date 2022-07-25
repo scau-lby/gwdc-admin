@@ -1,9 +1,9 @@
 {
   "id": "2208059",
-  "name": "pure-admin",
+  "name": "gwdc-admin",
   "font_family": "iconfont",
   "css_prefix_text": "team-icon",
-  "description": "pure-admin",
+  "description": "gwdc-admin",
   "glyphs": [
     {
       "icon_id": "20594647",

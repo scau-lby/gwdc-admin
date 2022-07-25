@@ -4,7 +4,7 @@ import noAccess from "/@/assets/status/403.svg?component";
 
 <template>
   <div class="flex justify-center items-center h-screen-sm">
-    <noAccess />
+    <noAccess class="ml-3" />
     <div class="ml-12">
       <p
         class="font-medium text-4xl mb-4"

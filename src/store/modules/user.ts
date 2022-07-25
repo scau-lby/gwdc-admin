@@ -19,7 +19,7 @@ if (data) {
 }
 
 export const useUserStore = defineStore({
-  id: "pure-user",
+  id: "gwdc-user",
   state: (): userType => ({
     token,
     name,

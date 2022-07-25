@@ -31,7 +31,7 @@ const {
   handleResize,
   menuSelect,
   resolvePath,
-  pureApp,
+  gwdcApp,
   username,
   avatarsStyle,
   getDropdownItemStyle
@@ -87,14 +87,14 @@ function translationEn() {
   <div class="horizontal-header">
     <div
       :class="classes.container"
-      :title="pureApp.sidebar.opened ? '点击折叠' : '点击展开'"
+      :title="gwdcApp.sidebar.opened ? '点击折叠' : '点击展开'"
       @click="toggleSideBar"
     >
       <svg
         :fill="useEpThemeStoreHook().fill"
         :class="[
           'hamburger',
-          pureApp.sidebar.opened ? 'is-active-hamburger' : ''
+          gwdcApp.sidebar.opened ? 'is-active-hamburger' : ''
         ]"
         viewBox="0 0 1024 1024"
         xmlns="http://www.w3.org/2000/svg"

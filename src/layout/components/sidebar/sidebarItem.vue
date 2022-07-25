@@ -7,8 +7,8 @@ import { useAppStoreHook } from "/@/store/modules/app";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 import { ref, PropType, nextTick, computed, CSSProperties } from "vue";
 
-const { pureApp } = useNav();
-const menuMode = ["vertical", "mix"].includes(pureApp.layout);
+const { gwdcApp } = useNav();
+const menuMode = ["vertical", "mix"].includes(gwdcApp.layout);
 
 const props = defineProps({
   item: {
@@ -46,7 +46,7 @@ const getNoDropdownStyle = computed((): CSSProperties => {
 
 const getDivStyle = computed((): CSSProperties => {
   return {
-    width: pureApp.sidebar.opened ? "" : "100%",
+    width: gwdcApp.sidebar.opened ? "" : "100%",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
@@ -56,7 +56,7 @@ const getDivStyle = computed((): CSSProperties => {
 
 const getMenuTextStyle = computed((): CSSProperties => {
   return {
-    width: pureApp.sidebar.opened ? "125px" : "",
+    width: gwdcApp.sidebar.opened ? "125px" : "",
     overflow: "hidden",
     textOverflow: "ellipsis",
     outline: "none"
@@ -65,7 +65,7 @@ const getMenuTextStyle = computed((): CSSProperties => {
 
 const getSubTextStyle = computed((): CSSProperties => {
   return {
-    width: pureApp.sidebar.opened ? "125px" : "",
+    width: gwdcApp.sidebar.opened ? "125px" : "",
     display: "inline-block",
     overflow: "hidden",
     textOverflow: "ellipsis"
@@ -160,8 +160,8 @@ function resolvePath(routePath) {
       </div>
       <div
         v-if="
-          !pureApp.sidebar.opened &&
-          pureApp.layout === 'mix' &&
+          !gwdcApp.sidebar.opened &&
+          gwdcApp.layout === 'mix' &&
           props.item?.pathList?.length === 2
         "
         :style="getDivStyle"
@@ -222,7 +222,7 @@ function resolvePath(routePath) {
         v-else
         placement="top"
         :offset="-10"
-        :disabled="!pureApp.sidebar.opened || !props.item.showTooltip"
+        :disabled="!gwdcApp.sidebar.opened || !props.item.showTooltip"
       >
         <template #content>
           {{ transformI18n(props.item.meta.title) }}

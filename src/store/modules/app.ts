@@ -6,7 +6,7 @@ import { storageLocal } from "/@/utils/storage";
 import { deviceDetection } from "/@/utils/deviceDetection";
 
 export const useAppStore = defineStore({
-  id: "pure-app",
+  id: "gwdc-app",
   state: (): appType => ({
     sidebar: {
       opened:

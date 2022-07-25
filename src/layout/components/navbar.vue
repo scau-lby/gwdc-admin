@@ -22,7 +22,7 @@ const {
   onPanel,
   changeTitle,
   toggleSideBar,
-  pureApp,
+  gwdcApp,
   username,
   avatarsStyle,
   getDropdownItemStyle
@@ -49,17 +49,17 @@ function translationEn() {
 <template>
   <div class="navbar">
     <Hamburger
-      v-if="pureApp.layout !== 'mix'"
-      :is-active="pureApp.sidebar.opened"
+      v-if="gwdcApp.layout !== 'mix'"
+      :is-active="gwdcApp.sidebar.opened"
       class="hamburger-container"
       @toggleClick="toggleSideBar"
     />
 
-    <Breadcrumb v-if="pureApp.layout !== 'mix'" class="breadcrumb-container" />
+    <Breadcrumb v-if="gwdcApp.layout !== 'mix'" class="breadcrumb-container" />
 
-    <mixNav v-if="pureApp.layout === 'mix'" />
+    <mixNav v-if="gwdcApp.layout === 'mix'" />
 
-    <div v-if="pureApp.layout === 'vertical'" class="vertical-header-right">
+    <div v-if="gwdcApp.layout === 'vertical'" class="vertical-header-right">
       <!-- 菜单搜索 -->
       <Search />
       <!-- 通知 -->

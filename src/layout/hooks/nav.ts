@@ -12,7 +12,7 @@ import { useEpThemeStoreHook } from "/@/store/modules/epTheme";
 const errorInfo = "当前路由配置不正确，请检查配置";
 
 export function useNav() {
-  const pureApp = useAppStoreHook();
+  const gwdcApp = useAppStoreHook();
   // 用户名
   const username: string = storageSession.getItem("info")?.username;
 
@@ -31,7 +31,7 @@ export function useNav() {
   });
 
   const isCollapse = computed(() => {
-    return !pureApp.getSidebarStatus;
+    return !gwdcApp.getSidebarStatus;
   });
 
   // 动态title
@@ -56,7 +56,7 @@ export function useNav() {
   }
 
   function toggleSideBar() {
-    pureApp.toggleSideBar();
+    gwdcApp.toggleSideBar();
   }
 
   function handleResize(menuRef) {
@@ -118,7 +118,7 @@ export function useNav() {
     handleResize,
     resolvePath,
     isCollapse,
-    pureApp,
+    gwdcApp,
     username,
     avatarsStyle,
     getDropdownItemStyle

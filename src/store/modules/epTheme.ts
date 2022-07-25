@@ -4,7 +4,7 @@ import { getConfig } from "/@/config";
 import { storageLocal } from "/@/utils/storage";
 
 export const useEpThemeStore = defineStore({
-  id: "pure-epTheme",
+  id: "gwdc-epTheme",
   state: () => ({
     epThemeColor:
       storageLocal.getItem("responsive-layout")?.epThemeColor ??

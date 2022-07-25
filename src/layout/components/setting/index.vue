@@ -310,14 +310,14 @@ nextTick(() => {
     <el-switch
       v-model="dataTheme"
       inline-prompt
-      class="pure-datatheme"
+      class="gwdc-datatheme"
       :active-icon="dayIcon"
       :inactive-icon="darkIcon"
       @change="dataThemeChange"
     />
 
     <el-divider>导航栏模式</el-divider>
-    <ul class="pure-theme">
+    <ul class="gwdc-theme">
       <el-tooltip class="item" content="左侧模式" placement="bottom">
         <li
           :class="layoutTheme.layout === 'vertical' ? $style.isSelect : ''"
@@ -479,7 +479,7 @@ nextTick(() => {
   font-weight: 700;
 }
 
-.pure-datatheme {
+.gwdc-datatheme {
   width: 100%;
   height: 50px;
   text-align: center;
@@ -487,7 +487,7 @@ nextTick(() => {
   padding-top: 25px;
 }
 
-.pure-theme {
+.gwdc-theme {
   margin-top: 25px;
   width: 100%;
   height: 50px;
