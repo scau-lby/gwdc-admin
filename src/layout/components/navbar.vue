@@ -3,9 +3,9 @@ import { useI18n } from "vue-i18n";
 import { useNav } from "../hooks/nav";
 import { useRoute } from "vue-router";
 import Search from "./search/index.vue";
-import Notice from "./notice/index.vue";
+// import Notice from "./notice/index.vue";
 import mixNav from "./sidebar/mixNav.vue";
-import avatars from "/@/assets/avatars.jpg";
+// import avatars from "/@/assets/avatars.jpg";
 import Hamburger from "./sidebar/hamBurger.vue";
 import { watch, getCurrentInstance } from "vue";
 import Breadcrumb from "./sidebar/breadCrumb.vue";
@@ -24,7 +24,7 @@ const {
   toggleSideBar,
   gwdcApp,
   username,
-  avatarsStyle,
+  // avatarsStyle,
   getDropdownItemStyle
 } = useNav();
 
@@ -63,7 +63,7 @@ function translationEn() {
       <!-- 菜单搜索 -->
       <Search />
       <!-- 通知 -->
-      <Notice id="header-notice" />
+      <!-- <Notice id="header-notice" /> -->
       <!-- 全屏 -->
       <screenfull id="header-screenfull" v-show="!deviceDetection()" />
       <!-- 国际化 -->
@@ -94,8 +94,8 @@ function translationEn() {
       <!-- 退出登陆 -->
       <el-dropdown trigger="click">
         <span class="el-dropdown-link">
-          <img v-if="avatars" :src="avatars" :style="avatarsStyle" />
-          <p v-if="username">{{ username }}</p>
+          <!-- <img v-if="avatars" :src="avatars" :style="avatarsStyle" /> -->
+          <p v-if="username">{{ username }}，欢迎您</p>
         </span>
         <template #dropdown>
           <el-dropdown-menu class="logout">
@@ -110,7 +110,7 @@ function translationEn() {
       </el-dropdown>
       <span
         class="el-icon-setting"
-        :title="t('buttons.hssystemSet')"
+        :title="t('buttons.hsSystemSet')"
         @click="onPanel"
       >
         <IconifyIconOffline icon="setting" />

@@ -139,7 +139,7 @@ function translationEn() {
       </el-dropdown>
       <span
         class="el-icon-setting"
-        :title="t('buttons.hssystemSet')"
+        :title="t('buttons.hsSystemSet')"
         @click="onPanel"
       >
         <IconifyIconOffline icon="setting" />

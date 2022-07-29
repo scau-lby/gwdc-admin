@@ -13,7 +13,13 @@ export const getVerify = (): userType => {
 
 // 登录
 export const getLogin = (data: object) => {
-  return http.request("post", "/login", { data });
+  // const token = JSON.parse(getToken());
+  data = Object.assign(data, {
+    method: "sncj.UserLogin",
+    token: "",
+    timestamp: new Date().getTime()
+  });
+  return http.request("post", "/gjsnccj/openapi", { data });
 };
 
 // 刷新token

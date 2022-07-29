@@ -7,7 +7,7 @@ const errorRouter = {
   redirect: "/error/403",
   meta: {
     icon: "information-line",
-    title: $t("menus.hserror"),
+    title: $t("menus.hsError"),
     rank: 9
   },
   children: [
@@ -16,7 +16,7 @@ const errorRouter = {
       name: "403",
       component: () => import("/@/views/error/403.vue"),
       meta: {
-        title: $t("menus.hsfourZeroOne")
+        title: $t("menus.hsFourZeroThree")
       }
     },
     {
@@ -24,7 +24,7 @@ const errorRouter = {
       name: "404",
       component: () => import("/@/views/error/404.vue"),
       meta: {
-        title: $t("menus.hsfourZeroFour")
+        title: $t("menus.hsFourZeroFour")
       }
     },
     {

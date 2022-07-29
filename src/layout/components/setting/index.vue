@@ -82,7 +82,7 @@ if (unref(layoutTheme)) {
 // 默认灵动模式
 const markValue = ref(instance.configure?.showModel ?? "smart");
 
-const logoVal = ref(instance.configure?.showLogo ?? true);
+// const logoVal = ref(instance.configure?.showLogo ?? true);
 
 const epThemeColor = ref(useEpThemeStoreHook().getEpThemeColor);
 
@@ -156,7 +156,7 @@ function onReset() {
       path: "/welcome",
       parentPath: "/",
       meta: {
-        title: "menus.hshome",
+        title: "menus.hsHome",
         icon: "home-filled"
       }
     }
@@ -171,12 +171,12 @@ function onChange(label) {
 }
 
 // 侧边栏Logo
-function logoChange() {
-  unref(logoVal)
-    ? storageConfigureChange("showLogo", true)
-    : storageConfigureChange("showLogo", false);
-  emitter.emit("logoChange", unref(logoVal));
-}
+// function logoChange() {
+//   unref(logoVal)
+//     ? storageConfigureChange("showLogo", true)
+//     : storageConfigureChange("showLogo", false);
+//   emitter.emit("logoChange", unref(logoVal));
+// }
 
 function setFalse(Doms): any {
   Doms.forEach(v => {
@@ -405,7 +405,7 @@ nextTick(() => {
           @change="tagsChange"
         />
       </li>
-      <li>
+      <!-- <li>
         <span>侧边栏Logo</span>
         <el-switch
           v-model="logoVal"
@@ -417,7 +417,7 @@ nextTick(() => {
           inactive-text="关"
           @change="logoChange"
         />
-      </li>
+      </li> -->
       <li>
         <span>标签页持久化</span>
         <el-switch

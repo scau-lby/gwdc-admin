@@ -5,7 +5,6 @@ import { loginRules } from "./utils/rule";
 import { initRouter } from "/@/router/utils";
 import { message } from "@pureadmin/components";
 import type { FormInstance } from "element-plus";
-import { storageSession } from "/@/utils/storage";
 import { ref, reactive, watch } from "vue";
 import { useUserStoreHook } from "/@/store/modules/user";
 import { bg, currentWeek } from "./utils/static";
@@ -29,17 +28,16 @@ const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      // 模拟请求，需根据实际开发进行修改
-      setTimeout(() => {
-        loading.value = false;
-        storageSession.setItem("info", {
-          username: "admin",
-          accessToken: "eyJhbGciOiJIUzUxMiJ9.test"
+      useUserStoreHook()
+        .loginByUsername({
+          LoginName: ruleForm.username,
+          password: ruleForm.password
+        })
+        .then(() => {
+          initRouter("admin").then(() => {});
+          message.success("登陆成功");
+          router.push("/");
         });
-        initRouter("admin").then(() => {});
-        message.success("登陆成功");
-        router.push("/");
-      }, 2000);
     } else {
       loading.value = false;
       return fields;

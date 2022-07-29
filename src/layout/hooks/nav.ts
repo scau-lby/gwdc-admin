@@ -14,7 +14,7 @@ const errorInfo = "当前路由配置不正确，请检查配置";
 export function useNav() {
   const gwdcApp = useAppStoreHook();
   // 用户名
-  const username: string = storageSession.getItem("info")?.username;
+  const username: string = storageSession.getItem("authorized-token")?.name;
 
   // 设置国际化选中后的样式
   const getDropdownItemStyle = computed(() => {
@@ -43,7 +43,7 @@ export function useNav() {
 
   // 退出登录
   function logout() {
-    storageSession.removeItem("info");
+    storageSession.removeItem("authorized-token");
     router.push("/login");
   }
 

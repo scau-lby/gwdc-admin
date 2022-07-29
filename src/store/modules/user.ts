@@ -45,9 +45,13 @@ export const useUserStore = defineStore({
     async loginByUsername(data) {
       return new Promise<void>((resolve, reject) => {
         getLogin(data)
-          .then(data => {
-            if (data) {
-              setToken(data);
+          .then(({ ResultCode, data: r }) => {
+            if (ResultCode === 0) {
+              console.log(r[0]);
+              setToken({
+                accessToken: r[0].token,
+                name: r[0].username
+              });
               resolve();
             }
           })
@@ -67,7 +71,7 @@ export const useUserStore = defineStore({
           path: "/welcome",
           parentPath: "/",
           meta: {
-            title: "menus.hshome",
+            title: "menus.hsHome",
             icon: "home-filled"
           }
         }

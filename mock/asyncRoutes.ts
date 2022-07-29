@@ -5,23 +5,23 @@ const permissionRouter = {
   path: "/permission",
   redirect: "/permission/page/index",
   meta: {
-    title: "menus.permission",
+    title: "menus.hsPermission",
     icon: "lollipop",
-    rank: 7
+    rank: 11
   },
   children: [
     {
       path: "/permission/page/index",
       name: "permissionPage",
       meta: {
-        title: "menus.permissionPage"
+        title: "menus.hsPermissionPage"
       }
     },
     {
       path: "/permission/button/index",
       name: "permissionButton",
       meta: {
-        title: "menus.permissionButton",
+        title: "menus.hsPermissionButton",
         authority: []
       }
     }

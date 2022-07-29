@@ -8,16 +8,16 @@ const homeRouter = {
   redirect: "/welcome",
   meta: {
     icon: "home-filled",
-    title: $t("menus.hshome"),
+    title: $t("menus.hsHome"),
     rank: 0
   },
   children: [
     {
       path: "/welcome",
       name: "welcome",
-      component: () => import("/@/views/welcome.vue"),
+      component: () => import("/@/views/home/index.vue"),
       meta: {
-        title: $t("menus.hshome")
+        title: $t("menus.hsHome")
       }
     }
   ]

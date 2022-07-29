@@ -1,32 +1,44 @@
 buttons:
   hsLoginOut: LoginOut
-  hsfullscreen: FullScreen
-  hsexitfullscreen: ExitFullscreen
-  hsrefreshRoute: RefreshRoute
-  hslogin: Login
-  hsadd: Add
-  hsmark: Mark/Cancel
-  hssave: Save
-  hssearch: Search
-  hsexpendAll: Expand All
-  hscollapseAll: Collapse All
-  hssystemSet: Open ProjectConfig
-  hsdelete: Delete
-  hsreload: Reload
-  hscloseCurrentTab: Close CurrentTab
-  hscloseLeftTabs: Close LeftTabs
-  hscloseRightTabs: Close RightTabs
-  hscloseOtherTabs: Close OtherTabs
-  hscloseAllTabs: Close AllTabs
+  hsFullScreen: FullScreen
+  hsExitFullScreen: ExitFullscreen
+  hsRefreshRoute: RefreshRoute
+  hsLogin: Login
+  hsAdd: Add
+  hsMark: Mark/Cancel
+  hsSave: Save
+  hsSearch: Search
+  hsExpendAll: Expand All
+  hsCollapseAll: Collapse All
+  hsSystemSet: Open ProjectConfig
+  hsDelete: Delete
+  hsReload: Reload
+  hsCloseCurrentTab: Close CurrentTab
+  hsCloseLeftTabs: Close LeftTabs
+  hsCloseRightTabs: Close RightTabs
+  hsCloseOtherTabs: Close OtherTabs
+  hsCloseAllTabs: Close AllTabs
 menus:
-  hshome: Home
-  hslogin: Login
-  hserror: Error Page
-  hsfourZeroFour: "404"
-  hsfourZeroOne: "403"
+  hsHome: Home
+  hsLogin: Login
+  hsError: Error Page
+  hsFourZeroFour: "404"
+  hsFourZeroThree: "403"
   hsFive: "500"
-  permission: Permission Manage
-  permissionPage: Page Permission
-  permissionButton: Button Permission
+  hsRealtime: Realtime
+  hsHistorical: Historical
+  hsTraining: hsTraining
+  hsEquipment: Equipment
+  hsOrganization: Origanization
+  hsUser: User
+  hsGroup: Group
+  hsDepartment: Department
+  hsRecyclebin: Recyclebin
+  hsRecords: Records
+  hsReports: Reports
+  hsResource: Resource
+  hsPermission: Permission Manage
+  hsPermissionPage: Page Permission
+  hsPermissionButton: Button Permission
 status:
   hsLoad: Loading...

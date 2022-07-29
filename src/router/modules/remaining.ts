@@ -7,7 +7,7 @@ const remainingRouter = [
     name: "login",
     component: () => import("/@/views/login/index.vue"),
     meta: {
-      title: $t("menus.hslogin"),
+      title: $t("menus.hsLogin"),
       showLink: false,
       rank: 101
     }
@@ -17,7 +17,7 @@ const remainingRouter = [
     component: Layout,
     meta: {
       icon: "home-filled",
-      title: $t("menus.hshome"),
+      title: $t("menus.hsHome"),
       showLink: false,
       rank: 104
     },

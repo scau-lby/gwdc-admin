@@ -29,11 +29,32 @@ import {
 } from "./utils";
 
 import homeRouter from "./modules/home";
-import errorRouter from "./modules/error";
+// import errorRouter from "./modules/error";
 import remainingRouter from "./modules/remaining";
+import realtimeRouter from "./modules/realtime";
+import historicalRouter from "./modules/historical";
+import trainingRouter from "./modules/training";
+import equipmentRouter from "./modules/equipment";
+import organizationRouter from "./modules/organization";
+import recyclebinRouter from "./modules/recyclebin";
+import recordsRouter from "./modules/records";
+import reportsRouter from "./modules/reports";
+import resourceRouter from "./modules/resource";
 
 // 原始静态路由（未做任何处理）
-const routes = [homeRouter, errorRouter];
+const routes = [
+  homeRouter,
+  // errorRouter,
+  realtimeRouter,
+  historicalRouter,
+  trainingRouter,
+  equipmentRouter,
+  organizationRouter,
+  recyclebinRouter,
+  recordsRouter,
+  reportsRouter,
+  resourceRouter
+];
 
 // 导出处理后的静态路由（三级及以上的路由全部拍成二级）
 export const constantRoutes: Array<RouteRecordRaw> = formatTwoStageRoutes(
@@ -82,7 +103,7 @@ router.beforeEach((to: toRouteType, _from, next) => {
       handleAliveRoute(newMatched);
     }
   }
-  const name = storageSession.getItem("info");
+  const name = storageSession.getItem("authorized-token");
   NProgress.start();
   const externalLink = isUrl(to?.name);
   if (!externalLink)
@@ -93,6 +114,7 @@ router.beforeEach((to: toRouteType, _from, next) => {
         document.title = `${transformI18n(item.meta.title)} | ${Title}`;
       else document.title = transformI18n(item.meta.title);
     });
+
   if (name) {
     if (_from?.name) {
       // name为超链接
