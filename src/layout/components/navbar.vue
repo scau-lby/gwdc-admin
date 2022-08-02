@@ -7,11 +7,13 @@ import Search from "./search/index.vue";
 import mixNav from "./sidebar/mixNav.vue";
 // import avatars from "/@/assets/avatars.jpg";
 import Hamburger from "./sidebar/hamBurger.vue";
-import { watch, getCurrentInstance } from "vue";
+import { watch, getCurrentInstance, ref } from "vue";
 import Breadcrumb from "./sidebar/breadCrumb.vue";
 import { deviceDetection } from "/@/utils/deviceDetection";
 import screenfull from "../components/screenfull/index.vue";
 import globalization from "/@/assets/svg/globalization.svg?component";
+
+import changePwdFormDialog from "./changePwdFormDialog.vue";
 
 const route = useRoute();
 const { locale, t } = useI18n();
@@ -43,6 +45,20 @@ function translationCh() {
 function translationEn() {
   instance.locale = { locale: "en" };
   locale.value = "en";
+}
+
+const changePwdFormDialogVisible = ref(false);
+
+const initialData = {
+  oldPasswd: "",
+  newPasswd: "",
+  newPasswd2: ""
+};
+
+const changePwdFormData = ref({ ...initialData });
+
+function changePwd() {
+  changePwdFormDialogVisible.value = true;
 }
 </script>
 
@@ -99,7 +115,13 @@ function translationEn() {
         </span>
         <template #dropdown>
           <el-dropdown-menu class="logout">
-            <el-dropdown-item @click="logout">
+            <el-dropdown-item @click="changePwd">
+              <IconifyIconOffline
+                icon="lock-password-line"
+                style="margin: 5px"
+              />{{ t("buttons.hsChangePwd") }}</el-dropdown-item
+            >
+            <el-dropdown-item divided @click="logout">
               <IconifyIconOffline
                 icon="logout-circle-r-line"
                 style="margin: 5px"
@@ -116,6 +138,11 @@ function translationEn() {
         <IconifyIconOffline icon="setting" />
       </span>
     </div>
+
+    <changePwdFormDialog
+      v-model:visible="changePwdFormDialogVisible"
+      :data="changePwdFormData"
+    />
   </div>
 </template>
 

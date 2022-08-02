@@ -1,5 +1,7 @@
 buttons:
   hsLoginOut: 退出系统
+  hsResetPwd: 重置密码
+  hsChangePwd: 修改密码
   hsFullScreen: 全屏
   hsExitFullScreen: 退出全屏
   hsRefreshRoute: 刷新路由
@@ -26,9 +28,17 @@ menus:
   hsFourZeroThree: "403"
   hsFive: "500"
   hsRealtime: 实时监控
+  hsLiveData: 作业数据
+  hsLiveMonitor: 实时视频
+  hsLivePower: 动力数据
   hsHistorical: 历史数据
+  hsHisNavigation: 作业导航
+  hsHisStatistics: 工程曲线
+  hsHisData: 工程数据
+  hsHisVideo: 视频回放
+  hsHisPower: 动力参数
   hsTraining: 培训管理
-  hsEquipment: 设备管理
+  hsTruck: 设备管理
   hsOrganization: 组织与角色
   hsUser: 用户管理
   hsGroup: 用户组管理

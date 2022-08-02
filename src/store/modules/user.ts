@@ -3,9 +3,16 @@ import { store } from "/@/store";
 import { userType } from "./types";
 import { router } from "/@/router";
 import { storageSession } from "/@/utils/storage";
-import { getLogin, refreshToken } from "/@/api/user";
+import { userLogin, refreshToken } from "/@/api/user";
 import { getToken, setToken, removeToken } from "/@/utils/auth";
 import { useMultiTagsStoreHook } from "/@/store/modules/multiTags";
+import { message } from "@pureadmin/components";
+
+interface ResponseType extends Promise<any> {
+  status: number;
+  message: string;
+  data: string;
+}
 
 const data = getToken();
 let token = "";
@@ -42,17 +49,21 @@ export const useUserStore = defineStore({
       this.currentPage = value;
     },
     // 登入
-    async loginByUsername(data) {
+    async loginByLoginName(params) {
       return new Promise<void>((resolve, reject) => {
-        getLogin(data)
-          .then(({ ResultCode, data: r }) => {
-            if (ResultCode === 0) {
-              console.log(r[0]);
+        userLogin(params)
+          .then(({ data, message: msg, status }: ResponseType) => {
+            if (status === 200) {
+              data = JSON.parse(data);
               setToken({
-                accessToken: r[0].token,
-                name: r[0].username
+                accessToken: data?.token,
+                name: data?.userName,
+                expires: data?.expires || 1 * 60 * 60 * 1000
               });
               resolve();
+            } else {
+              message.error(msg);
+              reject();
             }
           })
           .catch(error => {

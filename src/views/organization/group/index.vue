@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import groupFormDialog from "./components/GroupFormDialog.vue";
 import { useColumns } from "./columns";
-import { getGroupList } from "/@/api/organization";
+import { getGroupList, deleteGroup } from "/@/api/organization";
 import { reactive, ref, onMounted } from "vue";
+import { ElNotification } from "element-plus";
 import { type FormInstance } from "element-plus";
 import { type PaginationProps } from "@pureadmin/table";
 import { TableProBar } from "/@/components/ReTable";
@@ -12,9 +14,7 @@ defineOptions({
 });
 
 const form = reactive({
-  name: "",
-  code: "",
-  status: ""
+  GroupName: ""
 });
 
 let dataList = ref([]);
@@ -30,35 +30,64 @@ const pagination = reactive<PaginationProps>({
   background: true
 });
 
-function handleAdd() {
-  console.log("add");
+function onAdd() {
+  groupFormDialogVisible.value = true;
 }
 
-function handleEdit(row) {
+function onEdit(row) {
   console.log(row);
+  groupFormDialogVisible.value = true;
+  nextTick(() => {
+    groupFormData.value = {
+      ...row
+    };
+  });
 }
 
-function handleDelete(row) {
-  console.log(row);
+function onDelete(row) {
+  deleteGroup({
+    gid: row.GID
+  }).then(({ ResultCode, Msg }) => {
+    if (ResultCode === 0) {
+      ElNotification({
+        title: "操作成功",
+        message: `删除用户组 【${row.GroupName}】`,
+        type: "success"
+      });
+      if (dataList.value.length === 1) {
+        pagination.currentPage =
+          pagination.currentPage > 1 ? pagination.currentPage - 1 : 1;
+      }
+      onSearch();
+    } else {
+      ElNotification({
+        title: "操作失败",
+        message: `删除用户组，提示：${Msg}`,
+        type: "error"
+      });
+    }
+  });
 }
 
-function handleCurrentChange(val: number) {
-  console.log(`current page: ${val}`);
+function onCurrentChange(val: number) {
+  pagination.currentPage = val;
+  onSearch();
 }
 
-function handleSizeChange(val: number) {
-  console.log(`${val} items per page`);
+function onSizeChange(val: number) {
+  pagination.pageSize = val;
+  onSearch();
 }
 
-function handleSelectionChange(val) {
-  console.log("handleSelectionChange", val);
+function onSelectionChange(val) {
+  console.log("onSelectionChange", val);
 }
 
 async function onSearch() {
   loading.value = true;
   let { data } = await getGroupList({});
-  dataList.value = data.list;
-  pagination.total = data.total;
+  dataList.value = data;
+  pagination.total = data.length;
   setTimeout(() => {
     loading.value = false;
   }, 500);
@@ -67,12 +96,23 @@ async function onSearch() {
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.resetFields();
+  pagination.currentPage = 1;
   onSearch();
 };
 
 onMounted(() => {
   onSearch();
 });
+
+const initialData = {
+  uid: 0,
+  LoginName: "",
+  UserName: "",
+  group_ids: []
+};
+
+const groupFormDialogVisible = ref(false);
+const groupFormData = ref({ ...initialData });
 </script>
 
 <template>
@@ -91,7 +131,7 @@ onMounted(() => {
           type="primary"
           :icon="useRenderIcon('search')"
           :loading="loading"
-          @click="onSearch"
+          @click="(pagination.currentPage = 1), onSearch()"
         >
           搜索
         </el-button>
@@ -108,11 +148,7 @@ onMounted(() => {
       @refresh="onSearch"
     >
       <template #buttons>
-        <el-button
-          type="primary"
-          :icon="useRenderIcon('plus')"
-          @click="handleAdd"
-        >
+        <el-button type="primary" :icon="useRenderIcon('plus')" @click="onAdd">
           新增用户组
         </el-button>
       </template>
@@ -129,49 +165,48 @@ onMounted(() => {
           :pagination="pagination"
           :paginationSmall="size === 'small' ? true : false"
           :header-cell-style="{ background: '#fafafa', color: '#606266' }"
-          @selection-change="handleSelectionChange"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
+          @selection-change="onSelectionChange"
+          @size-change="onSizeChange"
+          @current-change="onCurrentChange"
         >
           <template #operation="{ row }">
+            <el-tooltip content="权限设置" placement="left">
+              <el-button
+                class="reset-margin"
+                type="text"
+                :size="size"
+                @click="onEdit(row)"
+                :icon="useRenderIcon('menu')"
+              />
+            </el-tooltip>
             <el-button
               class="reset-margin"
-              link
-              type="primary"
+              type="text"
               :size="size"
-              @click="handleEdit(row)"
-              :icon="useRenderIcon('menu')"
-            >
-              权限设置
-            </el-button>
-            <el-button
-              class="reset-margin"
-              link
-              type="primary"
-              :size="size"
-              @click="handleEdit(row)"
+              @click="onEdit(row)"
               :icon="useRenderIcon('edit-open')"
+            />
+            <el-popconfirm
+              title="是否确定删除该用户组?"
+              @confirm="onDelete(row)"
             >
-              编辑
-            </el-button>
-            <el-popconfirm title="是否确定删除该用户组?">
               <template #reference>
                 <el-button
                   class="reset-margin"
-                  link
-                  type="primary"
+                  type="text"
                   :size="size"
                   :icon="useRenderIcon('delete')"
-                  @click="handleDelete(row)"
-                >
-                  删除
-                </el-button>
+                />
               </template>
             </el-popconfirm>
           </template>
         </PureTable>
       </template>
     </TableProBar>
+    <groupFormDialog
+      v-model:visible="groupFormDialogVisible"
+      :data="groupFormData"
+    />
   </div>
 </template>
 

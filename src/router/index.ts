@@ -34,7 +34,7 @@ import remainingRouter from "./modules/remaining";
 import realtimeRouter from "./modules/realtime";
 import historicalRouter from "./modules/historical";
 import trainingRouter from "./modules/training";
-import equipmentRouter from "./modules/equipment";
+import truckRouter from "./modules/truck";
 import organizationRouter from "./modules/organization";
 import recyclebinRouter from "./modules/recyclebin";
 import recordsRouter from "./modules/records";
@@ -48,7 +48,7 @@ const routes = [
   realtimeRouter,
   historicalRouter,
   trainingRouter,
-  equipmentRouter,
+  truckRouter,
   organizationRouter,
   recyclebinRouter,
   recordsRouter,

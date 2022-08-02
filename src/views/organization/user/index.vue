@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import dialogForm from "./components/DialogForm.vue";
+import addUserFormDialog from "./components/AddUserFormDialog.vue";
+import editUserFormDialog from "./components/EditUserFormDialog.vue";
+import userGroupFormDialog from "./components/UserGroupFormDialog.vue";
 import tree from "./tree.vue";
 import { useColumns } from "./columns";
-import { getUserList, setPwd, deleteUser } from "/@/api/organization";
-// import { message } from "@pureadmin/components";
+import { getUserList, resetPwd, deleteUser } from "/@/api/organization";
+import { reactive, ref, onMounted, nextTick } from "vue";
 import { ElMessageBox, ElNotification } from "element-plus";
-import { reactive, ref, onMounted } from "vue";
 import { type FormInstance } from "element-plus";
 import { TableProBar } from "/@/components/ReTable";
 import { type PaginationProps } from "@pureadmin/table";
@@ -16,10 +17,10 @@ defineOptions({
 });
 
 const form = reactive({
-  BelongTo: "固井公司",
-  username: "",
-  // mobile: "",
+  belongTo: "",
+  loginName: "",
   state: ""
+  // status: ""
 });
 
 let dataList = ref([]);
@@ -36,13 +37,12 @@ const pagination = reactive<PaginationProps>({
 });
 
 function onAdd() {
-  formDialogVisible.value = true;
+  addUserFormDialogVisible.value = true;
 }
 
-function onSetPwd(row) {
-  console.log(row);
+function onResetPwd(row) {
   ElMessageBox.prompt(
-    `用户 【${row.username}】 的密码将被重新设置`,
+    `用户 【${row.userName}】 的密码将被重新设置`,
     "重设密码",
     {
       confirmButtonText: "确定",
@@ -56,20 +56,20 @@ function onSetPwd(row) {
     }
   )
     .then(({ value }) => {
-      setPwd({
-        id: row.ID,
-        PassWord: value
-      }).then(({ ResultCode, Msg }) => {
-        if (ResultCode === 0) {
+      resetPwd({
+        loginName: row.loginName,
+        passwd: value
+      }).then(({ status, data }) => {
+        if (status === 200) {
           ElNotification({
             title: "操作成功",
-            message: `重设用户 【${row.username}】 密码`,
+            message: `重设用户 【${row.userName}】 密码`,
             type: "success"
           });
         } else {
           ElNotification({
             title: "操作失败",
-            message: `重设用户 【${row.username}】 密码，提示：${Msg}`,
+            message: `${data}`,
             type: "error"
           });
         }
@@ -78,26 +78,27 @@ function onSetPwd(row) {
     .catch(() => {
       ElNotification({
         title: "操作放弃",
-        message: `重设用户 【${row.username}】 密码`,
+        message: `重设用户 【${row.userName}】 密码`,
         type: "info"
       });
     });
 }
 
 function onEdit(row) {
-  console.log(row);
-  formDialogVisible.value = true;
-  // nextTick(() => {
-  //   formData.value = { ...product, status: product?.isSetup ? "1" : "0" };
-  // });
+  editUserFormDialogVisible.value = true;
+  const { passWord, onLine, loginTimes, createTime, ...params } = row;
+  console.log(passWord, onLine, loginTimes, createTime);
+  nextTick(() => {
+    userFormData.value = { ...params };
+  });
 }
 
 function onDelete(row) {
-  deleteUser({ id: row.ID }).then(({ ResultCode }) => {
+  deleteUser({ id: row.ID }).then(({ ResultCode, Msg }) => {
     if (ResultCode === 0) {
       ElNotification({
         title: "操作成功",
-        message: `删除用户 【${row.LoginName}】`,
+        message: `删除用户 【${row.userName}】`,
         type: "success"
       });
       if (dataList.value.length === 1) {
@@ -105,7 +106,25 @@ function onDelete(row) {
           pagination.currentPage > 1 ? pagination.currentPage - 1 : 1;
       }
       onSearch();
+    } else {
+      ElNotification({
+        title: "操作失败",
+        message: `删除用户，提示：${Msg}`,
+        type: "error"
+      });
     }
+  });
+}
+
+function onSetGroups(row) {
+  userGroupFormDialogVisible.value = true;
+  nextTick(() => {
+    userGroupFormData.value = {
+      userId: row.ID,
+      loginName: row.loginName,
+      userName: row.userName,
+      group_ids: row.groups.split(",")
+    };
   });
 }
 
@@ -127,18 +146,22 @@ function onSelectionChange(val) {
 
 async function onSearch() {
   loading.value = true;
-  let { ResultCode, Count, data } = await getUserList({
-    BelongTo: form.BelongTo,
+  let { status, message, data } = await getUserList({
+    ...form,
     pageSize: pagination.pageSize,
-    pageNum: pagination.currentPage,
-    username: form.username,
-    state: form.state
+    pageNum: pagination.currentPage
   });
-  if (ResultCode !== 0) {
-    // 接口错误
+  if (status !== 200) {
+    ElNotification({
+      title: "查询失败",
+      message: `${message}，${data}`,
+      type: "error"
+    });
+  } else {
+    dataList.value = data.records;
+    pagination.total = data.total;
   }
-  dataList.value = data;
-  pagination.total = Count;
+
   setTimeout(() => {
     loading.value = false;
   }, 500);
@@ -155,16 +178,31 @@ onMounted(() => {
   onSearch();
 });
 
-const INITIAL_DATA = {
-  LoginName: "",
-  UserName: "",
-  BelongTo: "",
-  AdminOrg: 0,
-  state: 1
+const initialUFData = {
+  userId: 0,
+  loginName: "",
+  userName: "",
+  passWord: "1234qwer",
+  belongTo: "",
+  email: "",
+  phone: "",
+  state: 1,
+  adminOrg: 0,
+  groups: ""
 };
 
-const formDialogVisible = ref(false);
-const formData = ref({ ...INITIAL_DATA });
+const addUserFormDialogVisible = ref(false);
+const editUserFormDialogVisible = ref(false);
+const userFormData = ref({ ...initialUFData });
+
+const initialUGFData = {
+  userId: 0,
+  loginName: "",
+  userName: "",
+  group_ids: ""
+};
+const userGroupFormDialogVisible = ref(false);
+const userGroupFormData = ref({ ...initialUGFData });
 </script>
 
 <template>
@@ -177,25 +215,27 @@ const formData = ref({ ...INITIAL_DATA });
         :model="form"
         class="bg-white w-99/100 pl-8 pt-4"
       >
-        <el-form-item label="用户名称：" prop="username">
-          <el-input
-            v-model="form.username"
-            placeholder="请输入用户名称"
-            clearable
-          />
+        <el-form-item label="所属单位" prop="belongTo">
+          <el-select v-model="form.belongTo" placeholder="请选择" clearable />
         </el-form-item>
-        <!-- <el-form-item label="手机号码：" prop="mobile">
-          <el-input
-            v-model="form.mobile"
-            placeholder="请输入手机号码"
-            clearable
-          />
-        </el-form-item> -->
-        <el-form-item label="状态：" prop="state">
+        <el-form-item label="用户状态" prop="state">
           <el-select v-model="form.state" placeholder="请选择" clearable>
             <el-option label="已激活" :value="1" />
             <el-option label="未激活" :value="0" />
           </el-select>
+        </el-form-item>
+        <!-- <el-form-item label="用户当前状态" prop="status">
+          <el-select v-model="form.status" placeholder="请选择" clearable>
+            <el-option label="在线" :value="1" />
+            <el-option label="离线" :value="0" />
+          </el-select>
+        </el-form-item> -->
+        <el-form-item label="用户姓名" prop="loginName">
+          <el-input
+            v-model="form.loginName"
+            placeholder="请输入用户姓名"
+            clearable
+          />
         </el-form-item>
         <el-form-item>
           <el-button
@@ -253,7 +293,7 @@ const formData = ref({ ...INITIAL_DATA });
                   type="text"
                   :size="size"
                   :icon="useRenderIcon('password')"
-                  @click="onSetPwd(row)"
+                  @click="onResetPwd(row)"
                 />
               </el-tooltip>
               <el-button
@@ -279,6 +319,7 @@ const formData = ref({ ...INITIAL_DATA });
                   type="text"
                   :size="size"
                   :icon="useRenderIcon('role')"
+                  @click="onSetGroups(row)"
                 />
               </el-tooltip>
             </template>
@@ -286,7 +327,18 @@ const formData = ref({ ...INITIAL_DATA });
         </template>
       </TableProBar>
     </div>
-    <dialogForm v-model:visible="formDialogVisible" :data="formData" />
+    <addUserFormDialog
+      v-model:visible="addUserFormDialogVisible"
+      :data="userFormData"
+    />
+    <editUserFormDialog
+      v-model:visible="editUserFormDialogVisible"
+      :data="userFormData"
+    />
+    <userGroupFormDialog
+      v-model:visible="userGroupFormDialogVisible"
+      :data="userGroupFormData"
+    />
   </div>
 </template>
 

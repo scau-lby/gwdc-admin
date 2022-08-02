@@ -18,8 +18,8 @@ const checked = ref(false);
 const ruleFormRef = ref<FormInstance>();
 
 const ruleForm = reactive({
-  username: "admin",
-  password: "GwcC*789)qwer*",
+  LoginName: "test",
+  password: "1q2w3e4r",
   verifyCode: ""
 });
 
@@ -29,14 +29,17 @@ const onLogin = async (formEl: FormInstance | undefined) => {
   await formEl.validate((valid, fields) => {
     if (valid) {
       useUserStoreHook()
-        .loginByUsername({
-          LoginName: ruleForm.username,
+        .loginByLoginName({
+          LoginName: ruleForm.LoginName,
           password: ruleForm.password
         })
         .then(() => {
-          initRouter("admin").then(() => {});
+          initRouter().then(() => {});
           message.success("登陆成功");
           router.push("/");
+        })
+        .catch(() => {
+          loading.value = false;
         });
     } else {
       loading.value = false;
@@ -70,10 +73,10 @@ watch(imgCode, value => {
           @keyup.enter="onLogin(ruleFormRef)"
         >
           <Motion :delay="100">
-            <el-form-item prop="username">
+            <el-form-item prop="LoginName">
               <el-input
                 clearable
-                v-model="ruleForm.username"
+                v-model="ruleForm.LoginName"
                 placeholder="账号"
                 :prefix-icon="useRenderIcon('user')"
               />

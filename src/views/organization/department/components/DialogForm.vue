@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { ElNotification, FormInstance } from "element-plus";
-import { getOrgTree } from "/@/api/organization";
+// import { getOrgTree } from "/@/api/organization";
 const BelongToProps = {
   checkStrictly: true
 };
 let BelongToOptions = ref([]);
-async function getTree() {
-  let { ResultCode, data, Msg } = await getOrgTree({});
-  if (ResultCode === 0) {
-    BelongToOptions = data;
-  } else {
-    ElNotification({
-      title: "操作失败",
-      message: `获取组织机构树, 提示：${Msg}`,
-      type: "error"
-    });
-  }
-}
+// async function getTree() {
+//   let { ResultCode, data, Msg } = await getOrgTree({});
+//   if (ResultCode === 0) {
+//     BelongToOptions = data;
+//   } else {
+//     ElNotification({
+//       title: "操作失败",
+//       message: `获取组织机构树, 提示：${Msg}`,
+//       type: "error"
+//     });
+//   }
+// }
 
 const props = defineProps({
   visible: {
@@ -125,7 +125,7 @@ const rules = {
 };
 
 onMounted(() => {
-  getTree();
+  // getTree();
 });
 </script>
 

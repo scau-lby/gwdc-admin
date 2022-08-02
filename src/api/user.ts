@@ -12,14 +12,8 @@ export const getVerify = (): userType => {
 };
 
 // 登录
-export const getLogin = (data: object) => {
-  // const token = JSON.parse(getToken());
-  data = Object.assign(data, {
-    method: "sncj.UserLogin",
-    token: "",
-    timestamp: new Date().getTime()
-  });
-  return http.request("post", "/gjsnccj/openapi", { data });
+export const userLogin = (data?: object) => {
+  return http.request("post", "/gjsnccj/login", { data });
 };
 
 // 刷新token
@@ -30,3 +24,20 @@ export const refreshToken = (data: object) => {
 // export const searchVague = (data: object) => {
 //   return http.request("post", "/searchVague", { data });
 // };
+
+// 用户注销
+export const logout = (data?: object) => {
+  return http.request("post", "/gjsnccj/openapi", { data });
+};
+
+// 用户重置密码
+export const changePwd = (data?: object) => {
+  return http.request(
+    "post",
+    "/gjsnccj/users/changepwd",
+    {},
+    {
+      params: data
+    }
+  );
+};

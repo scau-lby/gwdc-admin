@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { useColumns } from "./columns";
-import { getOrgList, deleteOrg } from "/@/api/organization";
-// import { handleTree } from "@pureadmin/utils";
+import { deleteOrg } from "/@/api/organization";
 import { type PaginationProps } from "@pureadmin/table";
 import { reactive, ref, onMounted } from "vue";
-import { ElNotification, FormInstance } from "element-plus";
+import { ElNotification, type FormInstance } from "element-plus";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 import { TableProBar } from "/@/components/ReTable";
 
@@ -65,29 +64,28 @@ function onDelete(row) {
   });
 }
 
-function handleCurrentChange(val: number) {
+function onCurrentChange(val: number) {
   pagination.currentPage = val;
   onSearch();
 }
 
-function handleSizeChange(val: number) {
+function onSizeChange(val: number) {
   pagination.pageSize = val;
   onSearch();
 }
 
-function handleSelectionChange(val) {
-  console.log("handleSelectionChange", val);
+function onSelectionChange(val) {
+  console.log("onSelectionChange", val);
 }
 
 async function onSearch() {
   loading.value = true;
-  let { data } = await getOrgList({
-    pageSize: pagination.pageSize,
-    pageNum: pagination.currentPage
-  });
-  console.log(data);
-  dataList.value = data;
-  pagination.total = data.length;
+  // let { data } = await getOrgList({
+  //   pageSize: pagination.pageSize,
+  //   pageNum: pagination.currentPage
+  // });
+  // dataList.value = data;
+  // pagination.total = data.length;
   setTimeout(() => {
     loading.value = false;
   }, 500);
@@ -96,6 +94,7 @@ async function onSearch() {
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.resetFields();
+  pagination.currentPage = 1;
   onSearch();
 };
 
@@ -146,7 +145,7 @@ const formDialogVisible = ref(false);
           type="primary"
           :icon="useRenderIcon('search')"
           :loading="loading"
-          @click="onSearch"
+          @click="(pagination.currentPage = 1), onSearch()"
         >
           搜索
         </el-button>
@@ -180,9 +179,9 @@ const formDialogVisible = ref(false);
           :pagination="pagination"
           :paginationSmall="size === 'small' ? true : false"
           :header-cell-style="{ background: '#fafafa', color: '#606266' }"
-          @selection-change="handleSelectionChange"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
+          @selection-change="onSelectionChange"
+          @size-change="onSizeChange"
+          @current-change="onCurrentChange"
         >
           <template #operation="{ row }">
             <el-button

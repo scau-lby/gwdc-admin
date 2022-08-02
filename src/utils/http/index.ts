@@ -23,7 +23,7 @@ const defaultConfig: AxiosRequestConfig = {
       : VITE_PROXY_DOMAIN,
   // 当前使用mock模拟请求，将baseURL制空，如果你的环境用到了http请求，请删除下面的baseURL启用上面的baseURL，并将11行、16行代码注释取消
   // baseURL: "",
-  timeout: 10000,
+  timeout: 20000,
   headers: {
     Accept: "application/json, text/plain, */*",
     "Content-Type": "application/json",
@@ -70,11 +70,13 @@ class GwdcHttp {
             useUserStoreHook()
               .refreshToken(data)
               .then((res: resultType) => {
-                config.headers["Authorization"] = "Bearer " + res.accessToken;
+                // config.headers["Authorization"] = "Bearer " + res.accessToken;
+                config.headers["token"] = res.accessToken;
                 return $config;
               });
           } else {
-            config.headers["Authorization"] = "Bearer " + data.accessToken;
+            // config.headers["Authorization"] = "Bearer " + data.accessToken;
+            config.headers["token"] = data.accessToken;
             return $config;
           }
         } else {

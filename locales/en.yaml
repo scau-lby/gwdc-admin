@@ -1,5 +1,7 @@
 buttons:
   hsLoginOut: LoginOut
+  hsResetPwd: ResetPwd
+  hsChangePwd: ChangePwd
   hsFullScreen: FullScreen
   hsExitFullScreen: ExitFullscreen
   hsRefreshRoute: RefreshRoute
@@ -26,9 +28,17 @@ menus:
   hsFourZeroThree: "403"
   hsFive: "500"
   hsRealtime: Realtime
+  hsLiveData: LiveData
+  hsLiveMonitor: LiveMonitor
+  hsLivePower: LivePower
   hsHistorical: Historical
+  hsHisNavigation: HisNavigation
+  hsHisStatistics: HisStatistics
+  hsHisData: HisData
+  hsHisVideo: HisVideo
+  hsHisPower: HisPower
   hsTraining: hsTraining
-  hsEquipment: Equipment
+  hsTruck: Truck
   hsOrganization: Origanization
   hsUser: User
   hsGroup: Group

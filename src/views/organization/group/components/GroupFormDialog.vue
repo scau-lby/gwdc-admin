@@ -1,27 +1,23 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { ElNotification, FormInstance } from "element-plus";
-import { getOrgTree } from "/@/api/organization";
+// import { getOrgTree } from "/@/api/organization";
 const BelongToProps = {
-  checkStrictly: true,
-  value: "id",
-  label: "label",
-  children: "children"
+  checkStrictly: true
 };
 let BelongToOptions = ref([]);
-async function getTree() {
-  let { ResultCode, data, Msg } = await getOrgTree({});
-  if (ResultCode === 0) {
-    BelongToOptions = data;
-    console.log(BelongToOptions);
-  } else {
-    ElNotification({
-      title: "操作失败",
-      message: `获取组织机构树, 提示：${Msg}`,
-      type: "error"
-    });
-  }
-}
+// async function getTree() {
+//   let { ResultCode, data, Msg } = await getOrgTree({});
+//   if (ResultCode === 0) {
+//     BelongToOptions = data;
+//   } else {
+//     ElNotification({
+//       title: "操作失败",
+//       message: `获取组织机构树, 提示：${Msg}`,
+//       type: "error"
+//     });
+//   }
+// }
 
 const props = defineProps({
   visible: {
@@ -129,14 +125,14 @@ const rules = {
 };
 
 onMounted(() => {
-  getTree();
+  // getTree();
 });
 </script>
 
 <template>
   <el-dialog
     v-model="formVisible"
-    title="新增用户"
+    title="新增/编辑机构"
     :width="680"
     draggable
     :before-close="closeDialog"

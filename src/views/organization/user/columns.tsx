@@ -1,7 +1,8 @@
 import { ref } from "vue";
-// import dayjs from "dayjs";
 import { ElMessageBox } from "element-plus";
 import { Switch, message } from "@pureadmin/components";
+import dayjs from "dayjs";
+import { updateUser } from "/@/api/organization";
 
 export function useColumns() {
   const switchLoadMap = ref({});
@@ -18,21 +19,17 @@ export function useColumns() {
       width: 70,
       hide: ({ checkList }) => !checkList.includes("序号列")
     },
-    // {
-    //   label: "用户编号",
-    //   prop: "ID"
-    // },
     {
       label: "登录名称",
-      prop: "LoginName"
+      prop: "loginName"
     },
     {
       label: "姓名",
-      prop: "username"
+      prop: "userName"
     },
     {
       label: "所属单位",
-      prop: "BelongTo"
+      prop: "belongTo"
       // formatter: ({ dept }) => dept.name
     },
     {
@@ -53,7 +50,7 @@ export function useColumns() {
     },
     {
       label: "联系电话",
-      prop: "mobile"
+      prop: "phone"
     },
     {
       label: "电子邮箱",
@@ -61,28 +58,28 @@ export function useColumns() {
     },
     {
       label: "当前状态",
-      prop: "status",
+      prop: "onLine",
       cellRenderer: ({ row, props }) => (
         <el-tag
           size={props.size}
-          type={row.status === 1 ? "success" : "danger"}
+          type={row.onLine === 1 ? "success" : "danger"}
           effect="plain"
         >
-          {row.status === 1 ? "在线" : "离线"}
+          {row.onLine === 1 ? "在线" : "离线"}
         </el-tag>
       )
     },
     {
       label: "上线次数",
-      prop: "num"
+      prop: "loginTimes"
     },
-    // {
-    //   label: "创建时间",
-    //   width: 180,
-    //   prop: "createTime",
-    //   formatter: ({ createTime }) =>
-    //     dayjs(createTime).format("YYYY-MM-DD HH:mm:ss")
-    // },
+    {
+      label: "创建时间",
+      prop: "createTime",
+      formatter: ({ createTime }) =>
+        dayjs(createTime).format("YYYY-MM-DD HH:mm:ss"),
+      width: 200
+    },
     {
       label: "操作",
       fixed: "left",
@@ -94,10 +91,10 @@ export function useColumns() {
   function onChange({ row, index }) {
     ElMessageBox.confirm(
       `确认要<strong>${
-        row.status === 0 ? "停用" : "激活"
-      }</strong><strong style='color:var(--el-color-primary)'>${
-        row.username
-      }</strong>用户吗?`,
+        row.state === 0 ? "停用" : "激活"
+      }</strong>用户<strong style='color:var(--el-color-primary)'>${
+        row.userName
+      }</strong>吗?`,
       "系统提示",
       {
         confirmButtonText: "确定",
@@ -115,19 +112,30 @@ export function useColumns() {
             loading: true
           }
         );
-        setTimeout(() => {
-          switchLoadMap.value[index] = Object.assign(
-            {},
-            switchLoadMap.value[index],
-            {
-              loading: false
-            }
-          );
-          message.success("已成功修改用户状态");
-        }, 300);
+        const { passWord, onLine, loginTimes, createTime, ...params } = row;
+        console.log(passWord, onLine, loginTimes, createTime);
+        updateUser({
+          ...params
+        }).then(({ status, data }) => {
+          if (status === 200) {
+            setTimeout(() => {
+              switchLoadMap.value[index] = Object.assign(
+                {},
+                switchLoadMap.value[index],
+                {
+                  loading: false
+                }
+              );
+              message.success("已成功修改用户状态");
+            }, 300);
+          } else {
+            message.error(`${data}`);
+            row.state === 0 ? (row.state = 1) : (row.state = 0);
+          }
+        });
       })
       .catch(() => {
-        row.status === 0 ? (row.status = 1) : (row.status = 0);
+        row.state === 0 ? (row.state = 1) : (row.state = 0);
       });
   }
 

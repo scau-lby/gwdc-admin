@@ -1,3 +1,3 @@
 <template>
-  <h1>equipment</h1>
+  <h1>realtime</h1>
 </template>

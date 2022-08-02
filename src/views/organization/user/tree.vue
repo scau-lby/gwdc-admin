@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import type { ElTree } from "element-plus";
-import { getOrgList } from "/@/api/organization";
-import { handleTree } from "@pureadmin/utils";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 import { ref, watch, onMounted, getCurrentInstance } from "vue";
 
@@ -63,11 +61,7 @@ watch(searchValue, val => {
   treeRef.value!.filter(val);
 });
 
-onMounted(async () => {
-  let { data } = await getOrgList({});
-  console.log(data);
-  treeData.value = handleTree(data);
-});
+onMounted(async () => {});
 </script>
 
 <template>
