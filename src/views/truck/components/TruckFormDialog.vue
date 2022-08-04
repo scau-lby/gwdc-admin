@@ -53,20 +53,13 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         editTruck({
           ...formData.value,
           belongTo: "兴隆台项目部"
-        }).then(({ status, message }) => {
-          if (status === 200) {
-            ElNotification({
-              title: "操作成功",
-              message: `编辑设备 【${formData.value.plateNum}】`,
-              type: "success"
-            });
-          } else {
-            ElNotification({
-              title: "操作失败",
-              message: `${message}`,
-              type: "error"
-            });
-          }
+        }).then(() => {
+          ElNotification({
+            title: "操作成功",
+            message: `编辑设备 【${formData.value.plateNum}】`,
+            type: "success"
+          });
+
           formVisible.value = false;
           resetForm(formEl);
         });
@@ -75,20 +68,13 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         addTruck({
           ...formData.value,
           belongTo: "兴隆台项目部"
-        }).then(({ status, message }) => {
-          if (status === 200) {
-            ElNotification({
-              title: "操作成功",
-              message: `新增设备 【${formData.value.plateNum}】`,
-              type: "success"
-            });
-          } else {
-            ElNotification({
-              title: "操作失败",
-              message: `${message}`,
-              type: "error"
-            });
-          }
+        }).then(() => {
+          ElNotification({
+            title: "操作成功",
+            message: `新增设备 【${formData.value.plateNum}】`,
+            type: "success"
+          });
+
           formVisible.value = false;
           resetForm(formEl);
         });

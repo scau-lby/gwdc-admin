@@ -1,9 +1,8 @@
 import { computed } from "vue";
-import { router } from "/@/router";
+import { router, remainingPaths } from "/@/router";
 import { getConfig } from "/@/config";
 import { emitter } from "/@/utils/mitt";
 import { routeMetaType } from "../types";
-import { remainingPaths } from "/@/router";
 import { transformI18n } from "/@/plugins/i18n";
 import { storageSession } from "/@/utils/storage";
 import { useAppStoreHook } from "/@/store/modules/app";

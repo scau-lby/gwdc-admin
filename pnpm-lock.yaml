@@ -4,12 +4,15 @@ specifiers:
   "@commitlint/cli": 13.1.0
   "@commitlint/config-conventional": 13.1.0
   "@ctrl/tinycolor": ^3.4.1
+  "@iconify-icons/carbon": ^1.2.8
   "@iconify-icons/ep": ^1.2.4
+  "@iconify-icons/fa": ^1.2.3
+  "@iconify-icons/fa-solid": ^1.2.3
   "@iconify-icons/fluent": ^1.2.15
   "@iconify-icons/mdi": ^1.2.27
   "@iconify-icons/ri": ^1.2.1
   "@iconify-icons/uil": ^1.2.2
-  "@iconify/vue": ^3.2.0
+  "@iconify/vue": ^3.2.1
   "@intlify/vite-plugin-vue-i18n": ^3.4.0
   "@pureadmin/components": ^1.0.6
   "@pureadmin/table": 1.2.0
@@ -98,8 +101,13 @@ specifiers:
 
 dependencies:
   "@ctrl/tinycolor": 3.4.1
+  "@iconify-icons/carbon": 1.2.8
+  "@iconify-icons/ep": 1.2.6
+  "@iconify-icons/fa": 1.2.3
+  "@iconify-icons/fa-solid": 1.2.3
   "@iconify-icons/fluent": 1.2.15
   "@iconify-icons/mdi": 1.2.27
+  "@iconify-icons/ri": 1.2.2
   "@iconify-icons/uil": 1.2.2
   "@pureadmin/components": 1.0.8_vue@3.2.37
   "@pureadmin/table": 1.2.0
@@ -141,8 +149,6 @@ dependencies:
 devDependencies:
   "@commitlint/cli": 13.1.0
   "@commitlint/config-conventional": 13.1.0
-  "@iconify-icons/ep": 1.2.6
-  "@iconify-icons/ri": 1.2.2
   "@iconify/vue": 3.2.1_vue@3.2.37
   "@intlify/vite-plugin-vue-i18n": 3.4.0_jw2e7vdrclbpem4sahyj6mbsae
   "@pureadmin/theme": 2.4.0
@@ -958,6 +964,15 @@ packages:
       }
     dev: true
 
+  /@iconify-icons/carbon/1.2.8:
+    resolution:
+      {
+        integrity: sha512-/2QoYo1G8YiEoZVXQJWGUuWHsuHfWQ5c6Zn3lecOe2zQaAIlWXpZPgbzADCDZM0sl2+d6NZCoDeYAxNhwrSqPw==
+      }
+    dependencies:
+      "@iconify/types": 1.1.0
+    dev: false
+
   /@iconify-icons/ep/1.2.6:
     resolution:
       {
@@ -965,7 +980,25 @@ packages:
       }
     dependencies:
       "@iconify/types": 1.1.0
-    dev: true
+    dev: false
+
+  /@iconify-icons/fa-solid/1.2.3:
+    resolution:
+      {
+        integrity: sha512-Eo8TQ4d4tJnMGhNNDujGb2HWsNgAC4AS0h+Pzd199aazgNPQnP16ycCt4CijpmETI9hjZCLrgfc2VUiBQ2FzHQ==
+      }
+    dependencies:
+      "@iconify/types": 1.1.0
+    dev: false
+
+  /@iconify-icons/fa/1.2.3:
+    resolution:
+      {
+        integrity: sha512-qxMbbKfZMJf7C74mrRKsH3Rb9sjua5ujtHjEUMI1yKlriZPbQale9SqXu4m6Xlq6OJ1GSN3LRsweE/pcm889oQ==
+      }
+    dependencies:
+      "@iconify/types": 1.1.0
+    dev: false
 
   /@iconify-icons/fluent/1.2.15:
     resolution:
@@ -992,7 +1025,7 @@ packages:
       }
     dependencies:
       "@iconify/types": 1.1.0
-    dev: true
+    dev: false
 
   /@iconify-icons/uil/1.2.2:
     resolution:

@@ -1,88 +1,91 @@
 <script lang="ts" setup>
-import { reactive } from "vue";
-import { HCard, HTable1, HTable2, HPie, HBar } from "./components";
+// import { reactive } from "vue";
+import Htable1 from "./components/Table1/index.vue";
+import { HCard, HTable2, HPie, HBar } from "./components";
 defineOptions({
   name: "Home"
 });
 // 施工井表内容
-let tableWellData = reactive([
-  {
-    show: true,
-    address: "山西省朔州市",
-    company: "西部钻井公司",
-    wellNum: "高4-10-2H",
-    truckPlate: "辽L30708 辽L30716",
-    operator: "张** 李**",
-    type: "油层"
-  },
-  {
-    true: false,
-    address: "山西省朔州市",
-    company: "西部钻井公司",
-    wellNum: "高4-10-2H",
-    truckPlate: "辽L30708 辽L30716",
-    operator: "张** 李**",
-    type: "油层"
-  },
-  {
-    true: true,
-    address: "山西省朔州市",
-    company: "西部钻井公司",
-    wellNum: "高4-10-2H",
-    truckPlate: "辽L30708 辽L30716",
-    operator: "张** 李**",
-    type: "油层"
-  },
-  {
-    true: false,
-    address: "山西省朔州市",
-    company: "西部钻井公司",
-    wellNum: "高4-10-2H",
-    truckPlate: "辽L30708 辽L30716",
-    operator: "张** 李**",
-    type: "油层"
-  },
-  {
-    true: false,
-    address: "山西省朔州市",
-    company: "西部钻井公司",
-    wellNum: "高4-10-2H",
-    truckPlate: "辽L30708 辽L30716",
-    operator: "张** 李**",
-    type: "油层"
-  }
-]);
+// let tableWellData = reactive([
+//   {
+//     show: true,
+//     address: "山西省朔州市",
+//     company: "西部钻井公司",
+//     wellNum: "高4-10-2H",
+//     truckPlate: "辽L30708 辽L30716",
+//     operator: "张** 李**",
+//     type: "油层"
+//   },
+//   {
+//     true: false,
+//     address: "山西省朔州市",
+//     company: "西部钻井公司",
+//     wellNum: "高4-10-2H",
+//     truckPlate: "辽L30708 辽L30716",
+//     operator: "张** 李**",
+//     type: "油层"
+//   },
+//   {
+//     true: true,
+//     address: "山西省朔州市",
+//     company: "西部钻井公司",
+//     wellNum: "高4-10-2H",
+//     truckPlate: "辽L30708 辽L30716",
+//     operator: "张** 李**",
+//     type: "油层"
+//   },
+//   {
+//     true: false,
+//     address: "山西省朔州市",
+//     company: "西部钻井公司",
+//     wellNum: "高4-10-2H",
+//     truckPlate: "辽L30708 辽L30716",
+//     operator: "张** 李**",
+//     type: "油层"
+//   },
+//   {
+//     true: false,
+//     address: "山西省朔州市",
+//     company: "西部钻井公司",
+//     wellNum: "高4-10-2H",
+//     truckPlate: "辽L30708 辽L30716",
+//     operator: "张** 李**",
+//     type: "油层"
+//   }
+// ]);
 
-// 在线设备表内容
-let tableOTData = reactive([
-  {
-    danwei: "兴隆台项目部",
-    address: "山西省朔州市"
-  },
-  {
-    danwei: "四川项目部",
-    address: "山西省朔州市"
-  },
-  {
-    danwei: "兴隆台项目部",
-    address: "山西省朔州市"
-  },
-  {
-    danwei: "四川项目部",
-    address: "山西省朔州市"
-  },
-  {
-    danwei: "兴隆台项目部",
-    address: "山西省朔州市"
-  }
-]);
+// // 在线设备表内容
+// let tableOTData = reactive([
+//   {
+//     danwei: "兴隆台项目部",
+//     address: "山西省朔州市"
+//   },
+//   {
+//     danwei: "四川项目部",
+//     address: "山西省朔州市"
+//   },
+//   {
+//     danwei: "兴隆台项目部",
+//     address: "山西省朔州市"
+//   },
+//   {
+//     danwei: "四川项目部",
+//     address: "山西省朔州市"
+//   },
+//   {
+//     danwei: "兴隆台项目部",
+//     address: "山西省朔州市"
+//   }
+// ]);
 </script>
 
 <template>
-  <div class="welcome">
+  <div class="main">
     <HCard />
-    <HTable1 :tableData="tableWellData" :total="7" />
-    <HTable2 :tableData="tableOTData" :total="5" />
+    <el-card style="margin-top: 20px">
+      <Htable1 />
+    </el-card>
+    <HTable2 />
     <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
         <el-card>

@@ -12,6 +12,15 @@ export const getUserList = (params?: object): ResponseType => {
   return http.request("get", "/gjsnccj/users/list", { params });
 };
 
+// 根据id获取用户信息
+export const getUserById = (id?: number): ResponseType => {
+  return http.request("get", "/gjsnccj/users/get", {
+    params: {
+      id
+    }
+  });
+};
+
 // 新增用户
 export const addUser = (data: object): ResponseType => {
   return http.request("post", "/gjsnccj/users/add", { data });
@@ -23,35 +32,24 @@ export const updateUser = (data: object): ResponseType => {
 };
 
 // 管理员重置用户密码
-export const resetPwd = (data?: object): ResponseType => {
+export const resetPwd = (params?: object): ResponseType => {
   return http.request(
     "post",
     "/gjsnccj/users/setpasswd",
     {},
     {
-      params: data
+      params
     }
   );
 };
 
 // 删除用户
-export const userBindGroup = (data: object): ResponseType => {
-  const token = getToken();
-  let accessToken = "";
-  if (token) {
-    accessToken = JSON.parse(token).accessToken;
-  }
-
-  data = Object.assign(data, {
-    method: "sncj.DeleteUser",
-    token: accessToken,
-    timestamp: new Date().getTime()
-  });
-  return http.request("post", "/gjsnccj/openapi", { data });
+export const deleteUser = (data: object): ResponseType => {
+  return http.request("post", "/gjsnccj/users/delete", { data });
 };
 
 // 用户绑定分组
-export const deleteUser = (data: object): ResponseType => {
+export const userBindGroup = (data: object): ResponseType => {
   const token = getToken();
   let accessToken = "";
   if (token) {
@@ -164,98 +162,31 @@ export function getTokenTree(data: object) {
 
 // 获取组织机构列表
 export const getOrgList = (data: object): ResponseType => {
-  const token = getToken();
-  let accessToken = "";
-  if (token) {
-    accessToken = JSON.parse(token).accessToken;
-  }
-
-  data = Object.assign(data, {
-    method: "sncj.GetOrgList",
-    token: accessToken,
-    timestamp: new Date().getTime()
-  });
-  return http.request("post", "/gjsnccj/openapi", { data });
-};
-
-// 获取虚拟机构列表
-export const getVirOrgList = (data: object): ResponseType => {
-  const token = getToken();
-  let accessToken = "";
-  if (token) {
-    accessToken = JSON.parse(token).accessToken;
-  }
-
-  data = Object.assign(data, {
-    method: "sncj.GetVirOrgList",
-    token: accessToken,
-    timestamp: new Date().getTime()
-  });
-  return http.request("post", "/gjsnccj/openapi", { data });
-};
-
-// 获取组织机构树
-export const getOrgTree = (data: object): ResponseType => {
-  const token = getToken();
-  let accessToken = "";
-  if (token) {
-    accessToken = JSON.parse(token).accessToken;
-  }
-
-  data = Object.assign(data, {
-    method: "sncj.GetOrgTree",
-    token: accessToken,
-    timestamp: new Date().getTime()
-  });
-  return http.request("post", "/gjsnccj/openapi", { data });
-};
-
-// 删除机构
-export const deleteOrg = (data: object): ResponseType => {
-  const token = getToken();
-  let accessToken = "";
-  if (token) {
-    accessToken = JSON.parse(token).accessToken;
-  }
-
-  data = Object.assign(data, {
-    method: "sncj.DeleteOrg",
-    token: accessToken,
-    timestamp: new Date().getTime()
-  });
-  return http.request("post", "/gjsnccj/openapi", { data });
+  return http.request("get", "/gjsnccj/org/getlist", { data });
 };
 
 // 新增机构
 export const addOrg = (data: object): ResponseType => {
-  const token = getToken();
-  let accessToken = "";
-  if (token) {
-    accessToken = JSON.parse(token).accessToken;
-  }
-
-  data = Object.assign(data, {
-    method: "sncj.AddOrgName",
-    token: accessToken,
-    timestamp: new Date().getTime()
-  });
-  return http.request("post", "/gjsnccj/openapi", { data });
+  return http.request("post", "/gjsnccj/org/add", { data });
 };
 
 // 编辑机构
-export const editOrg = (data: object): ResponseType => {
-  const token = getToken();
-  let accessToken = "";
-  if (token) {
-    accessToken = JSON.parse(token).accessToken;
-  }
+export const editOrg = (params: object): ResponseType => {
+  return http.request("get", "/gjsnccj/org/update", { params });
+};
 
-  data = Object.assign(data, {
-    method: "sncj.EditOrgName",
-    token: accessToken,
-    timestamp: new Date().getTime()
+// 删除机构
+export const deleteOrg = (params: object): ResponseType => {
+  return http.request("get", "/gjsnccj/org/delete", { params });
+};
+
+// 根据名称获取机构信息
+export const getOrgByName = (orgName: string): ResponseType => {
+  return http.request("get", "/gjsnccj/org/get", {
+    params: {
+      orgName
+    }
   });
-  return http.request("post", "/gjsnccj/openapi", { data });
 };
 
 // 设备授权

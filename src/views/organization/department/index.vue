@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useColumns } from "./columns";
-import { deleteOrg } from "/@/api/organization";
-import { type PaginationProps } from "@pureadmin/table";
-import { reactive, ref, onMounted } from "vue";
-import { ElNotification, type FormInstance } from "element-plus";
+import { getOrgList, deleteOrg } from "/@/api/organization";
+import { handleTree } from "@pureadmin/utils";
+import dialogForm from "./components/DialogForm.vue";
+import { ref, onMounted, nextTick } from "vue";
+import { ElNotification } from "element-plus";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 import { TableProBar } from "/@/components/ReTable";
 
@@ -11,150 +12,90 @@ defineOptions({
   name: "Department"
 });
 
-const form = reactive({
-  name: "",
-  virtual: "",
-  status: ""
-});
-
 let dataList = ref([]);
 let loading = ref(true);
 const { columns } = useColumns();
 
-const formRef = ref<FormInstance>();
-
-const pagination = reactive<PaginationProps>({
-  total: 0,
-  pageSize: 10,
-  currentPage: 1,
-  background: true
-});
+const tableRef = ref();
 
 function onAdd() {
-  console.log("add");
   formDialogVisible.value = true;
 }
 
 function onEdit(row) {
-  console.log(row);
+  formDialogVisible.value = true;
+  nextTick(() => {
+    formData.value = {
+      orgId: row.orgId,
+      orgName: row.orgName,
+      pid: row.pid,
+      layer: row.layer
+    };
+  });
 }
 
 function onDelete(row) {
+  console.log(row);
   deleteOrg({
-    OrgID: row.id
-  }).then(({ ResultCode, Msg }) => {
-    if (ResultCode === 0) {
+    orgId: row.id
+  }).then(({ status }) => {
+    if (status === 200) {
       ElNotification({
         title: "操作成功",
-        message: `删除机构 【${row.label}】`,
+        message: `删除机构 【${row.orgName}】`,
         type: "success"
-      });
-      if (dataList.value.length === 1) {
-        pagination.currentPage =
-          pagination.currentPage > 1 ? pagination.currentPage - 1 : 1;
-      }
-    } else {
-      ElNotification({
-        title: "操作失败",
-        message: `删除机构 【${row.label}】，提示：${Msg}`,
-        type: "danger"
       });
     }
     onSearch();
   });
 }
 
-function onCurrentChange(val: number) {
-  pagination.currentPage = val;
-  onSearch();
-}
-
-function onSizeChange(val: number) {
-  pagination.pageSize = val;
-  onSearch();
-}
-
-function onSelectionChange(val) {
-  console.log("onSelectionChange", val);
-}
-
 async function onSearch() {
   loading.value = true;
-  // let { data } = await getOrgList({
-  //   pageSize: pagination.pageSize,
-  //   pageNum: pagination.currentPage
-  // });
-  // dataList.value = data;
-  // pagination.total = data.length;
+  let { data } = await getOrgList({});
+  const dataArray = JSON.parse(data);
+
+  const list = dataArray.map(item => {
+    // if (item.pid > 0) {
+    //   item.parentName = dataArray.filter(
+    //     row => row.orgId === item.pid
+    //   )[0].orgName;
+    // } else {
+    //   item.parentName = "-";
+    // }
+    const { orgId, pid } = item;
+    return {
+      id: orgId,
+      parentId: pid,
+      ...item
+    };
+  });
+
+  dataList.value = handleTree(list);
+
   setTimeout(() => {
     loading.value = false;
   }, 500);
 }
 
-const resetForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  formEl.resetFields();
-  pagination.currentPage = 1;
-  onSearch();
-};
-
 onMounted(() => {
   onSearch();
 });
 
-// const INITIAL_DATA = {
-//   name: "",
-//   status: "",
-//   description: "",
-//   type: "",
-//   mark: ""
-// };
+const initialData = {
+  orgId: 0,
+  orgName: "",
+  pid: 0,
+  layer: 0
+};
 
 const formDialogVisible = ref(false);
-// const formData = ref({ ...INITIAL_DATA });
+const formData = ref({ ...initialData });
 </script>
 <template>
   <div class="main">
-    <el-form
-      ref="formRef"
-      :inline="true"
-      :model="form"
-      class="bg-white w-99/100 pl-8 pt-4"
-    >
-      <el-form-item label="是否虚拟机构" prop="name">
-        <el-select
-          v-model="form.virtual"
-          placeholder="请选择是否为虚拟机构"
-          clearable
-        >
-          <el-option label="是" :value="true" />
-          <el-option label="否" :value="false" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="状态：" prop="status">
-        <el-select v-model="form.status" placeholder="请选择状态" clearable>
-          <el-option label="开启" :value="1" />
-          <el-option label="关闭" :value="0" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="机构名称" prop="name">
-        <el-input v-model="form.name" placeholder="请输入机构名称" clearable />
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          :icon="useRenderIcon('search')"
-          :loading="loading"
-          @click="(pagination.currentPage = 1), onSearch()"
-        >
-          搜索
-        </el-button>
-        <el-button :icon="useRenderIcon('refresh')" @click="resetForm(formRef)">
-          重置
-        </el-button>
-      </el-form-item>
-    </el-form>
     <TableProBar
+      :tableRef="tableRef?.getTableRef()"
       title="组织机构"
       :loading="loading"
       :dataList="dataList"
@@ -167,21 +108,18 @@ const formDialogVisible = ref(false);
       </template>
       <template v-slot="{ size, checkList }">
         <PureTable
+          ref="tableRef"
           border
           align="center"
           row-key="id"
           table-layout="auto"
           showOverflowTooltip
+          default-expand-all
           :size="size"
           :data="dataList"
           :columns="columns"
           :checkList="checkList"
-          :pagination="pagination"
-          :paginationSmall="size === 'small' ? true : false"
           :header-cell-style="{ background: '#fafafa', color: '#606266' }"
-          @selection-change="onSelectionChange"
-          @size-change="onSizeChange"
-          @current-change="onCurrentChange"
         >
           <template #operation="{ row }">
             <el-button
@@ -205,5 +143,10 @@ const formDialogVisible = ref(false);
         </PureTable>
       </template>
     </TableProBar>
+    <dialogForm
+      v-model:visible="formDialogVisible"
+      :data="formData"
+      @refresh="onSearch"
+    />
   </div>
 </template>

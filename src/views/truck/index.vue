@@ -61,21 +61,14 @@ function onEdit(row) {
   });
 }
 
-async function onDelete(row) {
-  const { status, data } = await deleteTruck(row.id);
-  if (status === 200) {
+function onDelete(row) {
+  deleteTruck(row.id).then(() => {
     ElNotification({
       title: "操作成功",
       message: `删除设备【${row.plateNum}】`,
       type: "success"
     });
-  } else {
-    ElNotification({
-      title: "操作失败",
-      message: `删除设备【${row.plateNum}】,${data}`,
-      type: "error"
-    });
-  }
+  });
 }
 
 function onCurrentChange(val: number) {
@@ -88,27 +81,16 @@ function onSizeChange(val: number) {
   onSearch();
 }
 
-function onSelectionChange(val) {
-  console.log("onSelectionChange", val);
-}
-
 async function onSearch() {
   loading.value = true;
-  let { status, data } = await getTruckList({
+  let { data } = await getTruckList({
     pageSize: pagination.pageSize,
     pageNum: pagination.currentPage,
     ...form
   });
-  if (status === 200) {
-    dataList.value = data.records;
-    pagination.total = data.total;
-  } else {
-    ElNotification({
-      title: "操作失败",
-      message: `获取设备列表, 提示：${data}`,
-      type: "error"
-    });
-  }
+
+  dataList.value = data.records;
+  pagination.total = data.total;
 
   setTimeout(() => {
     loading.value = false;
@@ -252,7 +234,6 @@ const truckFormData = ref({ ...initialData });
           :pagination="pagination"
           :paginationSmall="size === 'small' ? true : false"
           :header-cell-style="{ background: '#fafafa', color: '#606266' }"
-          @selection-change="onSelectionChange"
           @size-change="onSizeChange"
           @current-change="onCurrentChange"
           style="width: 100%"

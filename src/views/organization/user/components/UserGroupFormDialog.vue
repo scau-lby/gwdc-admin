@@ -42,22 +42,15 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       userBindGroup({
         uid: formData.value.uid,
         group_ids: formData.value.group_ids.join(",")
-      }).then(({ ResultCode, Msg }) => {
-        if (ResultCode === 0) {
-          ElNotification({
-            title: "操作成功",
-            message: `用户 【${
-              formData.value.UserName
-            }】绑定分组 【${formData.value.group_ids.join(",")}】`,
-            type: "success"
-          });
-        } else {
-          ElNotification({
-            title: "操作失败",
-            message: `用户绑定分组，提示：${Msg}`,
-            type: "error"
-          });
-        }
+      }).then(() => {
+        ElNotification({
+          title: "操作成功",
+          message: `用户 【${
+            formData.value.UserName
+          }】绑定分组 【${formData.value.group_ids.join(",")}】`,
+          type: "success"
+        });
+
         formVisible.value = false;
         resetForm(formEl);
       });

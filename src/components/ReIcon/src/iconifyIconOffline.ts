@@ -100,6 +100,16 @@ import FlUser from "@iconify-icons/fluent/person-12-filled";
 addIcon("role", Role);
 addIcon("flUser", FlUser);
 
+// fa
+import Heart from "@iconify-icons/fa/heart";
+import HeartO from "@iconify-icons/fa/heart-o";
+// fa-solid
+import HeartBroken from "@iconify-icons/fa-solid/heart-broken";
+
+addIcon("heart", Heart);
+addIcon("heart-o", HeartO);
+addIcon("heart-broken", HeartBroken);
+
 // Iconify Icon在Vue里离线使用（用于内网环境）https://docs.iconify.design/icon-components/vue/offline.html
 export default defineComponent({
   name: "IconifyIcon",

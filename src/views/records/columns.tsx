@@ -4,12 +4,6 @@ import dayjs from "dayjs";
 export function useColumns() {
   const columns = ref([
     {
-      type: "selection",
-      width: 55,
-      align: "left",
-      hide: ({ checkList }) => !checkList.includes("勾选列")
-    },
-    {
       label: "序号",
       type: "index",
       width: 60,

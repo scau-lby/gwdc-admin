@@ -9,11 +9,6 @@ export function useColumns() {
 
   const columns = ref([
     {
-      type: "selection",
-      width: 55,
-      hide: ({ checkList }) => !checkList.includes("勾选列")
-    },
-    {
       label: "序号",
       type: "index",
       width: 70,
@@ -30,7 +25,6 @@ export function useColumns() {
     {
       label: "所属单位",
       prop: "belongTo"
-      // formatter: ({ dept }) => dept.name
     },
     {
       label: "用户状态",

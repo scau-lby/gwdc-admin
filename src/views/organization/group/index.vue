@@ -47,8 +47,8 @@ function onEdit(row) {
 function onDelete(row) {
   deleteGroup({
     gid: row.GID
-  }).then(({ ResultCode, Msg }) => {
-    if (ResultCode === 0) {
+  }).then(({ status }) => {
+    if (status === 200) {
       ElNotification({
         title: "操作成功",
         message: `删除用户组 【${row.GroupName}】`,
@@ -59,12 +59,6 @@ function onDelete(row) {
           pagination.currentPage > 1 ? pagination.currentPage - 1 : 1;
       }
       onSearch();
-    } else {
-      ElNotification({
-        title: "操作失败",
-        message: `删除用户组，提示：${Msg}`,
-        type: "error"
-      });
     }
   });
 }
@@ -77,10 +71,6 @@ function onCurrentChange(val: number) {
 function onSizeChange(val: number) {
   pagination.pageSize = val;
   onSearch();
-}
-
-function onSelectionChange(val) {
-  console.log("onSelectionChange", val);
 }
 
 async function onSearch() {
@@ -165,7 +155,6 @@ const groupFormData = ref({ ...initialData });
           :pagination="pagination"
           :paginationSmall="size === 'small' ? true : false"
           :header-cell-style="{ background: '#fafafa', color: '#606266' }"
-          @selection-change="onSelectionChange"
           @size-change="onSizeChange"
           @current-change="onCurrentChange"
         >

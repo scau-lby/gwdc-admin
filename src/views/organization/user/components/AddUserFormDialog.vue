@@ -53,20 +53,13 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         ...formData.value,
         belongTo: "固井公司",
         groups: "1,2,3"
-      }).then(({ status, message }) => {
-        if (status === 200) {
-          ElNotification({
-            title: "操作成功",
-            message: `新增用户 【${formData.value.userName}】`,
-            type: "success"
-          });
-        } else {
-          ElNotification({
-            title: "操作失败",
-            message: `新增用户，提示：${message}`,
-            type: "error"
-          });
-        }
+      }).then(() => {
+        ElNotification({
+          title: "操作成功",
+          message: `新增用户 【${formData.value.userName}】`,
+          type: "success"
+        });
+
         formVisible.value = false;
         resetForm(formEl);
       });

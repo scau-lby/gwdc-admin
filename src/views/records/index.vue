@@ -50,10 +50,6 @@ function onSizeChange(val: number) {
   onSearch();
 }
 
-function onSelectionChange(val) {
-  console.log("onSelectionChange", val);
-}
-
 async function onSearch() {
   loading.value = true;
   // let { data } = await getOrgList({
@@ -145,7 +141,6 @@ onMounted(() => {
           :pagination="pagination"
           :paginationSmall="size === 'small' ? true : false"
           :header-cell-style="{ background: '#fafafa', color: '#606266' }"
-          @selection-change="onSelectionChange"
           @size-change="onSizeChange"
           @current-change="onCurrentChange"
         />

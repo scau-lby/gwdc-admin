@@ -30,7 +30,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       changePwd({
         newPasswd: formData.value.newPasswd,
         oldPasswd: formData.value.oldPasswd
-      }).then(({ status, data }) => {
+      }).then(({ status }) => {
         if (status === 200) {
           ElNotification({
             title: "操作成功",
@@ -39,12 +39,6 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           });
           storageSession.removeItem("authorized-token");
           router.push("/login");
-        } else {
-          ElNotification({
-            title: "操作失败",
-            message: `${data}`,
-            type: "error"
-          });
         }
         formVisible.value = false;
         resetForm(formEl);

@@ -11,6 +11,9 @@ import NProgress from "../progress";
 import { loadEnv } from "@build/index";
 import { getToken } from "../auth";
 import { useUserStoreHook } from "/@/store/modules/user";
+import { storageSession } from "../storage";
+import { router } from "/@/router";
+import { ElNotification } from "element-plus";
 
 // 加载环境变量 VITE_PROXY_DOMAIN（开发环境）  VITE_PROXY_DOMAIN_REAL（打包后的线上环境）
 const { VITE_PROXY_DOMAIN, VITE_PROXY_DOMAIN_REAL } = loadEnv();
@@ -94,10 +97,11 @@ class GwdcHttp {
     const instance = GwdcHttp.axiosInstance;
     instance.interceptors.response.use(
       (response: HttpResponse) => {
+        // console.log(response);
         const $config = response.config;
         // 关闭进度条动画
         NProgress.done();
-        // 优先判断post/get等方法是否传入回掉，否则执行初始化设置等回掉
+        // 优先判断post/get等方法是否传入回调，否则执行初始化设置等回调
         if (typeof $config.beforeResponseCallback === "function") {
           $config.beforeResponseCallback(response);
           return response.data;
@@ -105,6 +109,17 @@ class GwdcHttp {
         if (GwdcHttp.initConfig.beforeResponseCallback) {
           GwdcHttp.initConfig.beforeResponseCallback(response);
           return response.data;
+        }
+        if (response.data.status !== 200) {
+          ElNotification({
+            title: `${response.data.message}`,
+            message: `${response.data.data}`,
+            type: "error"
+          });
+          if (response.data.status === 401) {
+            storageSession.removeItem("authorized-token");
+            router.push("/login");
+          }
         }
         return response.data;
       },

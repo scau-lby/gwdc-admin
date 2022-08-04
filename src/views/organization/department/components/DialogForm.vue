@@ -1,23 +1,19 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { ElNotification, FormInstance } from "element-plus";
-// import { getOrgTree } from "/@/api/organization";
-const BelongToProps = {
-  checkStrictly: true
+import { getOrgList, editOrg, addOrg } from "/@/api/organization";
+import { handleTree } from "@pureadmin/utils";
+
+const orgProps = {
+  checkStrictly: true,
+  value: "id",
+  label: "orgName",
+  children: "children",
+  emitPath: false
 };
-let BelongToOptions = ref([]);
-// async function getTree() {
-//   let { ResultCode, data, Msg } = await getOrgTree({});
-//   if (ResultCode === 0) {
-//     BelongToOptions = data;
-//   } else {
-//     ElNotification({
-//       title: "操作失败",
-//       message: `获取组织机构树, 提示：${Msg}`,
-//       type: "error"
-//     });
-//   }
-// }
+
+let orgList = ref([]);
+let orgOptions = ref([]);
 
 const props = defineProps({
   visible: {
@@ -41,13 +37,41 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(valid => {
     if (valid) {
-      ElNotification({
-        title: "操作成功",
-        message: `新增/编辑用户 【${formData.value.UserName}】`,
-        type: "success"
-      });
-      formVisible.value = false;
-      resetForm(formEl);
+      if (formData.value.pid > 0) {
+        formData.value.layer =
+          orgList.value.filter(item => item.orgId === formData.value.pid)[0]
+            .layer + 1;
+      }
+      if (formData.value.orgId > 0) {
+        editOrg({
+          orgId: formData.value.orgId,
+          orgName: formData.value.orgName
+        }).then(() => {
+          ElNotification({
+            title: "操作成功",
+            message: `编辑机构 【${formData.value.orgName}】`,
+            type: "success"
+          });
+          formVisible.value = false;
+          resetForm(formEl);
+          emits("refresh");
+        });
+      } else {
+        const { orgId, ...params } = formData.value;
+        console.log(orgId);
+        addOrg({
+          ...params
+        }).then(() => {
+          ElNotification({
+            title: "操作成功",
+            message: `新增机构 【${formData.value.orgName}】`,
+            type: "success"
+          });
+          formVisible.value = false;
+          resetForm(formEl);
+          emits("refresh");
+        });
+      }
     }
   });
 };
@@ -62,11 +86,12 @@ const closeDialog = () => {
   resetForm(ruleFormRef.value);
 };
 
-const emit = defineEmits(["update:visible"]);
+const emits = defineEmits(["update:visible", "refresh"]);
 watch(
   () => formVisible.value,
   val => {
-    emit("update:visible", val);
+    emits("update:visible", val);
+    // emit("")
   }
 );
 
@@ -84,55 +109,36 @@ watch(
   }
 );
 
-const validateMobile = (rule: any, value: any, callback: any) => {
-  if (value === "") {
-    callback(new Error("请输入手机号码"));
-  } else if (!/^1(3|4|5|6|7|8|9)d{9}$/.test(value)) {
-    callback(new Error("手机号码格式错误"));
-  } else {
-    callback();
-  }
-};
-
-const validateEmail = (rule: any, value: any, callback: any) => {
-  if (value === "") {
-    callback(new Error("请输入电子邮箱"));
-  } else if (
-    !/[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/.test(
-      value
-    )
-  ) {
-    callback(new Error("电子邮箱格式错误"));
-  } else {
-    callback();
-  }
-};
-
-// const validateEmail = /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/;
-
 const rules = {
-  LoginName: [{ required: true, message: "请输入登录名称", trigger: "blur" }],
-  UserName: [{ required: true, message: "请输入用户姓名", trigger: "blur" }],
-  BelongTo: [
+  orgName: [{ required: true, message: "请输入机构名称", trigger: "blur" }],
+  pid: [
     {
       required: true,
-      message: "请选择所属单位",
+      message: "请选择上级机构",
       trigger: "change"
     }
-  ],
-  mobile: [{ validator: validateMobile, trigger: "blur" }],
-  email: [{ validator: validateEmail, trigger: "blur" }]
+  ]
 };
 
 onMounted(() => {
-  // getTree();
+  getOrgList({}).then(({ data }) => {
+    orgList.value = JSON.parse(data);
+    const list = JSON.parse(data).map(item => {
+      return {
+        id: item.orgId,
+        parentId: item.pid,
+        ...item
+      };
+    });
+    orgOptions.value = handleTree(list);
+  });
 });
 </script>
 
 <template>
   <el-dialog
     v-model="formVisible"
-    title="新增/编辑机构"
+    :title="formData.orgId > 0 ? '编辑机构' : '新增机构'"
     :width="680"
     draggable
     :before-close="closeDialog"
@@ -144,46 +150,27 @@ onMounted(() => {
       :rules="rules"
       label-width="100px"
     >
-      <el-form-item label="登录名称" prop="LoginName">
-        <el-input
-          v-model="formData.LoginName"
-          :style="{ width: '480px' }"
-          placeholder="请输入登录名称"
-        />
+      <el-form-item label="机构ID" prop="orgId" style="display: none">
+        <el-input v-model="formData.orgId" />
       </el-form-item>
-      <el-form-item label="用户姓名" prop="UserName">
-        <el-input
-          v-model="formData.UserName"
-          :style="{ width: '480px' }"
-          placeholder="请输入用户姓名"
-        />
+      <el-form-item label="机构名称" prop="orgName">
+        <el-input v-model="formData.orgName" placeholder="请输入机构名称" />
       </el-form-item>
-      <el-form-item label="所属单位" prop="BelongTo">
+      <el-form-item label="当前层级" prop="layer" style="display: none">
+        <el-input v-model="formData.layer" />
+      </el-form-item>
+      <el-form-item
+        label="上级机构"
+        prop="pid"
+        :style="{ display: formData.orgId > 0 ? 'none' : '' }"
+      >
         <el-cascader
-          :options="BelongToOptions"
-          :props="BelongToProps"
+          v-model="formData.pid"
+          :options="orgOptions"
+          :props="orgProps"
+          :show-all-levels="false"
           clearable
         />
-      </el-form-item>
-      <el-form-item label="联系电话" prop="mobile">
-        <el-input
-          v-model="formData.mobile"
-          :style="{ width: '480px' }"
-          placeholder="请输入联系电话"
-        />
-      </el-form-item>
-      <el-form-item label="电子邮箱" prop="email">
-        <el-input
-          v-model="formData.email"
-          :style="{ width: '480px' }"
-          placeholder="请输入电子邮箱"
-        />
-      </el-form-item>
-      <el-form-item label="是否激活" prop="state">
-        <el-radio-group v-model="formData.state">
-          <el-radio :label="0">否</el-radio>
-          <el-radio :label="1">是</el-radio>
-        </el-radio-group>
       </el-form-item>
     </el-form>
     <template #footer>
