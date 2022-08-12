@@ -140,7 +140,10 @@ onMounted(() => {
           :checkList="checkList"
           :pagination="pagination"
           :paginationSmall="size === 'small' ? true : false"
-          :header-cell-style="{ background: '#fafafa', color: '#606266' }"
+          :header-cell-style="{
+            backgroundColor: 'rgba(0,21,41,.7)',
+            color: '#d0d0d0'
+          }"
           @size-change="onSizeChange"
           @current-change="onCurrentChange"
         />

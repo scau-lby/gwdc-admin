@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import groupFormDialog from "./components/GroupFormDialog.vue";
 import { useColumns } from "./columns";
-import { getGroupList, deleteGroup } from "/@/api/organization";
-import { reactive, ref, onMounted } from "vue";
+import { getRoleList, deleteRole } from "/@/api/organization";
+import { reactive, ref, onMounted, nextTick } from "vue";
 import { ElNotification } from "element-plus";
 import { type FormInstance } from "element-plus";
 import { type PaginationProps } from "@pureadmin/table";
@@ -14,7 +14,7 @@ defineOptions({
 });
 
 const form = reactive({
-  GroupName: ""
+  groupName: ""
 });
 
 let dataList = ref([]);
@@ -45,13 +45,11 @@ function onEdit(row) {
 }
 
 function onDelete(row) {
-  deleteGroup({
-    gid: row.GID
-  }).then(({ status }) => {
+  deleteRole(row.gid).then(({ status }) => {
     if (status === 200) {
       ElNotification({
         title: "操作成功",
-        message: `删除用户组 【${row.GroupName}】`,
+        message: `删除用户组 【${row.groupName}】`,
         type: "success"
       });
       if (dataList.value.length === 1) {
@@ -75,9 +73,13 @@ function onSizeChange(val: number) {
 
 async function onSearch() {
   loading.value = true;
-  let { data } = await getGroupList({});
-  dataList.value = data;
-  pagination.total = data.length;
+  let { data } = await getRoleList({
+    pageNum: pagination.currentPage,
+    pageSize: pagination.pageSize,
+    groupName: form.groupName
+  });
+  dataList.value = data.records;
+  pagination.total = data.total;
   setTimeout(() => {
     loading.value = false;
   }, 500);
@@ -95,10 +97,9 @@ onMounted(() => {
 });
 
 const initialData = {
-  uid: 0,
-  LoginName: "",
-  UserName: "",
-  group_ids: []
+  gid: 0,
+  groupName: "",
+  note: ""
 };
 
 const groupFormDialogVisible = ref(false);
@@ -111,10 +112,14 @@ const groupFormData = ref({ ...initialData });
       ref="formRef"
       :inline="true"
       :model="form"
-      class="bg-white w-99/100 pl-8 pt-4"
+      class="bg-white w-99/100 pl-4 pt-4"
     >
-      <el-form-item label="用户组名" prop="name">
-        <el-input v-model="form.name" placeholder="请输入角色名称" clearable />
+      <el-form-item label="用户组名" prop="groupName">
+        <el-input
+          v-model="form.groupName"
+          placeholder="请输入用户组名称"
+          clearable
+        />
       </el-form-item>
       <el-form-item>
         <el-button
@@ -149,12 +154,15 @@ const groupFormData = ref({ ...initialData });
           showOverflowTooltip
           table-layout="auto"
           :size="size"
+          :checkList="checkList"
           :data="dataList"
           :columns="columns"
-          :checkList="checkList"
           :pagination="pagination"
           :paginationSmall="size === 'small' ? true : false"
-          :header-cell-style="{ background: '#fafafa', color: '#606266' }"
+          :header-cell-style="{
+            backgroundColor: 'rgba(0,21,41,.7)',
+            color: '#d0d0d0'
+          }"
           @size-change="onSizeChange"
           @current-change="onCurrentChange"
         >
@@ -195,6 +203,7 @@ const groupFormData = ref({ ...initialData });
     <groupFormDialog
       v-model:visible="groupFormDialogVisible"
       :data="groupFormData"
+      @refresh="onSearch"
     />
   </div>
 </template>

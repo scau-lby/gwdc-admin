@@ -7,7 +7,6 @@ export function useColumns() {
       label: "序号",
       type: "index",
       width: 60,
-      align: "left",
       hide: ({ checkList }) => !checkList.includes("序号列")
     },
     {
@@ -29,7 +28,7 @@ export function useColumns() {
     {
       label: "设备编号",
       prop: "plateNum",
-      width: 200
+      width: 100
     },
     {
       label: "数据SIM卡号",
@@ -39,7 +38,7 @@ export function useColumns() {
     {
       label: "数据订阅主题",
       prop: "subject",
-      width: 300
+      width: 260
     },
     {
       label: "数据状态",
@@ -82,13 +81,12 @@ export function useColumns() {
       label: "安装时间",
       prop: "installDate",
       formatter: ({ installDate }) => dayjs(installDate).format("YYYY-MM-DD"),
-      width: 200
+      width: 120
     },
     {
       label: "备注",
       prop: "note",
-      width: 200,
-      fixed: "right"
+      width: 200
     }
   ]);
 

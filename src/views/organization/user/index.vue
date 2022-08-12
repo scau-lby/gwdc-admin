@@ -3,23 +3,42 @@ import addUserFormDialog from "./components/AddUserFormDialog.vue";
 import editUserFormDialog from "./components/EditUserFormDialog.vue";
 import userGroupFormDialog from "./components/UserGroupFormDialog.vue";
 import { useColumns } from "./columns";
-import { getUserList, resetPwd, deleteUser } from "/@/api/organization";
+import {
+  getUserList,
+  resetPwd,
+  deleteUser,
+  getOrgList
+} from "/@/api/organization";
 import { reactive, ref, onMounted, nextTick } from "vue";
-import { ElMessageBox, ElNotification } from "element-plus";
-import { type FormInstance } from "element-plus";
+import { ElMessageBox, ElNotification, type FormInstance } from "element-plus";
 import { TableProBar } from "/@/components/ReTable";
 import { type PaginationProps } from "@pureadmin/table";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
+import { handleTree } from "/@/utils/tree";
 
 defineOptions({
   name: "User"
 });
 
+const orgProps = {
+  checkStrictly: true,
+  value: "orgName",
+  label: "orgName",
+  children: "children",
+  emitPath: false
+};
+
+let orgOptions = ref([]);
+
+async function getOrgOptions() {
+  let { data } = await getOrgList();
+  orgOptions.value = handleTree(JSON.parse(data), "orgId", "pid");
+}
+
 const form = reactive({
   belongTo: "",
   loginName: "",
   state: ""
-  // status: ""
 });
 
 let dataList = ref([]);
@@ -77,13 +96,13 @@ function onEdit(row) {
 }
 
 function onDelete(row) {
-  deleteUser({ id: row.ID }).then(() => {
+  deleteUser(row.ID).then(() => {
     ElNotification({
       title: "操作成功",
       message: `删除用户 【${row.userName}】`,
       type: "success"
     });
-    if (dataList.value.length === 1) {
+    if (dataList.value.length <= 1) {
       pagination.currentPage =
         pagination.currentPage > 1 ? pagination.currentPage - 1 : 1;
     }
@@ -137,6 +156,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 };
 
 onMounted(() => {
+  getOrgOptions();
   onSearch();
 });
 
@@ -173,10 +193,16 @@ const userGroupFormData = ref({ ...initialUGFData });
       ref="formRef"
       :inline="true"
       :model="form"
-      class="bg-white w-99/100 pl-8 pt-4"
+      class="bg-white w-99/100 pl-4 pt-4"
     >
-      <el-form-item label="所属单位" prop="belongTo">
-        <el-select v-model="form.belongTo" placeholder="请选择" clearable />
+      <el-form-item label="所属机构" prop="belongTo">
+        <el-cascader
+          v-model="form.belongTo"
+          :options="orgOptions"
+          :props="orgProps"
+          :show-all-levels="false"
+          clearable
+        />
       </el-form-item>
       <el-form-item label="用户状态" prop="state">
         <el-select v-model="form.state" placeholder="请选择" clearable>
@@ -234,7 +260,10 @@ const userGroupFormData = ref({ ...initialUGFData });
           :checkList="checkList"
           :pagination="pagination"
           :paginationSmall="size === 'small' ? true : false"
-          :header-cell-style="{ background: '#fafafa', color: '#606266' }"
+          :header-cell-style="{
+            backgroundColor: 'rgba(0,21,41,.7)',
+            color: '#d0d0d0'
+          }"
           @size-change="onSizeChange"
           @current-change="onCurrentChange"
         >
@@ -282,10 +311,12 @@ const userGroupFormData = ref({ ...initialUGFData });
     <addUserFormDialog
       v-model:visible="addUserFormDialogVisible"
       :data="userFormData"
+      @refresh="onSearch"
     />
     <editUserFormDialog
       v-model:visible="editUserFormDialogVisible"
       :data="userFormData"
+      @refresh="onSearch"
     />
     <userGroupFormDialog
       v-model:visible="userGroupFormDialogVisible"

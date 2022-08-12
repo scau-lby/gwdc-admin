@@ -65,51 +65,27 @@ export const userBindGroup = (data: object): ResponseType => {
 };
 
 // 获取用户组列表
-export const getGroupList = (data: object): ResponseType => {
-  const token = getToken();
-  let accessToken = "";
-  if (token) {
-    accessToken = JSON.parse(token).accessToken;
-  }
-
-  data = Object.assign(data, {
-    method: "sncj.GetGroupList",
-    token: accessToken,
-    timestamp: new Date().getTime()
-  });
-  return http.request("post", "/gjsnccj/openapi", { data });
+export const getRoleList = (params: object): ResponseType => {
+  return http.request("get", "/gjsnccj/roles/roleList", { params });
 };
 
 // 新增用户组
 export const addGroup = (data: object): ResponseType => {
-  const token = getToken();
-  let accessToken = "";
-  if (token) {
-    accessToken = JSON.parse(token).accessToken;
-  }
+  return http.request("post", "/gjsnccj/roles/add", { data });
+};
 
-  data = Object.assign(data, {
-    method: "sncj.AddNewGroup",
-    token: accessToken,
-    timestamp: new Date().getTime()
-  });
-  return http.request("post", "/gjsnccj/openapi", { data });
+// 编辑用户组
+export const editGroup = (data: object): ResponseType => {
+  return http.request("post", "/gjsnccj/roles/edit", { data });
 };
 
 // 删除用户组
-export const deleteGroup = (data: object): ResponseType => {
-  const token = getToken();
-  let accessToken = "";
-  if (token) {
-    accessToken = JSON.parse(token).accessToken;
-  }
-
-  data = Object.assign(data, {
-    method: "sncj.DeleteGroup",
-    token: accessToken,
-    timestamp: new Date().getTime()
+export const deleteRole = (gid: number): ResponseType => {
+  return http.request("get", "/gjsnccj/roles/delete", {
+    params: {
+      gid
+    }
   });
-  return http.request("post", "/gjsnccj/openapi", { data });
 };
 
 // 分组绑定权限
@@ -161,7 +137,7 @@ export function getTokenTree(data: object) {
 }
 
 // 获取组织机构列表
-export const getOrgList = (data: object): ResponseType => {
+export const getOrgList = (data?: object): ResponseType => {
   return http.request("get", "/gjsnccj/org/getlist", { data });
 };
 
@@ -176,8 +152,12 @@ export const editOrg = (params: object): ResponseType => {
 };
 
 // 删除机构
-export const deleteOrg = (params: object): ResponseType => {
-  return http.request("get", "/gjsnccj/org/delete", { params });
+export const deleteOrg = (orgId: number): ResponseType => {
+  return http.request("get", "/gjsnccj/org/delete", {
+    params: {
+      orgId
+    }
+  });
 };
 
 // 根据名称获取机构信息

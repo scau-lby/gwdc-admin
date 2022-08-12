@@ -2,29 +2,23 @@
 import { onMounted, ref, watch } from "vue";
 import { ElNotification, FormInstance } from "element-plus";
 import { addTruck, editTruck } from "/@/api/truck";
+import { getOrgList } from "/@/api/organization";
+import { handleTree } from "/@/utils/tree";
 
-const belongToProps = {
+const orgProps = {
   checkStrictly: true,
-  value: "label",
-  label: "label",
+  value: "orgName",
+  label: "orgName",
   children: "children",
   emitPath: false
 };
 
-let belongToOptions = ref([]);
+let orgOptions = ref([]);
 
-// async function getTree() {
-//   let { ResultCode, data, Msg } = await getOrgTree({});
-//   if (ResultCode === 0) {
-//     belongToOptions.value = data;
-//   } else {
-//     ElNotification({
-//       title: "操作失败",
-//       message: `获取组织机构树, 提示：${Msg}`,
-//       type: "error"
-//     });
-//   }
-// }
+async function getOrgOptions() {
+  let { data } = await getOrgList();
+  orgOptions.value = handleTree(JSON.parse(data), "orgId", "pid");
+}
 
 const props = defineProps({
   visible: {
@@ -43,7 +37,6 @@ const ruleFormRef = ref<FormInstance>();
 
 const formVisible = ref(false);
 const formData = ref(props.data);
-// console.log(formData.value);
 
 const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
@@ -51,9 +44,9 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     if (valid) {
       if (formData.value.id > 0) {
         editTruck({
-          ...formData.value,
-          belongTo: "兴隆台项目部"
+          ...formData.value
         }).then(() => {
+          emits("refresh");
           ElNotification({
             title: "操作成功",
             message: `编辑设备 【${formData.value.plateNum}】`,
@@ -64,11 +57,12 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
           resetForm(formEl);
         });
       } else {
-        delete formData.value?.id;
+        const { id, ...params } = formData.value;
+        console.log(id);
         addTruck({
-          ...formData.value,
-          belongTo: "兴隆台项目部"
+          ...params
         }).then(() => {
+          emits("refresh");
           ElNotification({
             title: "操作成功",
             message: `新增设备 【${formData.value.plateNum}】`,
@@ -93,11 +87,11 @@ const closeDialog = () => {
   resetForm(ruleFormRef.value);
 };
 
-const emit = defineEmits(["update:visible"]);
+const emits = defineEmits(["update:visible", "refresh"]);
 watch(
   () => formVisible.value,
   val => {
-    emit("update:visible", val);
+    emits("update:visible", val);
   }
 );
 
@@ -117,13 +111,13 @@ watch(
 //
 const rules = {
   plateNum: [{ required: true, message: "请输入设备编号", trigger: "blur" }],
-  // belongTo: [
-  //   {
-  //     required: true,
-  //     message: "请选择所属单位",
-  //     trigger: "change"
-  //   }
-  // ],
+  orgName: [
+    {
+      required: true,
+      message: "请选择所属单位",
+      trigger: "change"
+    }
+  ],
   equType: [
     {
       required: true,
@@ -145,7 +139,7 @@ const rules = {
 };
 
 onMounted(() => {
-  // getTree();
+  getOrgOptions();
 });
 </script>
 
@@ -164,14 +158,17 @@ onMounted(() => {
       :rules="rules"
       label-width="120px"
     >
+      <el-form-item label="设备ID" prop="id" style="display: none">
+        <el-input v-model="formData.id" />
+      </el-form-item>
       <el-form-item label="设备编号" prop="plateNum">
         <el-input v-model="formData.plateNum" placeholder="请输入设备编号" />
       </el-form-item>
-      <el-form-item label="所属单位" prop="belongTo">
+      <el-form-item label="所属机构" prop="belongTo">
         <el-cascader
           v-model="formData.belongTo"
-          :options="belongToOptions"
-          :props="belongToProps"
+          :options="orgOptions"
+          :props="orgProps"
           :show-all-levels="false"
           clearable
         />
@@ -214,11 +211,11 @@ onMounted(() => {
           <el-radio :label="0">禁用</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="视频状态" prop="videoState">
+      <el-form-item label="视频状态" prop="installDate">
         <el-date-picker
           v-model="formData.installDate"
-          type="datetime"
-          value-format="YYYY-MM-DD HH:mm:ss"
+          type="date"
+          value-format="YYYY-MM-DD"
           :default-value="new Date()"
         />
       </el-form-item>

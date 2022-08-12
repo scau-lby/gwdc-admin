@@ -10,12 +10,12 @@ export function useColumns() {
     },
     {
       label: "用户组名称",
-      prop: "GroupName",
+      prop: "groupName",
       width: 200
     },
     {
       label: "用户组权限描述",
-      prop: "Note"
+      prop: "note"
     },
     {
       label: "操作",

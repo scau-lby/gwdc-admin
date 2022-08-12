@@ -1,19 +1,23 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { ElNotification, FormInstance } from "element-plus";
-import { updateUser } from "/@/api/organization";
+import { updateUser, getOrgList } from "/@/api/organization";
+import { handleTree } from "@pureadmin/utils";
 
 const belongToProps = {
   checkStrictly: true,
-  value: "label",
-  label: "label",
+  value: "orgName",
+  label: "orgName",
   children: "children",
   emitPath: false
 };
 
 let belongToOptions = ref([]);
 
-function getTree() {}
+async function getOrgOptions() {
+  let { data } = await getOrgList();
+  belongToOptions.value = handleTree(JSON.parse(data), "orgId", "pid");
+}
 
 const props = defineProps({
   visible: {
@@ -40,6 +44,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       updateUser({
         ...formData.value
       }).then(() => {
+        emits("refresh");
         ElNotification({
           title: "操作成功",
           message: `更新用户 【${formData.value.userName}】`,
@@ -63,11 +68,11 @@ const closeDialog = () => {
   resetForm(ruleFormRef.value);
 };
 
-const emit = defineEmits(["update:visible"]);
+const emits = defineEmits(["update:visible", "refresh"]);
 watch(
   () => formVisible.value,
   val => {
-    emit("update:visible", val);
+    emits("update:visible", val);
   }
 );
 
@@ -88,13 +93,13 @@ watch(
 const rules = {
   loginName: [{ required: true, message: "请输入登录名称", trigger: "blur" }],
   userName: [{ required: true, message: "请输入用户姓名", trigger: "blur" }],
-  // belongTo: [
-  //   {
-  //     required: true,
-  //     message: "请选择所属单位",
-  //     trigger: "change"
-  //   }
-  // ],
+  belongTo: [
+    {
+      required: true,
+      message: "请选择所属机构",
+      trigger: "change"
+    }
+  ],
   phone: [
     { required: true, message: "请输入手机号码", trigger: "blur" },
     {
@@ -111,18 +116,18 @@ const rules = {
       message: "电子邮箱格式不正确",
       trigger: "blur"
     }
-  ],
-  groups: [
-    {
-      required: true,
-      message: "请设置用户分组",
-      trigger: "change"
-    }
   ]
+  // groups: [
+  //   {
+  //     required: true,
+  //     message: "请设置用户分组",
+  //     trigger: "change"
+  //   }
+  // ]
 };
 
 onMounted(() => {
-  getTree();
+  getOrgOptions();
 });
 </script>
 
@@ -141,6 +146,9 @@ onMounted(() => {
       :rules="rules"
       label-width="100px"
     >
+      <el-form-item label="用户ID" prop="userId" style="display: none">
+        <el-input v-model="formData.userId" />
+      </el-form-item>
       <el-form-item label="登录名称" prop="loginName">
         <el-input v-model="formData.loginName" placeholder="请输入登录名称" />
       </el-form-item>

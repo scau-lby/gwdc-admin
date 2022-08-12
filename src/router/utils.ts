@@ -147,39 +147,11 @@ function setDifAuthority(authority, routes) {
 
 // 初始化路由
 function initRouter() {
-  // name: string
   return new Promise(resolve => {
-    // getAsyncRoutes({ name }).then(({ resp }) => {
-    // if (resp.length === 0) {
-    //   usePermissionStoreHook().changeSetting(resp);
-    // } else {
-    //   formatFlatteningRoutes(addAsyncRoutes(resp)).map(
-    //     (v: RouteRecordRaw) => {
-    //       // 防止重复添加路由
-    //       if (
-    //         router.options.routes[0].children.findIndex(
-    //           value => value.path === v.path
-    //         ) !== -1
-    //       ) {
-    //         return;
-    //       } else {
-    //         // 切记将路由push到routes后还需要使用addRoute，这样路由才能正常跳转
-    //         router.options.routes[0].children.push(v);
-    //         // 最终路由进行升序
-    //         ascending(router.options.routes[0].children);
-    //         if (!router.hasRoute(v?.name)) router.addRoute(v);
-    //         const flattenRouters = router
-    //           .getRoutes()
-    //           .find(n => n.path === "/");
-    //         router.addRoute(flattenRouters);
-    //       }
-    //       resolve(router);
-    //     }
-    //   );
-    //   usePermissionStoreHook().changeSetting(resp);
-    // }
     const resp = [setDifAuthority("v-admin", permissionRouter)];
+    // console.log(router);
     formatFlatteningRoutes(addAsyncRoutes(resp)).map((v: RouteRecordRaw) => {
+      console.log(v);
       // 防止重复添加路由
       if (
         router.options.routes[0].children.findIndex(

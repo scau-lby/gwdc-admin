@@ -2,7 +2,7 @@
 import { useColumns } from "./columns";
 import { getOrgList, deleteOrg } from "/@/api/organization";
 import { handleTree } from "@pureadmin/utils";
-import dialogForm from "./components/DialogForm.vue";
+import orgDialogForm from "./components/OrgDialogForm.vue";
 import { ref, onMounted, nextTick } from "vue";
 import { ElNotification } from "element-plus";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
@@ -35,10 +35,7 @@ function onEdit(row) {
 }
 
 function onDelete(row) {
-  console.log(row);
-  deleteOrg({
-    orgId: row.id
-  }).then(({ status }) => {
+  deleteOrg(row.orgId).then(({ status }) => {
     if (status === 200) {
       ElNotification({
         title: "操作成功",
@@ -52,26 +49,9 @@ function onDelete(row) {
 
 async function onSearch() {
   loading.value = true;
-  let { data } = await getOrgList({});
-  const dataArray = JSON.parse(data);
+  let { data } = await getOrgList();
 
-  const list = dataArray.map(item => {
-    // if (item.pid > 0) {
-    //   item.parentName = dataArray.filter(
-    //     row => row.orgId === item.pid
-    //   )[0].orgName;
-    // } else {
-    //   item.parentName = "-";
-    // }
-    const { orgId, pid } = item;
-    return {
-      id: orgId,
-      parentId: pid,
-      ...item
-    };
-  });
-
-  dataList.value = handleTree(list);
+  dataList.value = handleTree(JSON.parse(data), "orgId", "pid");
 
   setTimeout(() => {
     loading.value = false;
@@ -92,12 +72,13 @@ const initialData = {
 const formDialogVisible = ref(false);
 const formData = ref({ ...initialData });
 </script>
+
 <template>
   <div class="main">
     <TableProBar
-      :tableRef="tableRef?.getTableRef()"
-      title="组织机构"
+      title="部门列表"
       :loading="loading"
+      :tableRef="tableRef?.getTableRef()"
       :dataList="dataList"
       @refresh="onSearch"
     >
@@ -111,15 +92,17 @@ const formData = ref({ ...initialData });
           ref="tableRef"
           border
           align="center"
-          row-key="id"
+          row-key="orgId"
           table-layout="auto"
-          showOverflowTooltip
           default-expand-all
           :size="size"
           :data="dataList"
           :columns="columns"
           :checkList="checkList"
-          :header-cell-style="{ background: '#fafafa', color: '#606266' }"
+          :header-cell-style="{
+            backgroundColor: 'rgba(0,21,41,.7)',
+            color: '#d0d0d0'
+          }"
         >
           <template #operation="{ row }">
             <el-button
@@ -143,7 +126,7 @@ const formData = ref({ ...initialData });
         </PureTable>
       </template>
     </TableProBar>
-    <dialogForm
+    <orgDialogForm
       v-model:visible="formDialogVisible"
       :data="formData"
       @refresh="onSearch"

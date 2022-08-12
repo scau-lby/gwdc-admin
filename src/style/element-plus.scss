@@ -69,3 +69,7 @@
     border-left-color: var(--el-color-primary);
   }
 }
+
+.el-form--inline .el-form-item {
+  margin-right: 10px !important;
+}

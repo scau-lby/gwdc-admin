@@ -6,7 +6,7 @@ import { handleTree } from "@pureadmin/utils";
 
 const orgProps = {
   checkStrictly: true,
-  value: "id",
+  value: "orgId",
   label: "orgName",
   children: "children",
   emitPath: false
@@ -47,6 +47,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           orgId: formData.value.orgId,
           orgName: formData.value.orgName
         }).then(() => {
+          getOrgOptions();
           ElNotification({
             title: "操作成功",
             message: `编辑机构 【${formData.value.orgName}】`,
@@ -62,6 +63,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         addOrg({
           ...params
         }).then(() => {
+          getOrgOptions();
           ElNotification({
             title: "操作成功",
             message: `新增机构 【${formData.value.orgName}】`,
@@ -120,18 +122,15 @@ const rules = {
   ]
 };
 
-onMounted(() => {
-  getOrgList({}).then(({ data }) => {
+function getOrgOptions() {
+  getOrgList().then(({ data }) => {
     orgList.value = JSON.parse(data);
-    const list = JSON.parse(data).map(item => {
-      return {
-        id: item.orgId,
-        parentId: item.pid,
-        ...item
-      };
-    });
-    orgOptions.value = handleTree(list);
+    orgOptions.value = handleTree(JSON.parse(data), "orgId", "pid");
   });
+}
+
+onMounted(() => {
+  getOrgOptions();
 });
 </script>
 

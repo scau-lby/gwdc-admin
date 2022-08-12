@@ -11,7 +11,7 @@ export function useColumns() {
     {
       label: "序号",
       type: "index",
-      width: 70,
+      width: 60,
       hide: ({ checkList }) => !checkList.includes("序号列")
     },
     {
@@ -61,23 +61,25 @@ export function useColumns() {
         >
           {row.onLine === 1 ? "在线" : "离线"}
         </el-tag>
-      )
+      ),
+      width: 90
     },
     {
       label: "上线次数",
-      prop: "loginTimes"
+      prop: "loginTimes",
+      width: 90
     },
     {
       label: "创建时间",
       prop: "createTime",
       formatter: ({ createTime }) =>
         dayjs(createTime).format("YYYY-MM-DD HH:mm:ss"),
-      width: 200
+      width: 180
     },
     {
       label: "操作",
       fixed: "left",
-      width: 200,
+      width: 180,
       slot: "operation"
     }
   ]);

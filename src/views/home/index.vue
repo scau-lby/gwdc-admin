@@ -82,9 +82,9 @@ defineOptions({
 <template>
   <div class="main">
     <HCard />
-    <el-card style="margin-top: 20px">
-      <Htable1 />
-    </el-card>
+
+    <Htable1 style="margin-top: 20px" />
+    <el-card />
     <HTable2 />
     <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">

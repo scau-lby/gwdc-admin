@@ -1,19 +1,33 @@
 <script setup lang="ts">
 import truckFormDialog from "./components/TruckFormDialog.vue";
-import { deleteTruck } from "/@/api/truck";
-import { getTruckList } from "/@/api/truck";
+import { getTruckList, deleteTruck } from "/@/api/truck";
+import { getOrgList } from "/@/api/organization";
 import { useColumns } from "./columns";
 import { type PaginationProps } from "@pureadmin/table";
 import { reactive, ref, onMounted, nextTick } from "vue";
 import { ElNotification, type FormInstance } from "element-plus";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 import { TableProBar } from "/@/components/ReTable";
+import { handleTree } from "/@/utils/tree";
 
 defineOptions({
   name: "Truck"
 });
 
-const orgList = ref([]);
+const orgProps = {
+  checkStrictly: true,
+  value: "orgName",
+  label: "orgName",
+  children: "children",
+  emitPath: false
+};
+
+let orgOptions = ref([]);
+
+async function getOrgOptions() {
+  let { data } = await getOrgList();
+  orgOptions.value = handleTree(JSON.parse(data), "orgId", "pid");
+}
 
 const form = reactive({
   orgName: "",
@@ -23,21 +37,7 @@ const form = reactive({
   plateNum: ""
 });
 
-let dataList = ref([
-  {
-    id: 1,
-    belongTo: "兴隆台项目部",
-    equType: "双机车",
-    plateNum: "测试001",
-    subject: "",
-    dataState: 1,
-    videoSimCard: "",
-    videoIp: "",
-    videoState: 0,
-    installDate: "1653206815000",
-    note: "其他"
-  }
-]);
+let dataList = ref([]);
 let loading = ref(true);
 const { columns } = useColumns();
 
@@ -55,6 +55,7 @@ function onAdd() {
 }
 
 function onEdit(row) {
+  console.log(row);
   truckFormDialogVisible.value = true;
   nextTick(() => {
     truckFormData.value = { ...row };
@@ -68,6 +69,11 @@ function onDelete(row) {
       message: `删除设备【${row.plateNum}】`,
       type: "success"
     });
+    if (dataList.value.length <= 1) {
+      pagination.currentPage =
+        pagination.currentPage > 1 ? pagination.currentPage - 1 : 1;
+    }
+    onSearch();
   });
 }
 
@@ -105,17 +111,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 };
 
 onMounted(() => {
-  // getOrgList({}).then(({ ResultCode, data }) => {
-  //   if (ResultCode === 0) {
-  //     orgList.value = data;
-  //   } else {
-  //     ElNotification({
-  //       title: "操作失败",
-  //       message: `获取组织机构列表, 提示：${Msg}`,
-  //       type: "error"
-  //     });
-  //   }
-  // });
+  getOrgOptions();
   onSearch();
 });
 
@@ -143,21 +139,16 @@ const truckFormData = ref({ ...initialData });
       ref="formRef"
       :inline="true"
       :model="form"
-      class="bg-white w-99/100 pl-8 pt-4"
+      class="bg-white w-99/100 pl-4 pt-4"
     >
-      <el-form-item label="所属单位" prop="orgName">
-        <el-select
+      <el-form-item label="所属机构" prop="orgName">
+        <el-cascader
           v-model="form.orgName"
-          placeholder="请选择所属单位"
+          :options="orgOptions"
+          :props="orgProps"
+          :show-all-levels="false"
           clearable
-        >
-          <el-option
-            v-for="item in orgList"
-            :key="item.id"
-            :label="item.label"
-            :value="item.id"
-          />
-        </el-select>
+        />
       </el-form-item>
       <el-form-item label="设备类型" prop="equType">
         <el-select
@@ -233,7 +224,10 @@ const truckFormData = ref({ ...initialData });
           :checkList="checkList"
           :pagination="pagination"
           :paginationSmall="size === 'small' ? true : false"
-          :header-cell-style="{ background: '#fafafa', color: '#606266' }"
+          :header-cell-style="{
+            backgroundColor: 'rgba(0,21,41,.7)',
+            color: '#d0d0d0'
+          }"
           @size-change="onSizeChange"
           @current-change="onCurrentChange"
           style="width: 100%"
@@ -264,6 +258,7 @@ const truckFormData = ref({ ...initialData });
     <truckFormDialog
       v-model:visible="truckFormDialogVisible"
       :data="truckFormData"
+      @refresh="onSearch"
     />
   </div>
 </template>
