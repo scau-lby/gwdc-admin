@@ -151,7 +151,7 @@ function initRouter() {
     const resp = [setDifAuthority("v-admin", permissionRouter)];
     // console.log(router);
     formatFlatteningRoutes(addAsyncRoutes(resp)).map((v: RouteRecordRaw) => {
-      console.log(v);
+      // console.log(v);
       // 防止重复添加路由
       if (
         router.options.routes[0].children.findIndex(

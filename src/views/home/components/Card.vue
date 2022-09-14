@@ -1,66 +1,55 @@
 <script setup lang="ts">
-import monitor from "/@/assets/home/monitor.png";
-import sensor from "/@/assets/home/sensor.png";
-import online from "/@/assets/home/online.png";
-import deactivate from "/@/assets/home/deactivate.png";
+import { ref, watch } from "vue";
+
+const props = defineProps({
+  icon: {
+    type: String,
+    default: ""
+  },
+  title: {
+    type: String,
+    default: ""
+  },
+  data: {
+    type: Number,
+    default: 0
+  }
+});
+const icon = ref(props.icon);
+watch(
+  () => props.icon,
+  val => {
+    icon.value = val;
+  }
+);
+const title = ref(props.title);
+watch(
+  () => props.title,
+  val => {
+    title.value = val;
+  }
+);
+const data = ref(props.data);
+watch(
+  () => props.data,
+  val => {
+    data.value = val;
+  }
+);
 </script>
 
 <template>
-  <el-row :gutter="20">
-    <el-col :span="6">
-      <el-card class="box-card">
-        <div class="box-icon">
-          <img :src="monitor" alt="" />
-        </div>
-
-        <div class="box-main">
-          <p class="box-title">数据传输装置安装</p>
-          <p class="box-content">
-            <span class="text-danger">{{ 52 }}</span> 台
-          </p>
-        </div>
-      </el-card>
-    </el-col>
-    <el-col :span="6">
-      <el-card class="box-card">
-        <div class="box-icon">
-          <img :src="sensor" alt="" />
-        </div>
-        <div class="box-main">
-          <p class="box-title">视频传输装置安装</p>
-          <p class="box-content">
-            <span class="text-danger">{{ 11 }}</span> 台
-          </p>
-        </div>
-      </el-card>
-    </el-col>
-    <el-col :span="6">
-      <el-card class="box-card">
-        <div class="box-icon">
-          <img :src="online" alt="" />
-        </div>
-        <div class="box-main">
-          <p class="box-title">当前在线设备数量</p>
-          <p class="box-content">
-            <span class="text-danger">{{ 4 }}</span> 台
-          </p>
-        </div>
-      </el-card>
-    </el-col>
-    <el-col :span="6">
-      <el-card class="box-card">
-        <div class="box-icon">
-          <img :src="deactivate" alt="" />
-        </div>
-        <div class="box-main">
-          <p class="box-title">当前停用设备数量</p>
-          <p class="box-content">
-            <span class="text-danger">{{ 0 }}</span> 台
-          </p>
-        </div>
-      </el-card>
-    </el-col>
-  </el-row>
+  <el-card class="box-card">
+    <div class="box-icon">
+      <img :src="icon" alt="" />
+    </div>
+    <div class="box-main">
+      <p class="box-title">{{ title }}</p>
+      <p class="box-content">
+        <span class="text-danger">{{ data }}</span> 台
+      </p>
+    </div>
+  </el-card>
 </template>
 
 <style scoped lang="scss">

@@ -97,6 +97,7 @@ specifiers:
   vue-router: ^4.0.15
   vue-types: ^4.1.1
   vxe-table: 4.3.0-beta.3
+  websocket: ^1.0.34
   xe-utils: ^3.5.6
 
 dependencies:
@@ -144,6 +145,7 @@ dependencies:
   vue-router: 4.0.16_vue@3.2.37
   vue-types: 4.1.1_vue@3.2.37
   vxe-table: 4.3.0-beta.3_vue@3.2.37+xe-utils@3.5.6
+  websocket: 1.0.34
   xe-utils: 3.5.6
 
 devDependencies:
@@ -2556,6 +2558,17 @@ packages:
       }
     dev: true
 
+  /bufferutil/4.0.6:
+    resolution:
+      {
+        integrity: sha512-jduaYOYtnio4aIAyc6UbvPCVcgq7nYpVnucyxr6eCYg/Woad9Hf/oxxBRDnGGjPfjUm6j5O/uBWhIu4iLebFaw==
+      }
+    engines: { node: ">=6.14.2" }
+    requiresBuild: true
+    dependencies:
+      node-gyp-build: 4.5.0
+    dev: false
+
   /builtin-modules/3.3.0:
     resolution:
       {
@@ -3187,6 +3200,16 @@ packages:
         integrity: sha512-/WwNkdXfckNgw6S5R125rrW8ez139lBHWouiBvX8dfMFtcn6V81REDqnH7+CRpRipfYlyU1CmOnOxrmGcFOjeA==
       }
 
+  /d/1.0.1:
+    resolution:
+      {
+        integrity: sha512-m62ShEObQ39CfralilEQRjH6oAMtNCV1xJyEx5LpRYUVN+EviphDgUc/F3hnYbADmkiNs67Y+3ylmlG7Lnu+FA==
+      }
+    dependencies:
+      es5-ext: 0.10.62
+      type: 1.2.0
+    dev: false
+
   /dargs/7.0.0:
     resolution:
       {
@@ -3214,7 +3237,6 @@ packages:
         optional: true
     dependencies:
       ms: 2.0.0
-    dev: true
 
   /debug/3.2.7:
     resolution:
@@ -3548,6 +3570,40 @@ packages:
     dependencies:
       is-arrayish: 0.2.1
     dev: true
+
+  /es5-ext/0.10.62:
+    resolution:
+      {
+        integrity: sha512-BHLqn0klhEpnOKSrzn/Xsz2UIW8j+cGmo9JLzr8BiUapV8hPL9+FliFqjwr9ngW7jWdnxv6eO+/LqyhJVqgrjA==
+      }
+    engines: { node: ">=0.10" }
+    requiresBuild: true
+    dependencies:
+      es6-iterator: 2.0.3
+      es6-symbol: 3.1.3
+      next-tick: 1.1.0
+    dev: false
+
+  /es6-iterator/2.0.3:
+    resolution:
+      {
+        integrity: sha512-zw4SRzoUkd+cl+ZoE15A9o1oQd920Bb0iOJMQkQhl3jNc03YqVjAhG7scf9C5KWRU/R13Orf588uCC6525o02g==
+      }
+    dependencies:
+      d: 1.0.1
+      es5-ext: 0.10.62
+      es6-symbol: 3.1.3
+    dev: false
+
+  /es6-symbol/3.1.3:
+    resolution:
+      {
+        integrity: sha512-NJ6Yn3FuDinBaBRWl/q5X/s4koRHBrgKAu+yGI6JCBeiu3qrcbJhwT2GeR/EXVfylRk8dpQVJoLEFhK+Mu31NA==
+      }
+    dependencies:
+      d: 1.0.1
+      ext: 1.6.0
+    dev: false
 
   /esbuild-android-64/0.14.43:
     resolution:
@@ -4151,6 +4207,15 @@ packages:
     dependencies:
       clone-regexp: 2.2.0
     dev: true
+
+  /ext/1.6.0:
+    resolution:
+      {
+        integrity: sha512-sdBImtzkq2HpkdRLtlLWDa6w4DX22ijZLKx8BMPUuKe1c5lbN6xwQDQCxSfxBQnHZ13ls/FH0MQZx/q/gr6FQg==
+      }
+    dependencies:
+      type: 2.7.2
+    dev: false
 
   /fast-deep-equal/3.1.3:
     resolution:
@@ -4931,6 +4996,13 @@ packages:
       text-extensions: 1.9.0
     dev: true
 
+  /is-typedarray/1.0.0:
+    resolution:
+      {
+        integrity: sha512-cyA56iCMHAh5CdzjJIa4aohJyeO1YbwLi3Jc35MmRU6poroFjIGZzUzupGiRPOjgHg9TLu43xbpwXk523fMxKA==
+      }
+    dev: false
+
   /is-unicode-supported/0.1.0:
     resolution:
       {
@@ -5516,7 +5588,6 @@ packages:
       {
         integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==
       }
-    dev: true
 
   /ms/2.1.2:
     resolution:
@@ -5561,12 +5632,27 @@ packages:
       }
     dev: true
 
+  /next-tick/1.1.0:
+    resolution:
+      {
+        integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==
+      }
+    dev: false
+
   /node-fetch-native/0.1.3:
     resolution:
       {
         integrity: sha512-Jf1IQZdovUIv9E+5avmN6Sf+bND+rnMlODnBQhdE2VRyuWP9WgqZb/KEgPekh19DAN1X2C4vbS1VCOaz2OH19g==
       }
     dev: true
+
+  /node-gyp-build/4.5.0:
+    resolution:
+      {
+        integrity: sha512-2iGbaQBV+ITgCz76ZEjmhUKAKVf7xfY1sRl4UiKQspfZMH2h06SyhNsnSVy50cwkFQDGLyif6m/6uFXHkOZ6rg==
+      }
+    hasBin: true
+    dev: false
 
   /node-releases/2.0.5:
     resolution:
@@ -7554,6 +7640,29 @@ packages:
     engines: { node: ">=8" }
     dev: true
 
+  /type/1.2.0:
+    resolution:
+      {
+        integrity: sha512-+5nt5AAniqsCnu2cEQQdpzCAh33kVx8n0VoFidKpB1dVVLAN/F+bgVOqOJqOnEnrhp222clB5p3vUlD+1QAnfg==
+      }
+    dev: false
+
+  /type/2.7.2:
+    resolution:
+      {
+        integrity: sha512-dzlvlNlt6AXU7EBSfpAscydQ7gXB+pPGsPnfJnZpiNJBDj7IaJzQlBZYGdEi4R9HmPdBv2XmWJ6YUtoTa7lmCw==
+      }
+    dev: false
+
+  /typedarray-to-buffer/3.1.5:
+    resolution:
+      {
+        integrity: sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==
+      }
+    dependencies:
+      is-typedarray: 1.0.0
+    dev: false
+
   /typescript/4.7.3:
     resolution:
       {
@@ -7686,6 +7795,17 @@ packages:
     dependencies:
       punycode: 2.1.1
     dev: true
+
+  /utf-8-validate/5.0.9:
+    resolution:
+      {
+        integrity: sha512-Yek7dAy0v3Kl0orwMlvi7TPtiCNrdfHNd7Gcc/pLq4BLXqfAmd0J7OWMizUQnTTJsyjKn02mU7anqwfmUP4J8Q==
+      }
+    engines: { node: ">=6.14.2" }
+    requiresBuild: true
+    dependencies:
+      node-gyp-build: 4.5.0
+    dev: false
 
   /util-deprecate/1.0.2:
     resolution:
@@ -7922,6 +8042,23 @@ packages:
       }
     dev: false
 
+  /websocket/1.0.34:
+    resolution:
+      {
+        integrity: sha512-PRDso2sGwF6kM75QykIesBijKSVceR6jL2G8NGYyq2XrItNC2P5/qL5XeR056GhA+Ly7JMFvJb9I312mJfmqnQ==
+      }
+    engines: { node: ">=4.0.0" }
+    dependencies:
+      bufferutil: 4.0.6
+      debug: 2.6.9
+      es5-ext: 0.10.62
+      typedarray-to-buffer: 3.1.5
+      utf-8-validate: 5.0.9
+      yaeti: 0.0.6
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /which-module/2.0.0:
     resolution:
       {
@@ -8020,6 +8157,14 @@ packages:
       }
     engines: { node: ">=10" }
     dev: true
+
+  /yaeti/0.0.6:
+    resolution:
+      {
+        integrity: sha512-MvQa//+KcZCUkBTIC9blM+CU9J2GzuTytsOUwf2lidtvkx/6gnEp1QvJv34t9vdjhFmha/mUiNDbN0D0mJWdug==
+      }
+    engines: { node: ">=0.10.32" }
+    dev: false
 
   /yallist/4.0.0:
     resolution:

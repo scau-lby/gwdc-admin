@@ -110,6 +110,8 @@ class GwdcHttp {
           GwdcHttp.initConfig.beforeResponseCallback(response);
           return response.data;
         }
+
+        // return response.data;
         if (response.data.status !== 200) {
           ElNotification({
             title: `${response.data.message}`,

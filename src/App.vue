@@ -16,7 +16,6 @@ export default defineComponent({
   },
   computed: {
     currentLocale() {
-      console.log(zhCn);
       return this.$storage.locale?.locale === "zh" ? zhCn : en;
     }
   }

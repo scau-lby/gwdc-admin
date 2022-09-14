@@ -10,6 +10,7 @@
     "mikestead.dotenv",
     "eamodio.gitlens",
     "antfu.iconify",
-    "antfu.unocss"
+    "antfu.unocss",
+    "ms-edgedevtools.vscode-edge-devtools"
   ]
 }

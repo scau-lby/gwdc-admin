@@ -20,12 +20,12 @@ const form = reactive({
 });
 
 let dataList = ref([
-  {
-    id: 1,
-    operator: "管理员",
-    createtime: "1653206815000",
-    remark: "洼21-31油层工程数据"
-  }
+  // {
+  //   id: 1,
+  //   operator: "管理员",
+  //   createtime: "1653206815000",
+  //   remark: "洼21-31油层工程数据"
+  // }
 ]);
 let loading = ref(true);
 const { columns } = useColumns();
@@ -88,7 +88,7 @@ onMounted(() => {
       ref="formRef"
       :inline="true"
       :model="form"
-      class="bg-white w-99/100 pl-8 pt-4"
+      class="bg-white w-99/100 pl-4 pt-4"
     >
       <el-form-item label="操作人员姓名" prop="operator">
         <el-input

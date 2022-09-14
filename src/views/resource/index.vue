@@ -1,3 +1,13 @@
+<script setup lang="ts">
+import developing from "../common/developing.vue";
+
+defineOptions({
+  name: "Resource"
+});
+</script>
+
 <template>
-  <h1>resource</h1>
+  <div class="main">
+    <developing />
+  </div>
 </template>

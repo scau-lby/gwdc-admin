@@ -1,7 +1,7 @@
 import type { App } from "vue";
 import * as echarts from "echarts/core";
 import { SVGRenderer } from "echarts/renderers";
-import { PieChart, BarChart, LineChart } from "echarts/charts";
+import { PieChart, BarChart, LineChart, ScatterChart } from "echarts/charts";
 import {
   GridComponent,
   TitleComponent,
@@ -10,7 +10,9 @@ import {
   ToolboxComponent,
   TooltipComponent,
   DataZoomComponent,
-  VisualMapComponent
+  VisualMapComponent,
+  BrushComponent,
+  DatasetComponent
 } from "echarts/components";
 
 const { use } = echarts;
@@ -20,6 +22,7 @@ use([
   PieChart,
   BarChart,
   LineChart,
+  ScatterChart,
   SVGRenderer,
   GridComponent,
   TitleComponent,
@@ -28,7 +31,9 @@ use([
   ToolboxComponent,
   TooltipComponent,
   DataZoomComponent,
-  VisualMapComponent
+  VisualMapComponent,
+  BrushComponent,
+  DatasetComponent
 ]);
 
 /**

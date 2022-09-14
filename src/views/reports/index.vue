@@ -1,3 +1,13 @@
+<script setup lang="ts">
+import developing from "../common/developing.vue";
+
+defineOptions({
+  name: "Reports"
+});
+</script>
+
 <template>
-  <h1>reports</h1>
+  <div class="main">
+    <developing />
+  </div>
 </template>

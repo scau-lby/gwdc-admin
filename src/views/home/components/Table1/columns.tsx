@@ -4,15 +4,14 @@ export function useColumns() {
   const columns = ref([
     {
       label: "操作",
-      width: 280,
+      width: 230,
       slot: "operation",
       fixed: "left"
     },
     {
       label: "序号",
       type: "index",
-      width: 60,
-      align: "left"
+      width: 60
     },
     {
       label: "作业单位",

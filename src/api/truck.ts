@@ -38,3 +38,14 @@ export const deleteTruck = (id: number): ResponseType => {
     }
   });
 };
+
+// 获取在线设备
+export const getOnlineTruckList = (params?: object): ResponseType => {
+  return http.request("get", "/gjsnccj/truck/getonline", { params });
+};
+
+// 获取首页概述信息
+
+export const getPreview = (offset: number): ResponseType => {
+  return http.request("get", `/gjsnccj/truck/getpreview?offset=${offset}`);
+};
