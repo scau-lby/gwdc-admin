@@ -171,6 +171,18 @@ async function getOnline() {
   }
 }
 
+function clean(params: object) {
+  const res = {};
+  for (var i in params) {
+    if (params[i] != 0 && ["jd", "wd", "sj"].indexOf(i) === -1) {
+      res[i] = parseFloat(params[i]).toFixed(3);
+    } else {
+      res[i] = params[i];
+    }
+  }
+  return res;
+}
+
 function initWebSocket() {
   if (!window.WebSocket) {
     return console.log("您的浏览器不支持WebSocket");
@@ -201,7 +213,6 @@ function initWebSocket() {
 
   ws.onmessage = msg => {
     const res = JSON.parse(msg.data);
-    console.log(res);
     if (typeof res.data == "object") {
       const { sj } = res.data;
       const time =
@@ -218,116 +229,118 @@ function initWebSocket() {
         sj.slice(12, 14);
       nowTime.value = time;
 
+      const clean_data = clean(res.data);
+
       formData1.value = [
-        res.data.dpfdjzs,
-        res.data.dpfdjnj,
-        res.data.dpfdjfz,
-        res.data.dpdpdy,
-        res.data.dpdpkgdy,
-        res.data.dpzyxsj,
-        res.data.dpzlc,
-        res.data.dpjyyl,
-        res.data.dpjywd,
-        res.data.dplqyyl,
-        res.data.dplqywd,
-        res.data.dpsyyl,
-        res.data.dprywd,
-        res.data.dpzlqwd,
-        res.data.dpfdjfqwd,
-        res.data.dpjqgwd,
-        res.data.dpkqlyc,
-        res.data.dpryyw,
-        res.data.dpyhdc,
-        res.data.dpzyh,
-        res.data.dpryxhb,
-        res.data.dpymtb,
-        res.data.dpnsyw,
-        res.data.dpbsxyw,
-        res.data.dpbsxqqdw,
-        res.data.dpbsxdw
+        clean_data.dpfdjzs,
+        clean_data.dpfdjnj,
+        clean_data.dpfdjfz,
+        clean_data.dpdpdy,
+        clean_data.dpdpkgdy,
+        clean_data.dpzyxsj,
+        clean_data.dpzlc,
+        clean_data.dpjyyl,
+        clean_data.dpjywd,
+        clean_data.dplqyyl,
+        clean_data.dplqywd,
+        clean_data.dpsyyl,
+        clean_data.dprywd,
+        clean_data.dpzlqwd,
+        clean_data.dpfdjfqwd,
+        clean_data.dpjqgwd,
+        clean_data.dpkqlyc,
+        clean_data.dpryyw,
+        clean_data.dpyhdc,
+        clean_data.dpzyh,
+        clean_data.dpryxhb,
+        clean_data.dpymtb,
+        clean_data.dpnsyw,
+        clean_data.dpbsxyw,
+        clean_data.dpbsxqqdw,
+        clean_data.dpbsxdw
       ];
 
       formData2.value = [
-        res.data.Apfdjzs,
-        res.data.Apfdjnj,
-        res.data.Apfdjfz,
-        res.data.Apdpdy,
-        res.data.Apdpkgdy,
-        res.data.Apzyxsj,
-        res.data.Apzlc,
-        res.data.Apjyyl,
-        res.data.Apjywd,
-        res.data.Aplqyyl,
-        res.data.Aplqywd,
-        res.data.Apsyyl,
-        res.data.Aprywd,
-        res.data.Apzlqwd,
-        res.data.Apfdjfqwd,
-        res.data.Apjqgwd,
-        res.data.Apkqlyc,
-        res.data.Apryyw,
-        res.data.Apyhdc,
-        res.data.Apzyh,
-        res.data.Apryxhb,
-        res.data.Apymtb,
-        res.data.Apnsyw,
-        res.data.Apbsxyw,
-        res.data.Apbsxqqdw,
-        res.data.Apbsxdw
+        clean_data.Apfdjzs,
+        clean_data.Apfdjnj,
+        clean_data.Apfdjfz,
+        clean_data.Apdpdy,
+        clean_data.Apdpkgdy,
+        clean_data.Apzyxsj,
+        clean_data.Apzlc,
+        clean_data.Apjyyl,
+        clean_data.Apjywd,
+        clean_data.Aplqyyl,
+        clean_data.Aplqywd,
+        clean_data.Apsyyl,
+        clean_data.Aprywd,
+        clean_data.Apzlqwd,
+        clean_data.Apfdjfqwd,
+        clean_data.Apjqgwd,
+        clean_data.Apkqlyc,
+        clean_data.Apryyw,
+        clean_data.Apyhdc,
+        clean_data.Apzyh,
+        clean_data.Apryxhb,
+        clean_data.Apymtb,
+        clean_data.Apnsyw,
+        clean_data.Apbsxyw,
+        clean_data.Apbsxqqdw,
+        clean_data.Apbsxdw
       ];
 
       formData3.value = [
-        res.data.Bpfdjzs,
-        res.data.Bpfdjnj,
-        res.data.Bpfdjfz,
-        res.data.Bpdpdy,
-        res.data.Bpdpkgdy,
-        res.data.Bpzyxsj,
-        res.data.Bpzlc,
-        res.data.Bpjyyl,
-        res.data.Bpjywd,
-        res.data.Bplqyyl,
-        res.data.Bplqywd,
-        res.data.Bpsyyl,
-        res.data.Bprywd,
-        res.data.Bpzlqwd,
-        res.data.Bpfdjfqwd,
-        res.data.Bpjqgwd,
-        res.data.Bpkqlyc,
-        res.data.Bpryyw,
-        res.data.Bpyhdc,
-        res.data.Bpzyh,
-        res.data.Bpryxhb,
-        res.data.Bpymtb,
-        res.data.Bpnsyw,
-        res.data.Bpbsxyw,
-        res.data.Bpbsxqqdw,
-        res.data.Bpbsxdw
+        clean_data.Bpfdjzs,
+        clean_data.Bpfdjnj,
+        clean_data.Bpfdjfz,
+        clean_data.Bpdpdy,
+        clean_data.Bpdpkgdy,
+        clean_data.Bpzyxsj,
+        clean_data.Bpzlc,
+        clean_data.Bpjyyl,
+        clean_data.Bpjywd,
+        clean_data.Bplqyyl,
+        clean_data.Bplqywd,
+        clean_data.Bpsyyl,
+        clean_data.Bprywd,
+        clean_data.Bpzlqwd,
+        clean_data.Bpfdjfqwd,
+        clean_data.Bpjqgwd,
+        clean_data.Bpkqlyc,
+        clean_data.Bpryyw,
+        clean_data.Bpyhdc,
+        clean_data.Bpzyh,
+        clean_data.Bpryxhb,
+        clean_data.Bpymtb,
+        clean_data.Bpnsyw,
+        clean_data.Bpbsxyw,
+        clean_data.Bpbsxqqdw,
+        clean_data.Bpbsxdw
       ];
 
       formData4.value = [
-        res.data.md,
-        res.data.Abyl,
-        res.data.Bbyl,
-        res.data.Abll,
-        res.data.Bbll,
-        res.data.Zssll,
-        res.data.Ablj,
-        res.data.Bblj,
-        res.data.Zlj,
-        res.data.Qsll,
-        res.data.Qslj,
-        res.data.AbDcll,
-        res.data.BbDcll,
-        res.data.AbDclllj,
-        res.data.BbDclllj,
-        res.data.Hffw,
-        res.data.Sffw,
-        res.data.Yw,
-        res.data.Abyy,
-        res.data.Abyw,
-        res.data.Bbyy,
-        res.data.Bbyw
+        clean_data.md,
+        clean_data.Abyl,
+        clean_data.Bbyl,
+        clean_data.Abll,
+        clean_data.Bbll,
+        clean_data.Zssll,
+        clean_data.Ablj,
+        clean_data.Bblj,
+        clean_data.Zlj,
+        clean_data.Qsll,
+        clean_data.Qslj,
+        clean_data.AbDcll,
+        clean_data.BbDcll,
+        clean_data.AbDclllj,
+        clean_data.BbDclllj,
+        clean_data.Hffw,
+        clean_data.Sffw,
+        clean_data.Yw,
+        clean_data.Abyy,
+        clean_data.Abyw,
+        clean_data.Bbyy,
+        clean_data.Bbyw
       ];
     }
   };
@@ -384,29 +397,29 @@ onBeforeUnmount(() => {
     <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
         <board
-          :type="1"
+          :type="connected ? 1 : 2"
           header="底盘通讯"
           :footer="curr_plateNum + ' 底盘柴油机'"
           :labels="labels1"
           :subs="subs1"
-          :formData="formData1"
+          :formData="formData2"
         />
       </el-col>
       <el-col :span="12">
         <board
-          :type="1"
+          :type="connected ? 1 : 2"
           header="A侧动力通讯"
           :footer="curr_plateNum + ' 台上A侧参数'"
           :labels="labels1"
           :subs="subs1"
-          :formData="formData2"
+          :formData="formData1"
         />
       </el-col>
     </el-row>
     <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="12">
         <board
-          :type="1"
+          :type="connected ? 1 : 2"
           header="B侧动力通讯"
           :footer="curr_plateNum + ' 台上B侧参数'"
           :labels="labels1"
@@ -416,7 +429,7 @@ onBeforeUnmount(() => {
       </el-col>
       <el-col :span="12">
         <board
-          :type="2"
+          :type="connected ? 1 : 2"
           header="PLC通讯"
           :footer="curr_plateNum + ' 工程作业参数'"
           :labels="labels2"
@@ -427,3 +440,9 @@ onBeforeUnmount(() => {
     </el-row>
   </div>
 </template>
+
+<style lang="scss" scoped>
+::v-deep(.el-form-item) {
+  margin-right: 40px;
+}
+</style>

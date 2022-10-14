@@ -37,11 +37,30 @@ watch(
 const emit = defineEmits(["type"]);
 
 function emitType(val) {
+  legend_selected.value[val] = !legend_selected.value[val];
   emit("type", {
     type: val,
     idx: index.value
   });
 }
+
+const legend_selected = ref({
+  混浆密度: true,
+  A泵压力: true,
+  B泵压力: true,
+  A泵瞬时排量: true,
+  B泵瞬时排量: true,
+  双泵瞬时排量: true,
+  清水瞬时流量: true,
+  A泵泵替瞬时排量: true,
+  B泵泵替瞬时排量: true,
+  A泵累计排量: true,
+  B泵累计排量: true,
+  双泵累计排量: true,
+  清水累计排量: true,
+  A泵泵替累计流量: true,
+  B泵泵替累计流量: true
+});
 </script>
 
 <template>
@@ -50,120 +69,201 @@ function emitType(val) {
   <el-form :model="formData" label-width="130px" label-position="left">
     <el-form-item>
       <template #label>
-        <span style="color: #5470c6" @click="emitType('密度')">混浆密度</span>
+        <span
+          :style="{
+            color: legend_selected['混浆密度'] ? '#5470c6' : '#9e9e9e'
+          }"
+          @click="emitType('混浆密度')"
+        >
+          混浆密度
+        </span>
       </template>
-      <el-input v-model="formData.md" />
+      <el-input v-model="formData.md" readonly />
     </el-form-item>
     <el-divider />
     <el-form-item>
       <template #label>
-        <span style="color: #91cc75" @click="emitType('A泵压力')">A泵压力</span>
+        <span
+          :style="{
+            color: legend_selected['A泵压力'] ? '#91cc75' : '#9e9e9e'
+          }"
+          @click="emitType('A泵压力')"
+        >
+          A泵压力
+        </span>
       </template>
-      <el-input v-model="formData.Abyl" />
+      <el-input v-model="formData.Abyl" readonly />
     </el-form-item>
     <el-form-item label="B泵压力">
       <template #label>
-        <span style="color: #fac858" @click="emitType('B泵压力')">B泵压力</span>
+        <span
+          :style="{
+            color: legend_selected['B泵压力'] ? '#fac858' : '#9e9e9e'
+          }"
+          @click="emitType('B泵压力')"
+        >
+          B泵压力
+        </span>
       </template>
-      <el-input v-model="formData.Bbyl" />
+      <el-input v-model="formData.Bbyl" readonly />
     </el-form-item>
     <el-divider />
     <el-form-item>
       <template #label>
-        <span style="color: #ee6666" @click="emitType('A泵瞬时流量')">
-          A泵瞬时流量
+        <span
+          :style="{
+            color: legend_selected['A泵瞬时排量'] ? '#ee6666' : '#9e9e9e'
+          }"
+          @click="emitType('A泵瞬时排量')"
+        >
+          A泵瞬时排量
         </span>
       </template>
-      <el-input v-model="formData.Abll" />
+      <el-input v-model="formData.Abll" readonly />
     </el-form-item>
     <el-form-item>
       <template #label>
-        <span style="color: #73c0de" @click="emitType('B泵瞬时流量')">
-          B泵瞬时流量
+        <span
+          :style="{
+            color: legend_selected['B泵瞬时排量'] ? '#73c0de' : '#9e9e9e'
+          }"
+          @click="emitType('B泵瞬时排量')"
+        >
+          B泵瞬时排量
         </span>
       </template>
-      <el-input v-model="formData.Bbll" />
+      <el-input v-model="formData.Bbll" readonly />
     </el-form-item>
     <el-form-item>
       <template #label>
-        <span style="color: #3ba272" @click="emitType('双泵瞬时流量')">
-          双泵瞬时流量
+        <span
+          :style="{
+            color: legend_selected['双泵瞬时排量'] ? '#3ba272' : '#9e9e9e'
+          }"
+          @click="emitType('双泵瞬时排量')"
+        >
+          双泵瞬时排量
         </span>
       </template>
-      <el-input v-model="formData.Zssll" />
+      <el-input v-model="formData.Zssll" readonly />
     </el-form-item>
     <el-form-item>
       <template #label>
-        <span style="color: #fc8452" @click="emitType('清水瞬时流量')">
+        <span
+          :style="{
+            color: legend_selected['清水瞬时流量'] ? '#fc8452' : '#9e9e9e'
+          }"
+          @click="emitType('清水瞬时流量')"
+        >
           清水瞬时流量
         </span>
       </template>
-      <el-input v-model="formData.Qsll" />
+      <el-input v-model="formData.Qsll" readonly />
     </el-form-item>
     <el-form-item>
       <template #label>
-        <span style="color: #9a60b4" @click="emitType('A泵泵替瞬时流量')">
-          A泵泵替瞬时流量
+        <span
+          :style="{
+            color: legend_selected['A泵泵替瞬时排量'] ? '#9a60b4' : '#9e9e9e'
+          }"
+          @click="emitType('A泵泵替瞬时排量')"
+        >
+          A泵泵替瞬时排量
         </span>
       </template>
-      <el-input v-model="formData.AbDcll" />
+      <el-input v-model="formData.AbDcll" readonly />
     </el-form-item>
     <el-form-item>
       <template #label>
-        <span style="color: #ea7ccc" @click="emitType('B泵泵替瞬时流量')">
-          B泵泵替瞬时流量
+        <span
+          :style="{
+            color: legend_selected['B泵泵替瞬时排量'] ? '#ea7ccc' : '#9e9e9e'
+          }"
+          @click="emitType('B泵泵替瞬时排量')"
+        >
+          B泵泵替瞬时排量
         </span>
       </template>
-      <el-input v-model="formData.BbDcll" />
+      <el-input v-model="formData.BbDcll" readonly />
     </el-form-item>
     <el-divider />
     <el-form-item>
       <template #label>
-        <span style="color: #b5954a" @click="emitType('A泵累计排量')">
+        <span
+          :style="{
+            color: legend_selected['A泵累计排量'] ? '#ee6666' : '#9e9e9e'
+          }"
+          @click="emitType('A泵累计排量')"
+        >
           A泵累计排量
         </span>
       </template>
-      <el-input v-model="formData.Ablj" />
+      <el-input v-model="formData.Ablj" readonly />
     </el-form-item>
     <el-form-item>
       <template #label>
-        <span style="color: #1c707a" @click="emitType('B泵累计排量')">
+        <span
+          :style="{
+            color: legend_selected['B泵累计排量'] ? '#73c0de' : '#9e9e9e'
+          }"
+          @click="emitType('B泵累计排量')"
+        >
           B泵累计排量
         </span>
       </template>
-      <el-input v-model="formData.Bblj" />
+      <el-input v-model="formData.Bblj" readonly />
     </el-form-item>
     <el-form-item>
       <template #label>
-        <span style="color: #a21bf4" @click="emitType('双泵累计排量')">
+        <span
+          :style="{
+            color: legend_selected['双泵累计排量'] ? '#3ba272' : '#9e9e9e'
+          }"
+          @click="emitType('双泵累计排量')"
+        >
           双泵累计排量
         </span>
       </template>
-      <el-input v-model="formData.Zlj" />
+      <el-input v-model="formData.Zlj" readonly />
     </el-form-item>
     <el-form-item>
       <template #label>
-        <span style="color: #e56f18" @click="emitType('清水累计排量')">
+        <span
+          :style="{
+            color: legend_selected['清水累计排量'] ? '#fc8452' : '#9e9e9e'
+          }"
+          @click="emitType('清水累计排量')"
+        >
           清水累计排量
         </span>
       </template>
-      <el-input v-model="formData.Qslj" />
+      <el-input v-model="formData.Qslj" readonly />
     </el-form-item>
     <el-form-item>
       <template #label>
-        <span style="color: #37ca84" @click="emitType('A泵泵替累计流量')">
+        <span
+          :style="{
+            color: legend_selected['A泵泵替累计流量'] ? '#9a60b4' : '#9e9e9e'
+          }"
+          @click="emitType('A泵泵替累计流量')"
+        >
           A泵泵替累计流量
         </span>
       </template>
-      <el-input v-model="formData.AbDclllj" />
+      <el-input v-model="formData.AbDclllj" readonly />
     </el-form-item>
     <el-form-item>
       <template #label>
-        <span style="color: #0c3433" @click="emitType('B泵泵替累计流量')">
+        <span
+          :style="{
+            color: legend_selected['B泵泵替累计流量'] ? '#ea7ccc' : '#9e9e9e'
+          }"
+          @click="emitType('B泵泵替累计流量')"
+        >
           B泵泵替累计流量
         </span>
       </template>
-      <el-input v-model="formData.BbDclllj" />
+      <el-input v-model="formData.BbDclllj" readonly />
     </el-form-item>
   </el-form>
 </template>

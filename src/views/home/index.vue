@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { getPreview } from "/@/api/truck";
 
-import Htable1 from "./components/Table1/index.vue";
+import WellTable from "./components/wellTable/index.vue";
 import OnlineTable from "./components/onlineTable/index.vue";
 import { HCard, HPie, HBar } from "./components";
 import { onMounted, ref } from "vue";
@@ -71,9 +71,9 @@ onMounted(() => {
         />
       </el-col>
     </el-row>
-    <Htable1 style="margin-top: 20px" />
-    <OnlineTable style="margin-top: 20px" />
-    <el-row :gutter="20" style="margin-top: 20px">
+    <WellTable style="margin-top: 10px" />
+    <OnlineTable style="margin-top: 10px" />
+    <el-row :gutter="20" style="margin-top: 10px">
       <el-col :span="12">
         <el-card>
           <HPie :pieLegend="pieLegend" :pieData="pieData" />
@@ -87,4 +87,3 @@ onMounted(() => {
     </el-row>
   </div>
 </template>
-<style scoped lang="scss"></style>

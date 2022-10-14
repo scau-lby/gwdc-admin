@@ -28,6 +28,10 @@ export function useColumns() {
       prop: "plateNum"
     },
     {
+      label: "作业日期",
+      prop: "commander"
+    },
+    {
       label: "施工指挥",
       prop: "commander"
     },
@@ -36,40 +40,12 @@ export function useColumns() {
       prop: "opreatePerson"
     },
     {
-      label: "当前状态",
-      prop: "state",
-      cellRenderer: ({ row, props }) => (
-        <el-tag
-          size={props.size}
-          type={
-            row.state === -1
-              ? "danger"
-              : row.state === 0
-              ? "warning"
-              : "success"
-          }
-          effect="plain"
-        >
-          {row.state === -1 ? "离线" : row.state === 0 ? "无数据" : "有数据"}
-        </el-tag>
-      )
-    },
-    {
       label: "设备所属单位",
       prop: "belongTo"
     },
     {
-      label: "在线时长",
+      label: "作业时长",
       prop: "totalMin"
-    },
-    {
-      label: "关注度",
-      prop: "maxOlAttention"
-    },
-    {
-      label: "施工位置",
-      prop: "position",
-      width: 350
     }
   ]);
 

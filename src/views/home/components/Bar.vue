@@ -138,5 +138,5 @@ tryOnUnmounted(() => {
 </script>
 
 <template>
-  <div class="bar" style="width: 100%; height: 35vh" />
+  <div class="bar" style="width: 100%; height: 26vh" />
 </template>

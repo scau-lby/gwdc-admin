@@ -17,32 +17,6 @@ function onLive(row) {
   toDetail(row.plateNum);
 }
 
-// async function getAddress(jd, wd) {
-//   let { data, status } = await axios.get(
-//     `https://restapi.amap.com/v3/geocode/regeo?key=705fd85820edb50fe963340206a708b3&location=${jd},${wd}`
-//   );
-
-//   if (status === 200) {
-//     return data.regeocode.formatted_address;
-//   } else {
-//     return "error";
-//   }
-// }
-
-// function getPosition(jd, wd) {
-//   return new Promise(function (resolve) {
-//     let p = getAddress(jd, wd);
-//     console.log(p);
-//     return resolve(p);
-//   });
-// }
-
-// function getPosition(item) {
-//   return new Promise(resolve => {
-//     resolve(getAddress(item));
-//   });
-// }
-
 async function onSearch() {
   loading.value = true;
   let { data } = await getOnlineTruckList();
@@ -50,11 +24,18 @@ async function onSearch() {
   if (Array.isArray(data) && data.length > 0) {
     let location = "";
     data.forEach(item => {
-      location += `${item.jd},${item.wd}|`;
+      if (item.jd && item.wd) {
+        location += `${item.jd},${item.wd}|`;
+      } else {
+        location += `120,40|`;
+      }
     });
+
+    location = location.substring(0, location.lastIndexOf("|"));
     let { status, data: info } = await axios.get(
       `https://restapi.amap.com/v3/geocode/regeo?key=705fd85820edb50fe963340206a708b3&location=${location}&batch=true`
     );
+
     if (status === 200) {
       res = data.map((item, index) => {
         return {
@@ -65,20 +46,6 @@ async function onSearch() {
     } else {
       res = data;
     }
-    // res = data.map(item => {
-    //   if (item.jd > 0 && item.wd > 0) {
-    //     console.log(getPosition(item.jd, item.wd));
-    //     return {
-    //       ...item,
-    //       position: getPosition(item.jd, item.wd)
-    //     };
-    //   } else {
-    //     return {
-    //       ...item,
-    //       position: "暂无经纬度信息"
-    //     };
-    //   }
-    // });
   }
 
   setTimeout(() => {
@@ -93,29 +60,41 @@ onMounted(() => {
 </script>
 
 <template>
-  <PureTable
-    border
-    align="center"
-    row-key="id"
-    table-layout="auto"
-    showOverflowTooltip
-    :data="dataList"
-    :columns="columns"
-    :header-cell-style="{
-      backgroundColor: 'rgba(0,21,41,.7)',
-      color: '#d0d0d0'
-    }"
-  >
-    <template #operation="{ row }">
-      <el-button
-        class="reset-margin"
-        plain
-        round
-        size="small"
-        @click="onLive(row)"
-      >
-        进入实时监控
-      </el-button>
-    </template>
-  </PureTable>
+  <div>
+    <PureTable
+      border
+      align="center"
+      row-key="id"
+      table-layout="auto"
+      showOverflowTooltip
+      :data="dataList"
+      :columns="columns"
+      :header-cell-style="{
+        backgroundColor: 'rgba(0,21,41,.7)',
+        color: '#d0d0d0'
+      }"
+    >
+      <template #operation="{ row }">
+        <el-button
+          class="reset-margin"
+          plain
+          round
+          size="small"
+          @click="onLive(row)"
+        >
+          进入实时监控
+        </el-button>
+      </template>
+    </PureTable>
+  </div>
 </template>
+
+<style lang="scss" scoped>
+:deep(.el-scrollbar__view) {
+  width: 100%;
+}
+
+:deep(.el-table__body) {
+  width: 100% !important;
+}
+</style>

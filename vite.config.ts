@@ -46,6 +46,7 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
       // 端口号
       port: VITE_PORT,
       host: "0.0.0.0",
+      open: true,
       // 本地跨域代理
       proxy:
         VITE_PROXY_DOMAIN_REAL.length > 0

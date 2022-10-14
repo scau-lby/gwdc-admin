@@ -235,21 +235,22 @@ const truckFormData = ref({ ...initialData });
           <template #operation="{ row }">
             <el-popconfirm title="是否确认删除该设备?" @confirm="onDelete(row)">
               <template #reference>
-                <el-button
+                <el-link
                   class="reset-margin"
-                  type="text"
+                  type="primary"
                   :size="size"
                   :icon="useRenderIcon('delete')"
                 />
               </template>
             </el-popconfirm>
 
-            <el-button
+            <el-link
               class="reset-margin"
-              type="text"
+              type="primary"
               :size="size"
               :icon="useRenderIcon('edit')"
               @click="onEdit(row)"
+              style="margin-left: 10px"
             />
           </template>
         </PureTable>

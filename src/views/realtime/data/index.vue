@@ -12,15 +12,17 @@ initToDetail();
 import empty from "/@/views/common/empty.vue";
 import liveForm from "./components/LiveForm.vue";
 import liveLine from "./components/LiveLine.vue";
-const chartRef = ref(null);
 
-const legend = ref();
+import liveFormMixed from "./components/liveFormMixed.vue";
+import liveLineMixed from "./components/liveLineMixed.vue";
+const chartRef = ref(null);
 
 let taskList = reactive([]), // 任务列表
   truckList = reactive([]), // 在线设备列表
   mixed = ref(0), // 0 单机 1 合并
   curr_task = ref(""), // 当前任务
   curr_plateNum = ref([]), // 当前设备
+  keys = ref([]), // 当前选中设备
   formData = ref([]),
   chartData = ref({});
 
@@ -36,22 +38,44 @@ async function getOnline() {
     if (id) {
       curr_task.value = truckList.filter(item => item.plateNum === id)[0].task;
       curr_plateNum.value = [id];
+      if (mixed.value === 1) {
+        keys.value = [curr_plateNum.value.join("/")];
+      } else {
+        keys.value = curr_plateNum.value;
+      }
     } else {
       curr_task.value = taskList[0];
       curr_plateNum.value = [
         truckList.filter(item => item.task === curr_task.value)[0].plateNum
       ];
+      if (mixed.value === 1) {
+        keys.value = [curr_plateNum.value.join("/")];
+      } else {
+        keys.value = curr_plateNum.value;
+      }
     }
 
     nextTick(() => {
-      formData.value = curr_plateNum.value.map(() => []);
-      curr_plateNum.value.forEach(item => {
+      formData.value = keys.value.map(() => []);
+      keys.value.forEach(item => {
         chartData.value[item] = [];
       });
     });
 
     initWebSocket();
   }
+}
+
+function clean(params: object) {
+  const res = {};
+  for (var i in params) {
+    if (params[i] != 0 && ["jd", "wd", "sj"].indexOf(i) === -1) {
+      res[i] = parseFloat(params[i]).toFixed(3);
+    } else {
+      res[i] = params[i];
+    }
+  }
+  return res;
 }
 
 // 和服务端连接的socket对象
@@ -90,19 +114,20 @@ function initWebSocket() {
     const res = JSON.parse(msg.data);
 
     if (typeof res.data == "object") {
-      // const params1 = {};
-
-      formData.value = curr_plateNum.value.map((item, index) => {
+      // 对所有数据进行清洗
+      const clean_data = clean(res.data);
+      formData.value = keys.value.map((item, index) => {
         if (item == res.plateNum) {
-          return res.data;
+          return clean_data;
         } else {
           return formData.value[index];
         }
       });
-      const { sj, ...params } = res.data;
+
+      const { sj, ...params } = clean_data;
       const time =
         sj.slice(8, 10) + ":" + sj.slice(10, 12) + ":" + sj.slice(12, 14);
-      curr_plateNum.value.forEach(item => {
+      keys.value.forEach(item => {
         if (item == res.plateNum) {
           chartData.value[item].push({
             sj: time,
@@ -115,10 +140,17 @@ function initWebSocket() {
 }
 
 // 切换订阅方式
-function onMixedChange() {
+function onMixedChange(value) {
+  if (value === 1) {
+    // 合并
+    keys.value = [curr_plateNum.value.join("/")];
+  } else {
+    keys.value = curr_plateNum.value;
+  }
+
   nextTick(() => {
-    formData.value = curr_plateNum.value.map(() => []);
-    curr_plateNum.value.forEach(item => {
+    formData.value = keys.value.map(() => []);
+    keys.value.forEach(item => {
       chartData.value[item] = [];
     });
   });
@@ -129,12 +161,15 @@ function onMixedChange() {
 
 // 切换施工任务
 function onTaskChange(val) {
+  mixed.value = 0;
   curr_plateNum.value = [
     truckList.filter(item => item.task === val)[0].plateNum
   ];
+  keys.value = curr_plateNum.value;
+
   nextTick(() => {
-    formData.value = curr_plateNum.value.map(() => []);
-    curr_plateNum.value.forEach(item => {
+    formData.value = keys.value.map(() => []);
+    keys.value.forEach(item => {
       chartData.value[item] = [];
     });
   });
@@ -144,10 +179,16 @@ function onTaskChange(val) {
 }
 
 // 切换订阅设备
-function onPlateChange() {
+function onPlateChange(value) {
+  if (mixed.value === 1) {
+    keys.value = [value.join("/")];
+  } else {
+    keys.value = value;
+  }
+
   nextTick(() => {
-    formData.value = curr_plateNum.value.map(() => []);
-    curr_plateNum.value.forEach(item => {
+    formData.value = keys.value.map(() => []);
+    keys.value.forEach(item => {
       chartData.value[item] = [];
     });
   });
@@ -169,14 +210,19 @@ onBeforeUnmount(() => {
 
 const getType = val => {
   const { type, idx } = val;
-  chartRef.value[idx].legend_toggle(type);
+  if (mixed.value === 1) {
+    chartRef.value.legend_toggle(type);
+  } else {
+    chartRef.value[idx].legend_toggle(type);
+  }
 };
 </script>
 <template>
   <div class="main">
-    <el-card class="source-card" header="数据来源" v-if="taskList.length > 0">
+    <el-card class="source-card" v-if="taskList.length > 0">
       <el-form :inline="true">
-        <el-form-item label="施工任务">
+        <el-form-item label="数据来源" />
+        <el-form-item label="施工任务" style="margin-left: 50px">
           <el-select
             v-model="curr_task"
             placeholder="请选择施工任务"
@@ -202,8 +248,8 @@ const getType = val => {
               v-for="item in truckList"
               :key="item.id"
               :label="item.plateNum"
+              v-show="item.task === curr_task"
             />
-            <!--  v-show="item.task === curr_task" -->
           </el-checkbox-group>
         </el-form-item>
       </el-form>
@@ -211,12 +257,12 @@ const getType = val => {
     <el-card v-else>
       <empty title="当前无设备在线" />
     </el-card>
-    <template v-if="mixed === 0">
-      <div
+    <el-row :gutter="10" style="margin-top: 10px" v-if="mixed === 0">
+      <el-col
         v-for="(item, index) in curr_plateNum"
         :key="index"
         class="live-container"
-        style="margin-top: 20px"
+        :span="curr_plateNum.length > 1 ? 12 : 24"
       >
         <el-card
           class="live-line"
@@ -225,7 +271,6 @@ const getType = val => {
           <liveLine
             ref="chartRef"
             :index="index"
-            :legend="legend"
             :chartData="chartData[curr_plateNum[index]]"
           />
         </el-card>
@@ -239,9 +284,26 @@ const getType = val => {
             @type="getType"
           />
         </el-card>
-      </div>
-    </template>
-    <template v-else>合并</template>
+      </el-col>
+    </el-row>
+    <div class="live-container" style="margin-top: 20px" v-else>
+      <el-card
+        class="live-line"
+        :header="curr_task + ' / 作业实时曲线(' + keys + ')'"
+      >
+        <liveLineMixed
+          ref="chartRef"
+          :index="100"
+          :chartData="chartData[keys[0]]"
+        />
+      </el-card>
+      <el-card
+        class="live-form"
+        :header="curr_task + ' / 作业实时数据(' + keys + ')'"
+      >
+        <liveFormMixed :formData="formData[0]" :index="100" @type="getType" />
+      </el-card>
+    </div>
   </div>
 </template>
 
@@ -257,17 +319,16 @@ const getType = val => {
 }
 
 .live-container {
-  display: flex;
-  flex-wrap: wrap;
+  display: flex !important;
+  flex-direction: row;
 }
 
 .live-line {
-  flex-grow: 1;
-  flex-shrink: 1;
+  width: calc(100% - 290px);
 }
 
 .live-form {
-  width: 380px;
-  margin-left: 20px;
+  width: 280px;
+  margin-left: 10px;
 }
 </style>

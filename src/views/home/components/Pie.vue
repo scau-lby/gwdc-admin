@@ -29,7 +29,7 @@ const option = {
     {
       subtext: "数据传输",
       left: "42%",
-      top: "5%",
+      top: "0",
       textAlign: "center",
       subtextStyle: {
         fontSize: 16
@@ -38,7 +38,7 @@ const option = {
     {
       subtext: "视频传输",
       left: "78%",
-      top: "5%",
+      top: "0",
       textAlign: "center",
       subtextStyle: {
         fontSize: 16
@@ -66,7 +66,7 @@ const option = {
     {
       name: "数据传输",
       type: "pie",
-      radius: [20, 140],
+      radius: [20, 120],
       center: ["42%", "65%"],
       roseType: "radius",
       itemStyle: {
@@ -74,7 +74,7 @@ const option = {
       },
       label: {
         show: true,
-        formatter: "{@product}：{@[1]}",
+        formatter: "{@[1]}",
         position: "inside"
       },
       encode: {
@@ -85,7 +85,7 @@ const option = {
     {
       name: "视频传输",
       type: "pie",
-      radius: [20, 140],
+      radius: [20, 120],
       center: ["78%", "65%"],
       roseType: "area",
       itemStyle: {
@@ -93,7 +93,7 @@ const option = {
       },
       label: {
         show: true,
-        formatter: "{@product}：{@[2]}",
+        formatter: "{@[2]}",
         position: "inside"
       },
       encode: {
@@ -159,5 +159,5 @@ tryOnUnmounted(() => {
 </script>
 
 <template>
-  <div class="hpie" style="width: 100%; height: 35vh" />
+  <div class="hpie" style="width: 100%; height: 26vh" />
 </template>

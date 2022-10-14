@@ -21,57 +21,30 @@ const props = defineProps({
 
 const legend_selected = {
   混浆密度: true,
-  A泵压力: true,
-  B泵压力: true,
-  A泵瞬时排量: true,
-  B泵瞬时排量: true,
-  双泵瞬时排量: true,
-  清水瞬时流量: true,
-  A泵泵替瞬时排量: true,
-  B泵泵替瞬时排量: true,
-  A泵累计排量: true,
-  B泵累计排量: true,
-  双泵累计排量: true,
-  清水累计排量: true,
-  A泵泵替累计流量: true,
-  B泵泵替累计流量: true
+  施工压力: true,
+  合并瞬时排量: true,
+  泵替瞬时流量: true,
+  合并累计排量: true,
+  泵替累计流量: true
 };
 
 const legend_data = [
   { name: "混浆密度" },
-  { name: "A泵压力" },
-  { name: "B泵压力" },
-  { name: "A泵瞬时排量" },
-  { name: "B泵瞬时排量" },
-  { name: "双泵瞬时排量" },
-  { name: "清水瞬时流量" },
-  { name: "A泵泵替瞬时排量" },
-  { name: "B泵泵替瞬时排量" },
-  { name: "A泵累计排量" },
-  { name: "B泵累计排量" },
-  { name: "双泵累计排量" },
-  { name: "清水累计排量" },
-  { name: "A泵泵替累计流量" },
-  { name: "B泵泵替累计流量" }
+  { name: "施工压力" },
+  { name: "合并瞬时排量" },
+  { name: "泵替瞬时流量" },
+  { name: "合并累计排量" },
+  { name: "泵替累计流量" }
 ];
 
 const dataset_dimensions = [
   "sj",
   "md",
   "Abyl",
-  "Bbyl",
-  "Abll",
-  "Bbll",
   "Zssll",
-  "Qsll",
   "AbDcll",
-  "BbDcll",
-  "Ablj",
-  "Bblj",
   "Zlj",
-  "Qslj",
-  "AbDclllj",
-  "BbDclllj"
+  "AbDclllj"
 ];
 
 const index = ref(props.index);
@@ -81,14 +54,6 @@ watch(
     index.value = val;
   }
 );
-/**
- * "#b5954a",
-    "#1c707a",
-    "#a21bf4",
-    "#e56f18",
-    "#37ca84",
-    "#0c3433"
- */
 
 const option = {
   tooltip: {
@@ -118,23 +83,7 @@ const option = {
       color: "inherit"
     }
   },
-  color: [
-    "#5470c6",
-    "#91cc75",
-    "#fac858",
-    "#ee6666",
-    "#73c0de",
-    "#3ba272",
-    "#fc8452",
-    "#9a60b4",
-    "#ea7ccc",
-    "#ee6666",
-    "#73c0de",
-    "#3ba272",
-    "#fc8452",
-    "#9a60b4",
-    "#ea7ccc"
-  ],
+  color: ["#5470c6", "#91cc75", "#fac858", "#ee6666", "#fac858", "#ee6666"],
   grid: [
     {
       left: 50,
@@ -304,7 +253,7 @@ const option = {
       yAxisIndex: 0
     },
     {
-      name: "A泵压力",
+      name: "施工压力",
       type: "line",
       symbol: "none",
       smooth: true,
@@ -312,15 +261,7 @@ const option = {
       yAxisIndex: 1
     },
     {
-      name: "B泵压力",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 1,
-      yAxisIndex: 1
-    },
-    {
-      name: "A泵瞬时排量",
+      name: "合并瞬时排量",
       type: "line",
       symbol: "none",
       smooth: true,
@@ -328,7 +269,7 @@ const option = {
       yAxisIndex: 2
     },
     {
-      name: "B泵瞬时排量",
+      name: "泵替瞬时流量",
       type: "line",
       symbol: "none",
       smooth: true,
@@ -336,39 +277,7 @@ const option = {
       yAxisIndex: 2
     },
     {
-      name: "双泵瞬时排量",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 2,
-      yAxisIndex: 2
-    },
-    {
-      name: "清水瞬时流量",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 2,
-      yAxisIndex: 2
-    },
-    {
-      name: "A泵泵替瞬时排量",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 2,
-      yAxisIndex: 2
-    },
-    {
-      name: "B泵泵替瞬时排量",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 2,
-      yAxisIndex: 2
-    },
-    {
-      name: "A泵累计排量",
+      name: "合并累计排量",
       type: "line",
       symbol: "none",
       smooth: true,
@@ -376,39 +285,7 @@ const option = {
       yAxisIndex: 3
     },
     {
-      name: "B泵累计排量",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 3,
-      yAxisIndex: 3
-    },
-    {
-      name: "双泵累计排量",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 3,
-      yAxisIndex: 3
-    },
-    {
-      name: "清水累计排量",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 3,
-      yAxisIndex: 3
-    },
-    {
-      name: "A泵泵替累计流量",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 3,
-      yAxisIndex: 3
-    },
-    {
-      name: "B泵泵替累计流量",
+      name: "泵替累计流量",
       type: "line",
       symbol: "none",
       smooth: true,

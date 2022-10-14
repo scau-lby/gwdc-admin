@@ -211,7 +211,7 @@ onMounted(() => {
           <el-radio :label="0">禁用</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="视频状态" prop="installDate">
+      <el-form-item label="安装日期" prop="installDate">
         <el-date-picker
           v-model="formData.installDate"
           type="date"

@@ -256,3 +256,9 @@ function resolvePath(routePath) {
     />
   </el-sub-menu>
 </template>
+
+<style lang="scss" scoped>
+.el-tooltip__trigger {
+  font-size: 14px !important;
+}
+</style>

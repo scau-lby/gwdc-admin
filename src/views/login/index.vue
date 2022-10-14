@@ -18,8 +18,8 @@ const checked = ref(false);
 const ruleFormRef = ref<FormInstance>();
 
 const ruleForm = reactive({
-  LoginName: "test",
-  password: "1q2w3e4r",
+  LoginName: "",
+  password: "",
   verifyCode: ""
 });
 

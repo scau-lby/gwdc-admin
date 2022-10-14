@@ -17,11 +17,11 @@ const form = reactive({
   groupName: ""
 });
 
+const formRef = ref<FormInstance>();
+
 let dataList = ref([]);
 let loading = ref(true);
 const { columns } = useColumns();
-
-const formRef = ref<FormInstance>();
 
 const pagination = reactive<PaginationProps>({
   total: 0,
@@ -35,7 +35,6 @@ function onAdd() {
 }
 
 function onEdit(row) {
-  console.log(row);
   groupFormDialogVisible.value = true;
   nextTick(() => {
     groupFormData.value = {

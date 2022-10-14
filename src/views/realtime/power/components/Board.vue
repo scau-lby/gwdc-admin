@@ -4,7 +4,7 @@ import { ref, watch } from "vue";
 const props = defineProps({
   type: {
     type: Number,
-    default: 1
+    default: 0
   },
   header: {
     type: String,
@@ -89,8 +89,6 @@ watch(
     immediate: true
   }
 );
-
-console.log(labels.value, subs.value);
 </script>
 
 <template>
