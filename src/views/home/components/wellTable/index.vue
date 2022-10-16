@@ -4,13 +4,12 @@ import {
   getWellList,
   addFavorite,
   delFavorite,
-  getDetailByWellName
+  getMoreInfo
 } from "/@/api/well";
 import { ref, onMounted, nextTick } from "vue";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 import detailDialogForm from "./DetailDialogForm.vue";
 import wellDialogForm from "./WellDialogForm.vue";
-import dayjs from "dayjs";
 
 let dataList = ref([{}]);
 let loading = ref(true);
@@ -20,7 +19,7 @@ const { columns } = useColumns();
 async function onFavoriteAdd(row) {
   let { data } = await addFavorite(row.id);
   if (data) {
-    this.onSearch();
+    onSearch();
   }
 }
 
@@ -28,72 +27,81 @@ async function onFavoriteAdd(row) {
 async function onFavoriteDel(row) {
   let { data } = await delFavorite(row.id);
   if (data) {
-    this.onSearch();
+    onSearch();
   }
 }
 
-const initialData = {
-  requestTime: null,
-  BITDEP: null,
-  BLOCKCOMP: null,
-  DEPTH: null,
-  FLOWIN: null,
-  FLOWOUTPC: null,
-  HKLD: null,
-  MWIN: null,
-  MWOUT: null,
-  PUMP1: null,
-  PUMP2: null,
-  PUMP3: null,
-  SPP: null,
-  SURF_RPM: null,
-  TGAS_OUT: null,
-  WOB: null,
-  wellName: null
-};
 const formDialogVisible = ref(false);
-const formData = ref({ ...initialData });
+const curr_wellName = ref(null);
 
-async function onView(row) {
-  let { data } = await getDetailByWellName(row.wellName);
-
+function onView(row) {
+  curr_wellName.value = row.wellName;
   formDialogVisible.value = true;
-  nextTick(() => {
-    formData.value = {
-      ...data,
-      requestTime: dayjs(data.requestTime * 1000).format("YYYY-MM-DD HH:mm:ss")
-    };
-    console.log(formData.value);
-  });
 }
 
 const initialUpdateData = {
-  belongTo: "",
-  drillCompany: "",
-  drillTeamNo: "",
-  commander: "string",
-  favorite: true,
+  belongTo: null,
+  commander: null,
+  drillCompany: null,
+  drillTeamNo: null,
+  favorite: false,
   id: 0,
-  opreatePerson: "string",
+  opreatePerson: null,
   push: 0,
-  schedule: "string",
+  schedule: null,
   state: 0,
-  trucks: "string",
-  wellName: "string",
-  wellRank: "string",
-  wellType: "string"
+  trucks: null,
+  wellName: null,
+  wellRank: null,
+  wellType: null
 };
 const updateDialogVisible = ref(false);
 const updateData = ref({ ...initialUpdateData });
 
+function onUpdate(row) {
+  console.log(row);
+  updateDialogVisible.value = true;
+  nextTick(() => {
+    updateData.value = {
+      ...row
+    };
+  });
+}
+
+// 只有首次获取口井数据时需要查询是否有更多信息，否则不查询
+let hasGetMore = false;
+
 async function onSearch() {
   loading.value = true;
   let { data } = await getWellList();
-  dataList.value = data;
+
+  const res = data.map(item => {
+    return {
+      ...item,
+      hasMore: false
+    };
+  });
+  dataList.value = res;
 
   setTimeout(() => {
     loading.value = false;
+    if (!hasGetMore) {
+      getMore();
+      hasGetMore = true;
+    }
   }, 500);
+}
+
+function getMore() {
+  dataList.value.forEach((item, index) => {
+    getMoreInfo(item.wellName)
+      .then(() => {
+        dataList.value[index].hasMore = true;
+      })
+      .catch(() => {
+        dataList.value[index].hasMore = false;
+      });
+  });
 }
 
 onMounted(() => {
@@ -102,7 +110,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div v-loading="loading" element-loading-text="Loading...">
     <PureTable
       border
       align="center"
@@ -130,6 +138,16 @@ onMounted(() => {
           @click="onFavoriteAdd(row)"
           v-else
         />
+        <el-button
+          class="reset-margin"
+          plain
+          round
+          size="small"
+          @click="onUpdate(row)"
+          style="margin-left: 15px"
+        >
+          更新
+        </el-button>
       </template>
       <template #operation1="{ row }">
         <el-button
@@ -138,22 +156,21 @@ onMounted(() => {
           round
           size="small"
           @click="onView(row)"
-        >
-          更新
-        </el-button>
-        <el-button
-          class="reset-margin"
-          plain
-          round
-          size="small"
-          @click="onView(row)"
+          :disabled="!row.hasMore"
         >
           了解详情
         </el-button>
       </template>
     </PureTable>
-    <detailDialogForm v-model:visible="formDialogVisible" :data="formData" />
-    <wellDialogForm v-model:visible="updateDialogVisible" :data="updateData" />
+    <detailDialogForm
+      v-model:visible="formDialogVisible"
+      :wellName="curr_wellName"
+    />
+    <wellDialogForm
+      v-model:visible="updateDialogVisible"
+      :data="updateData"
+      @refresh="onSearch"
+    />
   </div>
 </template>
 

@@ -105,20 +105,21 @@ const formData = ref({ ...initialData });
           }"
         >
           <template #operation="{ row }">
-            <el-button
+            <el-link
               class="reset-margin"
-              type="text"
               :size="size"
               :icon="useRenderIcon('edit-open')"
               @click="onEdit(row)"
+              style="margin-right: 20px"
+              type="primary"
             />
             <el-popconfirm title="是否确定删除该机构?" @confirm="onDelete(row)">
               <template #reference>
-                <el-button
+                <el-link
                   class="reset-margin"
-                  type="text"
                   :size="size"
                   :icon="useRenderIcon('delete')"
+                  type="primary"
                 />
               </template>
             </el-popconfirm>

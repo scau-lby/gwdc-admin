@@ -97,7 +97,6 @@ class GwdcHttp {
     const instance = GwdcHttp.axiosInstance;
     instance.interceptors.response.use(
       (response: HttpResponse) => {
-        // console.log(response);
         const $config = response.config;
         // 关闭进度条动画
         NProgress.done();
@@ -111,7 +110,6 @@ class GwdcHttp {
           return response.data;
         }
 
-        // return response.data;
         if (response.data.status !== 200) {
           ElNotification({
             title: `${response.data.message}`,
@@ -131,6 +129,11 @@ class GwdcHttp {
         // 关闭进度条动画
         NProgress.done();
         // 所有的响应异常 区分来源为取消请求/非取消请求
+        ElNotification({
+          title: `${error.response.data.status}-${error.response.data.error}`,
+          message: `接口："${error.response.data.path}"`,
+          type: "error"
+        });
         return Promise.reject($error);
       }
     );

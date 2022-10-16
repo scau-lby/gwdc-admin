@@ -188,38 +188,41 @@ onMounted(() => {
         >
           <template #operation="{ row }">
             <el-tooltip content="查看作业记录" placement="left">
-              <el-button
+              <el-link
                 class="reset-margin"
-                type="text"
+                type="primary"
                 :size="size"
                 @click="onView(row)"
                 :icon="useRenderIcon('view')"
+                style="margin-right: 15px"
               />
             </el-tooltip>
-            <el-button
+            <el-link
               class="reset-margin"
-              type="text"
+              type="primary"
               :size="size"
               @click="onEdit(row)"
               :icon="useRenderIcon('edit-open')"
+              style="margin-right: 15px"
             />
             <el-popconfirm
               title="是否确定删除该作业记录?"
               @confirm="onDelete(row)"
             >
               <template #reference>
-                <el-button
+                <el-link
                   class="reset-margin"
-                  type="text"
+                  type="primary"
                   :size="size"
                   :icon="useRenderIcon('delete')"
+                  style="margin-right: 15px"
                 />
               </template>
             </el-popconfirm>
             <el-tooltip content="数据推送" placement="right">
-              <el-button
+              <el-link
                 class="reset-margin"
-                type="text"
+                type="primary"
                 :size="size"
                 @click="onPush(row)"
                 :icon="useRenderIcon('promotion')"

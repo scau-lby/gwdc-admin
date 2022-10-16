@@ -60,7 +60,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div v-loading="loading" element-loading-text="Loading...">
     <PureTable
       border
       align="center"

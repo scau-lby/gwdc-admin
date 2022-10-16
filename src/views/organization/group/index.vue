@@ -167,29 +167,31 @@ const groupFormData = ref({ ...initialData });
         >
           <template #operation="{ row }">
             <el-tooltip content="权限设置" placement="left">
-              <el-button
+              <el-link
                 class="reset-margin"
-                type="text"
+                type="primary"
                 :size="size"
                 @click="onEdit(row)"
                 :icon="useRenderIcon('menu')"
+                style="margin-right: 15px"
               />
             </el-tooltip>
-            <el-button
+            <el-link
               class="reset-margin"
-              type="text"
+              type="primary"
               :size="size"
               @click="onEdit(row)"
               :icon="useRenderIcon('edit-open')"
+              style="margin-right: 15px"
             />
             <el-popconfirm
               title="是否确定删除该用户组?"
               @confirm="onDelete(row)"
             >
               <template #reference>
-                <el-button
+                <el-link
                   class="reset-margin"
-                  type="text"
+                  type="primary"
                   :size="size"
                   :icon="useRenderIcon('delete')"
                 />

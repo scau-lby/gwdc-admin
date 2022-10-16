@@ -269,35 +269,38 @@ const userGroupFormData = ref({ ...initialUGFData });
         >
           <template #operation="{ row }">
             <el-tooltip content="重设密码" placement="left">
-              <el-button
+              <el-link
                 class="reset-margin"
-                type="text"
+                type="primary"
                 :size="size"
                 :icon="useRenderIcon('password')"
                 @click="onResetPwd(row)"
+                style="margin-right: 15px"
               />
             </el-tooltip>
-            <el-button
+            <el-link
               class="reset-margin"
-              type="text"
+              type="primary"
               :size="size"
               :icon="useRenderIcon('edit-open')"
               @click="onEdit(row)"
+              style="margin-right: 15px"
             />
             <el-popconfirm title="是否确认删除?" @confirm="onDelete(row)">
               <template #reference>
-                <el-button
+                <el-link
                   class="reset-margin"
-                  type="text"
+                  type="primary"
                   :size="size"
                   :icon="useRenderIcon('delete')"
+                  style="margin-right: 15px"
                 />
               </template>
             </el-popconfirm>
             <el-tooltip content="设置分组" placement="right">
-              <el-button
+              <el-link
                 class="reset-margin"
-                type="text"
+                type="primary"
                 :size="size"
                 :icon="useRenderIcon('role')"
                 @click="onSetGroups(row)"

@@ -158,18 +158,19 @@ onMounted(() => {
           <template #operation="{ row }">
             <el-popconfirm title="是否确认彻底删除?" @confirm="onDelete(row)">
               <template #reference>
-                <el-button
+                <el-link
                   class="reset-margin"
-                  type="text"
+                  type="primary"
                   :size="size"
                   :icon="useRenderIcon('delete')"
+                  style="margin-right: 15px"
                 />
               </template>
             </el-popconfirm>
             <el-tooltip content="恢复" placement="right">
-              <el-button
+              <el-link
                 class="reset-margin"
-                type="text"
+                type="primary"
                 :size="size"
                 :icon="useRenderIcon('refresh')"
                 @click="onRecover(row)"

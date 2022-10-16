@@ -15,14 +15,6 @@ export const getVerify = (): userType => {
 export const userLogin = (data?: object) => {
   return http.request("post", "/gjsnccj/login", { data });
 };
-// export const userLogin = (data: object) => {
-//   data = Object.assign(data, {
-//     method: "sncj.UserLogin",
-//     token: "",
-//     timestamp: new Date().getTime()
-//   });
-//   return http.request("post", "/api/gjsnccj/openapi", { data });
-// };
 
 // 刷新token
 export const refreshToken = (data: object) => {

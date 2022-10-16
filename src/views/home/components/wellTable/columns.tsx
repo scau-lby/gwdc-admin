@@ -9,7 +9,7 @@ export function useColumns() {
   const columns = ref([
     {
       label: "操作",
-      width: 60,
+      width: 120,
       slot: "operation",
       fixed: "left"
     },
@@ -32,7 +32,7 @@ export function useColumns() {
     {
       label: "序号",
       type: "index",
-      width: 60
+      width: 120
     },
     {
       label: "作业单位",
@@ -66,7 +66,7 @@ export function useColumns() {
     },
     {
       label: "作业设备",
-      prop: "plateNum"
+      prop: "trucks"
     },
     {
       label: "施工指挥",

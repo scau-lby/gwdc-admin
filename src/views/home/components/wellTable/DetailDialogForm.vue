@@ -4,37 +4,78 @@
 }
 
 .el-form {
-  // text-align: center;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
 }
-
-// .el-form-item:last-child {
-//   margin-right: auto !important;
-// }
 </style>
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { FormInstance } from "element-plus";
+import { getMoreInfo } from "/@/api/well";
+import dayjs from "dayjs";
 
 const props = defineProps({
   visible: {
     type: Boolean,
     default: false
   },
-  data: {
-    type: Object,
-    default: () => {
-      return {};
-    }
+  wellName: {
+    type: String,
+    default: () => ""
   }
 });
 
-const formVisible = ref(false);
-const formData = ref(props.data);
-const ruleFormRef = ref<FormInstance>();
+const initialData = {
+  requestTime: null,
+  BITDEP: null,
+  BLOCKCOMP: null,
+  DEPTH: null,
+  FLOWIN: null,
+  FLOWOUTPC: null,
+  HKLD: null,
+  MWIN: null,
+  MWOUT: null,
+  PUMP1: null,
+  PUMP2: null,
+  PUMP3: null,
+  SPP: null,
+  SURF_RPM: null,
+  TGAS_OUT: null,
+  WOB: null,
+  wellName: null
+};
+const formData = ref({ ...initialData });
+
+function getDetail() {
+  getMoreInfo(wellName.value)
+    .then(({ status, data }) => {
+      if (status === 200) {
+        formData.value = {
+          ...data,
+          requestTime: dayjs(data.requestTime * 1000).format(
+            "YYYY-MM-DD HH:mm:ss"
+          )
+        };
+      } else {
+        if (timer.value !== null) {
+          clearInterval(timer.value);
+        }
+      }
+    })
+    .catch(() => {
+      if (timer.value !== null) {
+        clearInterval(timer.value);
+      }
+    });
+}
+
+const timer = ref(null);
+
+const formVisible = ref(false),
+  wellName = ref(null),
+  ruleFormRef = ref<FormInstance>();
 
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
@@ -42,8 +83,14 @@ const resetForm = (formEl: FormInstance | undefined) => {
 };
 
 const closeDialog = () => {
-  formVisible.value = false;
+  wellName.value = null;
+
   resetForm(ruleFormRef.value);
+  if (timer.value !== null) {
+    clearInterval(timer.value);
+  }
+
+  formVisible.value = false;
 };
 
 const emits = defineEmits(["update:visible"]);
@@ -63,9 +110,15 @@ watch(
 );
 
 watch(
-  () => props.data,
+  () => props.wellName,
   val => {
-    formData.value = val;
+    if (val !== null) {
+      wellName.value = val;
+      getDetail();
+      timer.value = setInterval(() => {
+        getDetail();
+      }, 1000);
+    }
   }
 );
 </script>

@@ -43,7 +43,7 @@ export const delFavorite = (id: number): ResponseType => {
 export const setPush = (id: number, push: number): ResponseType => {
   return http.request(
     "post",
-    `/gjsnccj/well/setstate`,
+    `/gjsnccj/well/setpush`,
     {},
     {
       params: {
@@ -55,7 +55,7 @@ export const setPush = (id: number, push: number): ResponseType => {
 };
 
 // 口井-获取实时的施工详情数据
-export const getDetailByWellName = (wellName: string): ResponseType => {
+export const getMoreInfo = (wellName: string): ResponseType => {
   return http.request("get", `/gjsnccj/well/moreinfo`, {
     params: {
       wellName
@@ -64,8 +64,6 @@ export const getDetailByWellName = (wellName: string): ResponseType => {
 };
 
 // 口井-更新口井信息
-export const updateWell = (params: object): ResponseType => {
-  return http.request("get", `/gjsnccj/well/update`, {
-    params
-  });
+export const updateWell = (data: object): ResponseType => {
+  return http.request("post", `/gjsnccj/well/update`, { data });
 };
