@@ -4,29 +4,38 @@ import {
   getWellList,
   addFavorite,
   delFavorite,
-  getMoreInfo
+  getWellMoreInfo
 } from "/@/api/well";
-import { ref, onMounted, nextTick } from "vue";
+import { ref, reactive, onMounted, nextTick } from "vue";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
-import detailDialogForm from "./DetailDialogForm.vue";
-import wellDialogForm from "./WellDialogForm.vue";
+import moreInfoDialog from "./MoreInfoDialog.vue";
+import updateDialog from "./UpdateFormDialog.vue";
 
 let dataList = ref([{}]);
 let loading = ref(true);
 const { columns } = useColumns();
 
+const pagination = reactive<PaginationProps>({
+  total: 0,
+  pageSize: 5,
+  currentPage: 1,
+  background: true
+});
+
 // 口井 - 添加收藏
 async function onFavoriteAdd(row) {
-  let { data } = await addFavorite(row.id);
+  let { data } = await addFavorite(row.wellName, row.wellType);
   if (data) {
+    pagination.currentPage = 1;
     onSearch();
   }
 }
 
 // 口井 - 删除收藏
 async function onFavoriteDel(row) {
-  let { data } = await delFavorite(row.id);
+  let { data } = await delFavorite(row.wellName, row.wellType);
   if (data) {
+    pagination.currentPage = 1;
     onSearch();
   }
 }
@@ -59,7 +68,7 @@ const updateDialogVisible = ref(false);
 const updateData = ref({ ...initialUpdateData });
 
 function onUpdate(row) {
-  console.log(row);
+  // searchWell(row.wellName).then(res => console.log(res));
   updateDialogVisible.value = true;
   nextTick(() => {
     updateData.value = {
@@ -68,35 +77,46 @@ function onUpdate(row) {
   });
 }
 
-// 只有首次获取口井数据时需要查询是否有更多信息，否则不查询
-let hasGetMore = false;
+function onCurrentChange(val: number) {
+  pagination.currentPage = val;
+  onSearch();
+}
+
+function onSizeChange(val: number) {
+  pagination.pageSize = val;
+  onSearch();
+}
 
 async function onSearch() {
   loading.value = true;
-  let { data } = await getWellList();
+  let { data } = await getWellList({
+    pageSize: pagination.pageSize,
+    pageNum: pagination.currentPage
+  });
 
-  const res = data.map(item => {
+  const res = data.records.map(item => {
     return {
       ...item,
       hasMore: false
     };
   });
   dataList.value = res;
-
+  pagination.total = data.total;
+  getMore();
   setTimeout(() => {
     loading.value = false;
-    if (!hasGetMore) {
-      getMore();
-      hasGetMore = true;
-    }
   }, 500);
 }
 
 function getMore() {
   dataList.value.forEach((item, index) => {
-    getMoreInfo(item.wellName)
-      .then(() => {
-        dataList.value[index].hasMore = true;
+    getWellMoreInfo(item.wellName)
+      .then(({ status }) => {
+        if (status === 200) {
+          dataList.value[index].hasMore = true;
+        } else {
+          dataList.value[index].hasMore = false;
+        }
       })
       .catch(() => {
         dataList.value[index].hasMore = false;
@@ -114,11 +134,15 @@ onMounted(() => {
     <PureTable
       border
       align="center"
-      row-key="id"
+      row-key="wellName"
       table-layout="auto"
       showOverflowTooltip
       :data="dataList"
       :columns="columns"
+      :pagination="pagination"
+      :paginationSmall="true"
+      @size-change="onSizeChange"
+      @current-change="onCurrentChange"
       :header-cell-style="{
         backgroundColor: 'rgba(0,21,41,.7)',
         color: '#d0d0d0'
@@ -162,11 +186,11 @@ onMounted(() => {
         </el-button>
       </template>
     </PureTable>
-    <detailDialogForm
+    <moreInfoDialog
       v-model:visible="formDialogVisible"
       :wellName="curr_wellName"
     />
-    <wellDialogForm
+    <updateDialog
       v-model:visible="updateDialogVisible"
       :data="updateData"
       @refresh="onSearch"

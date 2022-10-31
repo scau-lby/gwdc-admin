@@ -110,7 +110,10 @@ class GwdcHttp {
           return response.data;
         }
 
-        if (response.data.status !== 200) {
+        if (
+          response.data.status !== 200 &&
+          response.data.data !== "请求eiss授权错误"
+        ) {
           ElNotification({
             title: `${response.data.message}`,
             message: `${response.data.data}`,

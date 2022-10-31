@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { ElMessageBox } from "element-plus";
 import { Switch, message } from "@pureadmin/components";
-import { setPush } from "/@/api/well";
+import { setWellPush } from "/@/api/well";
 
 export function useColumns() {
   const switchLoadMap = ref({});
@@ -32,7 +32,7 @@ export function useColumns() {
     {
       label: "序号",
       type: "index",
-      width: 120
+      width: 60
     },
     {
       label: "作业单位",
@@ -66,7 +66,8 @@ export function useColumns() {
     },
     {
       label: "作业设备",
-      prop: "trucks"
+      prop: "trucks",
+      width: 200
     },
     {
       label: "施工指挥",
@@ -78,7 +79,7 @@ export function useColumns() {
     },
     {
       label: "井队作业关键参数",
-      width: 160,
+      width: 140,
       slot: "operation1",
       fixed: "right"
     }
@@ -106,8 +107,8 @@ export function useColumns() {
             loading: true
           }
         );
-        const { id, push } = row;
-        setPush(id, push).then(({ status, data }) => {
+        const { wellName, wellType, push } = row;
+        setWellPush(wellName, wellType, push).then(({ status, data }) => {
           if (status === 200) {
             setTimeout(() => {
               switchLoadMap.value[index] = Object.assign(

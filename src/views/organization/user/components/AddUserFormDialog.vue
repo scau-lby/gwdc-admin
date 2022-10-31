@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { ElNotification, FormInstance } from "element-plus";
-import { addUser, getOrgList } from "/@/api/organization";
+import { addUser } from "/@/api/user";
+import { getOrgList } from "/@/api/org";
 import { handleTree } from "@pureadmin/utils";
 
 const belongToProps = {
@@ -44,7 +45,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       delete formData.value?.userId;
       addUser({
         ...formData.value,
-        groups: "1,2,3"
+        groups: ""
       }).then(() => {
         emits("refresh");
         ElNotification({

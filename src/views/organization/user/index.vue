@@ -3,12 +3,8 @@ import addUserFormDialog from "./components/AddUserFormDialog.vue";
 import editUserFormDialog from "./components/EditUserFormDialog.vue";
 import userGroupFormDialog from "./components/UserGroupFormDialog.vue";
 import { useColumns } from "./columns";
-import {
-  getUserList,
-  resetPwd,
-  deleteUser,
-  getOrgList
-} from "/@/api/organization";
+import { getUserList, setUserPwd, deleteUser } from "/@/api/user";
+import { getOrgList } from "/@/api/org";
 import { reactive, ref, onMounted, nextTick } from "vue";
 import { ElMessageBox, ElNotification, type FormInstance } from "element-plus";
 import { TableProBar } from "/@/components/ReTable";
@@ -73,7 +69,7 @@ function onResetPwd(row) {
       center: true
     }
   ).then(({ value }) => {
-    resetPwd({
+    setUserPwd({
       loginName: row.loginName,
       passwd: value
     }).then(() => {
@@ -96,7 +92,9 @@ function onEdit(row) {
 }
 
 function onDelete(row) {
-  deleteUser(row.ID).then(() => {
+  // console.log(row);
+  // return;
+  deleteUser(row.userId).then(() => {
     ElNotification({
       title: "操作成功",
       message: `删除用户 【${row.userName}】`,
@@ -110,15 +108,21 @@ function onDelete(row) {
   });
 }
 
+const initialUGFData = {
+  userId: 0,
+  loginName: "",
+  userName: "",
+  gids: []
+};
+const userGroupFormDialogVisible = ref(false);
+const userGroupFormData = ref({ ...initialUGFData });
+
 function onSetGroups(row) {
   userGroupFormDialogVisible.value = true;
   nextTick(() => {
-    userGroupFormData.value = {
-      userId: row.ID,
-      loginName: row.loginName,
-      userName: row.userName,
-      group_ids: row.groups.split(",")
-    };
+    const { userId, loginName, userName, groups } = row;
+    const gids = groups ? groups.split(",").map(item => parseInt(item)) : [];
+    userGroupFormData.value = { userId, loginName, userName, gids };
   });
 }
 
@@ -176,15 +180,6 @@ const initialUFData = {
 const addUserFormDialogVisible = ref(false);
 const editUserFormDialogVisible = ref(false);
 const userFormData = ref({ ...initialUFData });
-
-const initialUGFData = {
-  userId: 0,
-  loginName: "",
-  userName: "",
-  group_ids: ""
-};
-const userGroupFormDialogVisible = ref(false);
-const userGroupFormData = ref({ ...initialUGFData });
 </script>
 
 <template>
@@ -324,6 +319,7 @@ const userGroupFormData = ref({ ...initialUGFData });
     <userGroupFormDialog
       v-model:visible="userGroupFormDialogVisible"
       :data="userGroupFormData"
+      @refresh="onSearch"
     />
   </div>
 </template>

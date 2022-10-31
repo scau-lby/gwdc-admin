@@ -8,6 +8,11 @@ export function useColumns() {
       width: 70,
       hide: ({ checkList }) => !checkList.includes("序号列")
     },
+    // {
+    //   label: "ID",
+    //   prop: "gid",
+    //   width: 70
+    // },
     {
       label: "用户组名称",
       prop: "groupName",

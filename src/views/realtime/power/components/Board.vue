@@ -96,13 +96,7 @@ watch(
   <div class="mc-board">
     <div class="mc-header">
       <div class="circle">
-        <div
-          :class="[
-            type === 1 ? 'green' : 'red',
-            formData.length > 0 ? 'twinkling' : ''
-          ]"
-          class="round"
-        />
+        <div :class="[type === 1 ? 'green twinkling' : 'red']" class="round" />
       </div>
       <div class="mc-content">{{ header }}</div>
     </div>

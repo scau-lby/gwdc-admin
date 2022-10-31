@@ -28,6 +28,10 @@ export function useColumns() {
       prop: "plateNum"
     },
     {
+      label: "设备类型",
+      prop: "equType"
+    },
+    {
       label: "施工指挥",
       prop: "commander"
     },

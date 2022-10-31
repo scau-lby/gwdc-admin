@@ -52,14 +52,6 @@ export const useUserStore = defineStore({
     async loginByLoginName(params) {
       return new Promise<void>((resolve, reject) => {
         userLogin(params)
-          // .then(({ data }) => {
-          //   setToken({
-          //     accessToken: data[0]?.token,
-          //     name: data[0]?.userName,
-          //     expires: data[0]?.expires || 1 * 60 * 60 * 1000
-          //   });
-          //   resolve();
-          // })
           .then(({ data, message: msg, status }: ResponseType) => {
             if (status === 200) {
               const res = JSON.parse(data);

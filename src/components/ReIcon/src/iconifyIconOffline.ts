@@ -34,6 +34,7 @@ import QuestionFilled from "@iconify-icons/ep/question-filled";
 import TrendCharts from "@iconify-icons/ep/trend-charts";
 import Menagement from "@iconify-icons/ep/management";
 import Tools from "@iconify-icons/ep/tools";
+import Van from "@iconify-icons/ep/van";
 addIcon("plus", Plus);
 addIcon("edit", Edit);
 addIcon("view", View);
@@ -65,6 +66,7 @@ addIcon("info-filled", InfoFilled);
 addIcon("question-filled", QuestionFilled);
 addIcon("trend-charts", TrendCharts);
 addIcon("management", Menagement);
+addIcon("van", Van);
 
 // remixicon
 import ArrowRightSLine from "@iconify-icons/ri/arrow-right-s-line";

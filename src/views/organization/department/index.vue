@@ -1,31 +1,45 @@
 <script setup lang="ts">
 import { useColumns } from "./columns";
-import { getOrgList, deleteOrg } from "/@/api/organization";
 import { handleTree } from "@pureadmin/utils";
-import orgDialogForm from "./components/OrgDialogForm.vue";
 import { ref, onMounted, nextTick } from "vue";
 import { ElNotification } from "element-plus";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 import { TableProBar } from "/@/components/ReTable";
 
+// api
+import { getOrgList, deleteOrg, getOrgPermit } from "/@/api/org";
+// components
+import orgFormDialog from "./components/OrgFormDialog.vue";
+import permitFormDialog from "./components/PermitFormDialog.vue";
+
 defineOptions({
   name: "Department"
 });
-
-let dataList = ref([]);
-let loading = ref(true);
+const orgList = ref([]);
+const dataList = ref([]);
+const loading = ref(true);
 const { columns } = useColumns();
 
 const tableRef = ref();
 
+const initialOrgData = {
+  orgId: 0,
+  orgName: "",
+  pid: 0,
+  layer: 0
+};
+
+const orgFormDialogVisible = ref(false);
+const orgFormData = ref({ ...initialOrgData });
+
 function onAdd() {
-  formDialogVisible.value = true;
+  orgFormDialogVisible.value = true;
 }
 
 function onEdit(row) {
-  formDialogVisible.value = true;
+  orgFormDialogVisible.value = true;
   nextTick(() => {
-    formData.value = {
+    orgFormData.value = {
       orgId: row.orgId,
       orgName: row.orgName,
       pid: row.pid,
@@ -50,7 +64,7 @@ function onDelete(row) {
 async function onSearch() {
   loading.value = true;
   let { data } = await getOrgList();
-
+  orgList.value = JSON.parse(data);
   dataList.value = handleTree(JSON.parse(data), "orgId", "pid");
 
   setTimeout(() => {
@@ -62,15 +76,27 @@ onMounted(() => {
   onSearch();
 });
 
-const initialData = {
+// 授权车辆
+const initialPermitData = {
   orgId: 0,
   orgName: "",
-  pid: 0,
-  layer: 0
+  plate_nums: []
 };
 
-const formDialogVisible = ref(false);
-const formData = ref({ ...initialData });
+const permitFormDialogVisible = ref(false);
+const permitFormData = ref({ ...initialPermitData });
+
+function onPermit(row) {
+  getOrgPermit(row.orgId).then(({ data }) => {
+    nextTick(() => {
+      permitFormData.value = {
+        ...row,
+        plate_nums: data
+      };
+      permitFormDialogVisible.value = true;
+    });
+  });
+}
 </script>
 
 <template>
@@ -123,13 +149,35 @@ const formData = ref({ ...initialData });
                 />
               </template>
             </el-popconfirm>
+            <el-tooltip content="授权车辆" placement="right">
+              <el-link
+                class="reset-margin"
+                :size="size"
+                :icon="useRenderIcon('van')"
+                @click="onPermit(row)"
+                style="margin-left: 20px"
+                type="primary"
+              />
+            </el-tooltip>
+          </template>
+          <template #parentName="{ row }">
+            {{
+              row.pid === 0
+                ? ""
+                : orgList.filter(item => item.orgId === row.pid)[0].orgName
+            }}
           </template>
         </PureTable>
       </template>
     </TableProBar>
-    <orgDialogForm
-      v-model:visible="formDialogVisible"
-      :data="formData"
+    <orgFormDialog
+      v-model:visible="orgFormDialogVisible"
+      :data="orgFormData"
+      @refresh="onSearch"
+    />
+    <permitFormDialog
+      v-model:visible="permitFormDialogVisible"
+      :data="permitFormData"
       @refresh="onSearch"
     />
   </div>

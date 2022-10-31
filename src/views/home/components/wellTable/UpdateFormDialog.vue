@@ -89,6 +89,15 @@ watch(
       <el-form-item label="ID" prop="id" style="display: none">
         <el-input v-model="formData.id" />
       </el-form-item>
+      <el-form-item label="井号" prop="wellName">
+        <el-input v-model="formData.wellName" readonly />
+      </el-form-item>
+      <el-form-item label="固井类型" prop="wellType">
+        <el-input v-model="formData.wellType" readonly />
+      </el-form-item>
+      <el-form-item label="固井级别" prop="wellRank">
+        <el-input v-model="formData.wellRank" />
+      </el-form-item>
 
       <el-form-item label="作业单位" prop="belongTo">
         <el-input v-model="formData.belongTo" />
@@ -102,34 +111,14 @@ watch(
       <el-form-item label="钻井队号" prop="drillTeamNo">
         <el-input v-model="formData.drillTeamNo" />
       </el-form-item>
-
-      <!-- <el-form-item label="施工指挥" prop="favorite">
-        <el-input v-model="formData.favorite" />
-      </el-form-item> -->
       <el-form-item label="操作人员" prop="opreatePerson">
         <el-input v-model="formData.opreatePerson" />
       </el-form-item>
-      <!-- <el-form-item label="施工指挥" prop="push">
-        <el-input v-model="formData.push" />
-      </el-form-item> -->
       <el-form-item label="当前进度" prop="schedule">
         <el-input v-model="formData.schedule" />
       </el-form-item>
-
-      <!-- <el-form-item label="施工指挥" prop="state">
-        <el-input v-model="formData.state" />
-      </el-form-item> -->
-      <el-form-item label="施工指挥" prop="trucks">
+      <el-form-item label="作业设备" prop="trucks">
         <el-input v-model="formData.trucks" />
-      </el-form-item>
-      <el-form-item label="井号" prop="wellName">
-        <el-input v-model="formData.wellName" />
-      </el-form-item>
-      <el-form-item label="固井级别" prop="wellRank">
-        <el-input v-model="formData.wellRank" />
-      </el-form-item>
-      <el-form-item label="固井类型" prop="wellType">
-        <el-input v-model="formData.wellType" />
       </el-form-item>
     </el-form>
     <template #footer>

@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { FormInstance } from "element-plus";
-import { getMoreInfo } from "/@/api/well";
+import { getWellMoreInfo } from "/@/api/well";
 import dayjs from "dayjs";
 
 const props = defineProps({
@@ -49,7 +49,7 @@ const initialData = {
 const formData = ref({ ...initialData });
 
 function getDetail() {
-  getMoreInfo(wellName.value)
+  getWellMoreInfo(wellName.value)
     .then(({ status, data }) => {
       if (status === 200) {
         formData.value = {

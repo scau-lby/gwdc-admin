@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import truckFormDialog from "./components/TruckFormDialog.vue";
 import { getTruckList, deleteTruck } from "/@/api/truck";
-import { getOrgList } from "/@/api/organization";
+import { getOrgList } from "/@/api/org";
 import { useColumns } from "./columns";
 import { type PaginationProps } from "@pureadmin/table";
 import { reactive, ref, onMounted, nextTick } from "vue";

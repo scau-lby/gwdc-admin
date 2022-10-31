@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { ElNotification, FormInstance } from "element-plus";
-import { addRole, editRole } from "/@/api/role";
+import { getRightList, saveRoleRights } from "/@/api/role";
 
 const props = defineProps({
   visible: {
@@ -25,36 +25,22 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(valid => {
     if (valid) {
-      if (formData.value.gid > 0) {
-        editRole(formData.value).then(({ status }) => {
+      saveRoleRights(formData.value.gid, formData.value.rids.join(",")).then(
+        ({ status }) => {
           if (status === 200) {
             ElNotification({
               title: "操作成功",
-              message: `编辑用户组 【${formData.value.groupName}】`,
+              message: `角色【${
+                formData.value.groupName
+              }】设置权限 【${formData.value.rids.join(",")}】`,
               type: "success"
             });
             emits("refresh");
             formVisible.value = false;
             resetForm(formEl);
           }
-        });
-      } else {
-        addRole({
-          groupName: formData.value.groupName,
-          note: formData.value.note
-        }).then(({ status }) => {
-          if (status === 200) {
-            ElNotification({
-              title: "操作成功",
-              message: `新增用户组 【${formData.value.groupName}】`,
-              type: "success"
-            });
-            emits("refresh");
-            formVisible.value = false;
-            resetForm(formEl);
-          }
-        });
-      }
+        }
+      );
     }
   });
 };
@@ -93,37 +79,62 @@ watch(
 
 const rules = {
   groupName: [{ required: true, message: "请输入用户组名称", trigger: "blur" }],
-  note: [{ required: true, message: "请输入用户组描述", trigger: "blur" }]
+  rids: [
+    {
+      type: "array",
+      required: true,
+      message: "请至少设置一项权限",
+      trigger: "change"
+    }
+  ]
 };
+
+const rightList = ref([]);
+
+async function getRights() {
+  let { data } = await getRightList();
+  rightList.value = data;
+}
+
+onMounted(() => {
+  getRights();
+});
 </script>
 
 <template>
   <el-dialog
     v-model="formVisible"
-    :title="formData.gid > 0 ? '编辑用户组' : '新增用户组'"
+    title="权限设置"
     :width="680"
     draggable
     :before-close="closeDialog"
+    center
   >
     <el-form
       ref="ruleFormRef"
       :model="formData"
       :rules="rules"
       label-width="100px"
-      center
     >
       <el-form-item label="用户组ID" prop="gid" style="display: none">
         <el-input v-model="formData.gid" />
       </el-form-item>
       <el-form-item label="用户组名称" prop="groupName">
-        <el-input v-model="formData.groupName" placeholder="请输入用户组名称" />
-      </el-form-item>
-      <el-form-item label="用户组描述" prop="note">
         <el-input
-          type="textarea"
-          v-model="formData.note"
-          placeholder="请输入用户组描述"
+          v-model="formData.groupName"
+          placeholder="请输入用户组名称"
+          readonly
         />
+      </el-form-item>
+      <el-form-item label="用户组权限" prop="rids">
+        <el-checkbox-group v-model="formData.rids">
+          <template v-for="item in rightList" :key="item.rid">
+            <el-checkbox :label="item.rid">
+              {{ item.funcInfo }}
+            </el-checkbox>
+            <br />
+          </template>
+        </el-checkbox-group>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -134,3 +145,11 @@ const rules = {
     </template>
   </el-dialog>
 </template>
+
+<style lang="scss" scoped>
+::v-deep(.el-checkbox-group) {
+  width: 100%;
+  max-height: 500px !important;
+  overflow-y: auto;
+}
+</style>

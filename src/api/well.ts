@@ -6,48 +6,61 @@ interface ResponseType extends Promise<any> {
   message?: string;
 }
 
-// 获取用户列表
+// 口井-获取口井列表
 export const getWellList = (params?: object): ResponseType => {
   return http.request("get", "/gjsnccj/well/get", { params });
 };
 
 // 口井-添加收藏
-export const addFavorite = (id: number): ResponseType => {
+export const addFavorite = (
+  wellName: string,
+  wellType: string
+): ResponseType => {
   return http.request(
     "post",
     `/gjsnccj/well/addfavorite`,
     {},
     {
       params: {
-        id
+        wellName,
+        wellType
       }
     }
   );
 };
 
 // 口井-删除收藏项目
-export const delFavorite = (id: number): ResponseType => {
+export const delFavorite = (
+  wellName: string,
+  wellType: string
+): ResponseType => {
   return http.request(
     "post",
     `/gjsnccj/well/delfavorite`,
     {},
     {
       params: {
-        id
+        wellName,
+        wellType
       }
     }
   );
 };
 
 // 口井-设置是否推送数据
-export const setPush = (id: number, push: number): ResponseType => {
+export const setWellPush = (
+  wellName: string,
+  wellType: string,
+  push: number
+): ResponseType => {
   return http.request(
     "post",
     `/gjsnccj/well/setpush`,
     {},
     {
       params: {
-        id,
+        wellName,
+        wellType,
         push
       }
     }
@@ -55,7 +68,7 @@ export const setPush = (id: number, push: number): ResponseType => {
 };
 
 // 口井-获取实时的施工详情数据
-export const getMoreInfo = (wellName: string): ResponseType => {
+export const getWellMoreInfo = (wellName: string): ResponseType => {
   return http.request("get", `/gjsnccj/well/moreinfo`, {
     params: {
       wellName
@@ -66,4 +79,14 @@ export const getMoreInfo = (wellName: string): ResponseType => {
 // 口井-更新口井信息
 export const updateWell = (data: object): ResponseType => {
   return http.request("post", `/gjsnccj/well/update`, { data });
+};
+
+// 口井-获取口井历史实时数据
+export const getHistoryReal = (params: object): ResponseType => {
+  return http.request("get", `/gjsnccj/well/gethistoryreal`, { params });
+};
+
+// 口井-查询口井历史实时数据（多车混合）
+export const getFixedHistoryReal = (params: object): ResponseType => {
+  return http.request("get", `/gjsnccj/well/getfixedHistoryReal`, { params });
 };

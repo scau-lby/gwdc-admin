@@ -1,21 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { ElNotification, FormInstance } from "element-plus";
-import { userBindGroup } from "/@/api/organization";
-
-let groups = ref([]);
-// async function getUserGroupList() {
-//   let { ResultCode, data, Msg } = await getGroupList({});
-//   if (ResultCode === 0) {
-//     groups.value = data;
-//   } else {
-//     ElNotification({
-//       title: "操作失败",
-//       message: `获取用户分组, 提示：${Msg}`,
-//       type: "error"
-//     });
-//   }
-// }
+import { getRoleList } from "/@/api/role";
+import { setUserToken } from "/@/api/user";
 
 const props = defineProps({
   visible: {
@@ -31,7 +18,7 @@ const props = defineProps({
 });
 
 const ruleFormRef = ref<FormInstance>();
-
+const groupList = ref([]);
 const formVisible = ref(false);
 const formData = ref(props.data);
 
@@ -39,21 +26,20 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(valid => {
     if (valid) {
-      userBindGroup({
-        uid: formData.value.uid,
-        group_ids: formData.value.group_ids.join(",")
-      }).then(() => {
-        ElNotification({
-          title: "操作成功",
-          message: `用户 【${
-            formData.value.UserName
-          }】绑定分组 【${formData.value.group_ids.join(",")}】`,
-          type: "success"
-        });
-
-        formVisible.value = false;
-        resetForm(formEl);
-      });
+      setUserToken(formData.value.userId, formData.value.gids.join(",")).then(
+        () => {
+          emits("refresh");
+          ElNotification({
+            title: "操作成功",
+            message: `用户 【${
+              formData.value.userName
+            }】绑定分组 【${formData.value.gids.join(",")}】`,
+            type: "success"
+          });
+          formVisible.value = false;
+          resetForm(formEl);
+        }
+      );
     }
   });
 };
@@ -68,11 +54,11 @@ const closeDialog = () => {
   resetForm(ruleFormRef.value);
 };
 
-const emit = defineEmits(["update:visible"]);
+const emits = defineEmits(["update:visible", "refresh"]);
 watch(
   () => formVisible.value,
   val => {
-    emit("update:visible", val);
+    emits("update:visible", val);
   }
 );
 
@@ -91,7 +77,17 @@ watch(
 );
 
 const rules = {
-  group_ids: [
+  loginName: [
+    {
+      required: true
+    }
+  ],
+  userName: [
+    {
+      required: true
+    }
+  ],
+  gids: [
     {
       type: "array",
       required: true,
@@ -101,8 +97,17 @@ const rules = {
   ]
 };
 
+async function getGroupList() {
+  let { data } = await getRoleList({
+    pageNum: 1,
+    pageSize: 1000,
+    groupName: ""
+  });
+  groupList.value = data.records;
+}
+
 onMounted(() => {
-  // getUserGroupList();
+  getGroupList();
 });
 </script>
 
@@ -116,25 +121,20 @@ onMounted(() => {
   >
     <!-- 表单内容 -->
     <el-form ref="ruleFormRef" :model="formData" :rules="rules">
-      <el-form-item prop="LoginName">
-        <el-input
-          v-model="formData.LoginName"
-          :style="{ width: '480px' }"
-          readonly
-        />
+      <el-form-item prop="userId" style="display: none">
+        <el-input v-model="formData.loginName" readonly />
       </el-form-item>
-      <el-form-item prop="UserName">
-        <el-input
-          v-model="formData.UserName"
-          :style="{ width: '480px' }"
-          readonly
-        />
+      <el-form-item label="登录名称" prop="loginName">
+        <el-input v-model="formData.loginName" readonly />
       </el-form-item>
-      <el-form-item prop="group_ids">
-        <el-checkbox-group v-model="formData.group_ids">
-          <template v-for="item in groups" :key="item.GID">
-            <el-checkbox :label="item.GID + ''">
-              {{ item.GroupName }}
+      <el-form-item label="用户姓名" prop="userName">
+        <el-input v-model="formData.userName" readonly />
+      </el-form-item>
+      <el-form-item label="设置分组" prop="gids">
+        <el-checkbox-group v-model="formData.gids">
+          <template v-for="item in groupList" :key="item.gid">
+            <el-checkbox :label="item.gid">
+              {{ item.groupName }}
             </el-checkbox>
             <br />
           </template>

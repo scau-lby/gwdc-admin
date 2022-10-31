@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { ElNotification, FormInstance } from "element-plus";
-import { changePwd } from "/@/api/user";
+import { changeUserPwd } from "/@/api/user";
 import { router } from "/@/router";
 import { storageSession } from "/@/utils/storage";
 
@@ -27,7 +27,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(valid => {
     if (valid) {
-      changePwd({
+      changeUserPwd({
         newPasswd: formData.value.newPasswd,
         oldPasswd: formData.value.oldPasswd
       }).then(({ status }) => {

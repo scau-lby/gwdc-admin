@@ -71,7 +71,9 @@ onMounted(() => {
         />
       </el-col>
     </el-row>
+    <!-- 口井 -->
     <WellTable style="margin-top: 10px" />
+    <!-- 在线设备 -->
     <OnlineTable style="margin-top: 10px" />
     <el-row :gutter="20" style="margin-top: 10px">
       <el-col :span="12">

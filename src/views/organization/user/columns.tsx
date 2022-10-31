@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { ElMessageBox } from "element-plus";
 import { Switch, message } from "@pureadmin/components";
 import dayjs from "dayjs";
-import { updateUser } from "/@/api/organization";
+import { updateUser } from "/@/api/user";
 
 export function useColumns() {
   const switchLoadMap = ref({});

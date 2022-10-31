@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { FormInstance } from "element-plus";
-// import { addGroup, editGroup } from "/@/api/organization";
-import { getOrgList } from "/@/api/organization";
+import { getOrgList } from "/@/api/org";
 
 const props = defineProps({
   visible: {
@@ -26,7 +25,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(valid => {
     if (valid) {
-      // editGroup(formData.value).then(({ status }) => {
+      // editRole(formData.value).then(({ status }) => {
       //   if (status === 200) {
       //     ElNotification({
       //       title: "操作成功",

@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import groupFormDialog from "./components/GroupFormDialog.vue";
 import { useColumns } from "./columns";
-import { getRoleList, deleteRole } from "/@/api/organization";
 import { reactive, ref, onMounted, nextTick } from "vue";
 import { ElNotification } from "element-plus";
 import { type FormInstance } from "element-plus";
 import { type PaginationProps } from "@pureadmin/table";
 import { TableProBar } from "/@/components/ReTable";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
+
+// components
+import groupFormDialog from "./components/GroupFormDialog.vue";
+import rightFormDialog from "./components/RightFormDialog.vue";
+
+// 接口
+import { getRoleList, deleteRole, getRoleRights } from "/@/api/role";
 
 defineOptions({
   name: "Group"
@@ -29,6 +34,15 @@ const pagination = reactive<PaginationProps>({
   currentPage: 1,
   background: true
 });
+
+const initialGroupData = {
+  gid: 0,
+  groupName: "",
+  note: ""
+};
+
+const groupFormDialogVisible = ref(false);
+const groupFormData = ref({ ...initialGroupData });
 
 function onAdd() {
   groupFormDialogVisible.value = true;
@@ -95,14 +109,31 @@ onMounted(() => {
   onSearch();
 });
 
-const initialData = {
+const initalRightFormData = {
   gid: 0,
   groupName: "",
-  note: ""
+  rids: []
 };
 
-const groupFormDialogVisible = ref(false);
-const groupFormData = ref({ ...initialData });
+const rightFormDialogVisible = ref(false);
+const rightFormData = ref({ ...initalRightFormData });
+
+function onSetRights(row) {
+  getRoleRights(row.gid).then(({ data }) => {
+    let rids = [];
+    if (data.length > 0) {
+      rids = data.map(item => item.rid);
+    }
+    rightFormDialogVisible.value = true;
+    nextTick(() => {
+      rightFormData.value = {
+        gid: row.gid,
+        groupName: row.groupName,
+        rids
+      };
+    });
+  });
+}
 </script>
 
 <template>
@@ -171,7 +202,7 @@ const groupFormData = ref({ ...initialData });
                 class="reset-margin"
                 type="primary"
                 :size="size"
-                @click="onEdit(row)"
+                @click="onSetRights(row)"
                 :icon="useRenderIcon('menu')"
                 style="margin-right: 15px"
               />
@@ -201,9 +232,16 @@ const groupFormData = ref({ ...initialData });
         </PureTable>
       </template>
     </TableProBar>
+
     <groupFormDialog
       v-model:visible="groupFormDialogVisible"
       :data="groupFormData"
+      @refresh="onSearch"
+    />
+
+    <rightFormDialog
+      v-model:visible="rightFormDialogVisible"
+      :data="rightFormData"
       @refresh="onSearch"
     />
   </div>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { ElNotification, FormInstance } from "element-plus";
-import { addTruck, editTruck } from "/@/api/truck";
-import { getOrgList } from "/@/api/organization";
+import { addTruck, updateTruck } from "/@/api/truck";
+import { getOrgList } from "/@/api/org";
 import { handleTree } from "/@/utils/tree";
 
 const orgProps = {
@@ -43,7 +43,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   await formEl.validate(valid => {
     if (valid) {
       if (formData.value.id > 0) {
-        editTruck({
+        updateTruck({
           ...formData.value
         }).then(() => {
           emits("refresh");

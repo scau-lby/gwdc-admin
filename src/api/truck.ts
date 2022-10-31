@@ -26,7 +26,7 @@ export const addTruck = (data?: object): ResponseType => {
 };
 
 // 编辑设备
-export const editTruck = (data?: object): ResponseType => {
+export const updateTruck = (data?: object): ResponseType => {
   return http.request("post", "/gjsnccj/truck/update", { data });
 };
 
@@ -45,7 +45,6 @@ export const getOnlineTruckList = (params?: object): ResponseType => {
 };
 
 // 获取首页概述信息
-
 export const getPreview = (offset: number): ResponseType => {
   return http.request("get", `/gjsnccj/truck/getpreview?offset=${offset}`);
 };

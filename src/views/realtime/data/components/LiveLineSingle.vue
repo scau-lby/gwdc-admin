@@ -5,9 +5,9 @@ import { onBeforeMount, onMounted, nextTick, ref, watch } from "vue";
 import { useEventListener, tryOnUnmounted, useTimeoutFn } from "@vueuse/core";
 import { getHistoryReal } from "/@/api/well";
 
-const pageSize = 500;
-
 let echartInstance: ECharts;
+
+const pageSize = 500;
 
 const props = defineProps({
   index: {
@@ -36,57 +36,39 @@ const props = defineProps({
 
 const legend_selected = {
   混浆密度: true,
+
   A泵压力: true,
-  B泵压力: true,
+
   A泵瞬时排量: true,
-  B泵瞬时排量: true,
-  双泵瞬时排量: true,
   清水瞬时流量: true,
   A泵泵替瞬时排量: true,
-  B泵泵替瞬时排量: true,
+
   A泵累计排量: true,
-  B泵累计排量: true,
-  双泵累计排量: true,
   清水累计排量: true,
-  A泵泵替累计流量: true,
-  B泵泵替累计流量: true
+  A泵泵替累计流量: true
 };
 
 const legend_data = [
   { name: "混浆密度" },
   { name: "A泵压力" },
-  { name: "B泵压力" },
   { name: "A泵瞬时排量" },
-  { name: "B泵瞬时排量" },
-  { name: "双泵瞬时排量" },
   { name: "清水瞬时流量" },
   { name: "A泵泵替瞬时排量" },
-  { name: "B泵泵替瞬时排量" },
   { name: "A泵累计排量" },
-  { name: "B泵累计排量" },
-  { name: "双泵累计排量" },
   { name: "清水累计排量" },
-  { name: "A泵泵替累计流量" },
-  { name: "B泵泵替累计流量" }
+  { name: "A泵泵替累计流量" }
 ];
 
 const dataset_dimensions = [
   "time",
   "md",
   "abyl",
-  "bbyl",
   "abll",
-  "bbll",
-  "zssll",
   "qsll",
   "abdcll",
-  "bbdcll",
   "ablj",
-  "bblj",
-  "zlj",
   "qslj",
-  "abdclllj",
-  "bbdclllj"
+  "abdclllj"
 ];
 
 const index = ref(props.index);
@@ -102,8 +84,7 @@ let chartData = [];
 const option = {
   tooltip: {
     show: true,
-    trigger: "axis",
-    confine: true
+    trigger: "axis"
   },
   axisPointer: {
     snap: true,
@@ -131,19 +112,12 @@ const option = {
   color: [
     "#5470c6",
     "#91cc75",
-    "#fac858",
     "#ee6666",
-    "#73c0de",
-    "#91cc75",
     "#fac858",
     "#9a60b4",
-    "#ea7ccc",
     "#ee6666",
-    "#73c0de",
-    "#91cc75",
     "#fac858",
-    "#9a60b4",
-    "#ea7ccc"
+    "#9a60b4"
   ],
   grid: [
     {
@@ -322,31 +296,7 @@ const option = {
       yAxisIndex: 1
     },
     {
-      name: "B泵压力",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 1,
-      yAxisIndex: 1
-    },
-    {
       name: "A泵瞬时排量",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 2,
-      yAxisIndex: 2
-    },
-    {
-      name: "B泵瞬时排量",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 2,
-      yAxisIndex: 2
-    },
-    {
-      name: "双泵瞬时排量",
       type: "line",
       symbol: "none",
       smooth: true,
@@ -370,31 +320,7 @@ const option = {
       yAxisIndex: 2
     },
     {
-      name: "B泵泵替瞬时排量",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 2,
-      yAxisIndex: 2
-    },
-    {
       name: "A泵累计排量",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 3,
-      yAxisIndex: 3
-    },
-    {
-      name: "B泵累计排量",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 3,
-      yAxisIndex: 3
-    },
-    {
-      name: "双泵累计排量",
       type: "line",
       symbol: "none",
       smooth: true,
@@ -416,14 +342,6 @@ const option = {
       smooth: true,
       xAxisIndex: 3,
       yAxisIndex: 3
-    },
-    {
-      name: "B泵泵替累计流量",
-      type: "line",
-      symbol: "none",
-      smooth: true,
-      xAxisIndex: 3,
-      yAxisIndex: 3
     }
   ],
   dataZoom: [
@@ -440,9 +358,7 @@ const option = {
   ],
   toolbox: {
     feature: {
-      saveAsImage: {
-        show: true
-      },
+      saveAsImage: {},
       dataView: {
         show: true,
         optionToContent: function (opt) {
@@ -460,13 +376,6 @@ const option = {
                 <th>${series[5].name}</th>
                 <th>${series[6].name}</th>
                 <th>${series[7].name}</th>
-                <th>${series[8].name}</th>
-                <th>${series[9].name}</th>
-                <th>${series[10].name}</th>
-                <th>${series[11].name}</th>
-                <th>${series[12].name}</th>
-                <th>${series[13].name}</th>
-                <th>${series[14].name}</th>
               </tr>
             </thead>`;
           table += `<tbody>`;
@@ -475,19 +384,12 @@ const option = {
                 <td>${dataset[i].time}</td>
                 <td>${dataset[i].md}</td>
                 <td>${dataset[i].abyl}</td>
-                <td>${dataset[i].bbyl}</td>
                 <td>${dataset[i].abll}</td>
-                <td>${dataset[i].bbll}</td>
-                <td>${dataset[i].zssll}</td>
                 <td>${dataset[i].qsll}</td>
                 <td>${dataset[i].abdcll}</td>
-                <td>${dataset[i].bbdcll}</td>
                 <td>${dataset[i].ablj}</td>
-                <td>${dataset[i].bblj}</td>
-                <td>${dataset[i].zlj}</td>
                 <td>${dataset[i].qslj}</td>
                 <td>${dataset[i].abdclllj}</td>
-                <td>${dataset[i].bbdclllj}</td>
               </tr>`;
           }
           table += "</tbody></table>";
@@ -556,18 +458,18 @@ function getResult(params: object) {
   return res;
 }
 
-async function getMoreRecords(pageNum, endTime) {
-  let { data } = await getHistoryReal({
+function getMoreRecords(pageNum, endTime) {
+  getHistoryReal({
     plateNum: props.plateNum,
     wellName: props.wellName,
     wellType: props.wellType,
     endTime: endTime,
     pageNum: pageNum,
     pageSize
+  }).then(({ data }) => {
+    const records = data.records.map(item => getResult(item));
+    chartData = records.concat(chartData);
   });
-
-  const records = data.records.map(item => getResult(item));
-  chartData = records.concat(chartData);
 }
 
 function initEchartInstance() {

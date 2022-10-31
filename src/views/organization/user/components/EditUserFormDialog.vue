@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { ElNotification, FormInstance } from "element-plus";
-import { updateUser, getOrgList } from "/@/api/organization";
+import { updateUser } from "/@/api/user";
+import { getOrgList } from "/@/api/org";
 import { handleTree } from "@pureadmin/utils";
 
 const belongToProps = {

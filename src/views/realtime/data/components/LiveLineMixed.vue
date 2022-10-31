@@ -3,6 +3,9 @@ import { ECharts } from "echarts";
 import echarts from "/@/plugins/echarts";
 import { onBeforeMount, onMounted, nextTick, ref, watch } from "vue";
 import { useEventListener, tryOnUnmounted, useTimeoutFn } from "@vueuse/core";
+import { getFixedHistoryReal } from "/@/api/well";
+
+const pageSize = 500;
 
 let echartInstance: ECharts;
 
@@ -11,10 +14,22 @@ const props = defineProps({
     type: Number,
     default: 0
   },
-  chartData: {
-    type: Array,
+  plateNum: {
+    type: String,
+    default: ""
+  },
+  wellName: {
+    type: String,
+    default: ""
+  },
+  wellType: {
+    type: String,
+    default: ""
+  },
+  data: {
+    type: Object,
     default: () => {
-      return [];
+      return {};
     }
   }
 });
@@ -38,13 +53,13 @@ const legend_data = [
 ];
 
 const dataset_dimensions = [
-  "sj",
+  "time",
   "md",
-  "Abyl",
-  "Zssll",
-  "AbDcll",
-  "Zlj",
-  "AbDclllj"
+  "abyl",
+  "zssll",
+  "abdcll",
+  "zlj",
+  "abdclllj"
 ];
 
 const index = ref(props.index);
@@ -54,6 +69,8 @@ watch(
     index.value = val;
   }
 );
+
+let chartData = [];
 
 const option = {
   tooltip: {
@@ -87,30 +104,30 @@ const option = {
   grid: [
     {
       left: 50,
-      top: "5%",
-      right: 10,
-      height: "17%",
+      top: "7%",
+      right: 25,
+      height: "16.5%",
       containLabel: false
     },
     {
       left: 50,
-      top: "29%",
-      right: 10,
-      height: "17%",
+      top: "29.5%",
+      right: 25,
+      height: "16.5%",
       containLabel: false
     },
     {
       left: 50,
-      top: "55%",
-      right: 10,
-      height: "17%",
+      top: "56%",
+      right: 25,
+      height: "16.5%",
       containLabel: false
     },
     {
       left: 50,
       top: "78%",
-      right: 10,
-      height: "17%",
+      right: 25,
+      height: "16.5%",
       containLabel: false
     }
   ],
@@ -307,14 +324,116 @@ const option = {
   ],
   toolbox: {
     feature: {
-      saveAsImage: {}
+      saveAsImage: {},
+      dataView: {
+        show: true,
+        optionToContent: function (opt) {
+          var dataset = opt.dataset[0].source;
+          var series = opt.series;
+          var table = `<table style="width:100%;text-align:center;">
+            <thead>
+              <tr>
+                <th>时间</th>
+                <th>${series[0].name}</th>
+                <th>${series[1].name}</th>
+                <th>${series[2].name}</th>
+                <th>${series[3].name}</th>
+                <th>${series[4].name}</th>
+                <th>${series[5].name}</th>
+              </tr>
+            </thead>`;
+          table += `<tbody>`;
+          for (var i = 0, l = dataset.length; i < l; i++) {
+            table += `<tr>
+                <td>${dataset[i].time}</td>
+                <td>${dataset[i].md}</td>
+                <td>${dataset[i].abyl}</td>
+                <td>${dataset[i].zssll}</td>
+                <td>${dataset[i].abdcll}</td>
+                <td>${dataset[i].zlj}</td>
+                <td>${dataset[i].abdclllj}</td>
+              </tr>`;
+          }
+          table += "</tbody></table>";
+          return table;
+        }
+      },
+
+      myTool1: {
+        show: true,
+        title: "获取历史数据",
+        icon: "path://M269.05,407.27Q415.66,347.84,477.1,232.91l41.61,9.91q13.83,2-2,11.89l-4,7.92q99.06,95.12,204.09,124.83L701,439q-134.76-53.5-210-148.61-53.5,69.38-101.05,101.05h210V435H376v-31.7Q326.5,437,288.86,450.86Zm340.8,61.43,35.67,23.77q7.89,7.95-5.95,9.91Q598,623.27,564.28,684.67l-47.56-19.82q41.61-73.27,67.37-142.66H330.47V478.6H603.91Z",
+        onclick: function () {
+          let endTime = "";
+          if (chartData.length > 0) {
+            endTime = chartData[0].sj;
+          }
+          getFixedHistoryReal({
+            plateNums: props.plateNum.split("/").join(","),
+            wellName: props.wellName,
+            wellType: props.wellType,
+            endTime: endTime,
+            pageNum: 1,
+            pageSize
+          }).then(({ data }) => {
+            console.log(data);
+            const { pages } = data;
+            let pageNum = pages;
+            getMoreRecords(pageNum, endTime);
+
+            const timer = setInterval(() => {
+              if (pageNum > 1) {
+                pageNum = pageNum - 1;
+                getMoreRecords(pageNum, endTime);
+              } else {
+                clearInterval(timer);
+              }
+            }, 2000);
+          });
+        }
+      }
     }
   },
   dataset: {
     dimensions: dataset_dimensions,
-    source: props.chartData
+    source: chartData
   }
 };
+
+function getResult(params: object) {
+  const res = {};
+  for (var i in params) {
+    if (params[i] != 0 && ["jd", "wd", "sj"].indexOf(i) === -1) {
+      res[i] = parseFloat(params[i]).toFixed(3);
+      if (i === "md" && parseFloat(params[i]) < 0) {
+        res[i] = 0;
+      }
+    } else {
+      res[i] = params[i];
+    }
+  }
+  res.time =
+    params.sj.slice(8, 10) +
+    ":" +
+    params.sj.slice(10, 12) +
+    ":" +
+    params.sj.slice(12, 14);
+  return res;
+}
+
+async function getMoreRecords(pageNum, endTime) {
+  let { data } = await getFixedHistoryReal({
+    plateNums: props.plateNum.split("/").join(","),
+    wellName: props.wellName,
+    wellType: props.wellType,
+    endTime: endTime,
+    pageNum: pageNum,
+    pageSize
+  });
+
+  const records = data.records.map(item => getResult(item));
+  chartData = records.concat(chartData);
+}
 
 function initEchartInstance() {
   const echartDom = document.querySelector(".live-line" + props.index);
@@ -324,17 +443,19 @@ function initEchartInstance() {
 
   // echartInstance.clear(); //清除旧画布 重新渲染
   echartInstance.on("legendselectchanged", (obj: any) => {
-    console.log("legendselectchanged");
     option.legend.selected = obj.selected;
   });
   echartInstance.setOption(option);
 }
 
 watch(
-  () => props.chartData,
+  () => props.data,
   val => {
-    option.dataset.source = val;
-    initEchartInstance();
+    if (val) {
+      chartData.push(val);
+      option.dataset.source = chartData;
+      initEchartInstance();
+    }
   },
   { deep: true }
 );
@@ -366,7 +487,6 @@ function legend_toggle(value) {
   const bool = legend_selected[value];
   legend_selected[value] = !bool;
   option.legend.selected = legend_selected;
-  console.log(option);
   initEchartInstance();
 }
 

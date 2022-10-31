@@ -22,11 +22,23 @@ watch(
   }
 );
 
-const formData = ref(props.formData);
+const initialData = {
+  time: "",
+  md: "",
+  abyl: "",
+  zssll: "",
+  abdcll: "",
+  zlj: "",
+  abdclllj: ""
+};
+
+const formData = ref(initialData);
 watch(
   () => props.formData,
   val => {
-    formData.value = val;
+    if (val !== null) {
+      formData.value = val;
+    }
   },
   {
     deep: true,
@@ -62,6 +74,10 @@ const legend_selected = ref({
     label-width="130px"
     label-position="left"
   >
+    <el-form-item label="时间">
+      <el-input v-model="formData.time" readonly />
+    </el-form-item>
+    <el-divider />
     <el-form-item>
       <template #label>
         <span
@@ -87,7 +103,7 @@ const legend_selected = ref({
           施工压力
         </span>
       </template>
-      <el-input v-model="formData.Abyl" readonly />
+      <el-input v-model="formData.abyl" readonly />
     </el-form-item>
     <el-divider />
     <el-form-item>
@@ -101,7 +117,7 @@ const legend_selected = ref({
           合并瞬时排量
         </span>
       </template>
-      <el-input v-model="formData.Zssll" readonly />
+      <el-input v-model="formData.zssll" readonly />
     </el-form-item>
     <el-form-item>
       <template #label>
@@ -114,7 +130,7 @@ const legend_selected = ref({
           泵替瞬时流量
         </span>
       </template>
-      <el-input v-model="formData.BbDcll" readonly />
+      <el-input v-model="formData.abdcll" readonly />
     </el-form-item>
     <el-divider />
     <el-form-item>
@@ -128,7 +144,7 @@ const legend_selected = ref({
           合并累计排量
         </span>
       </template>
-      <el-input v-model="formData.Zlj" readonly />
+      <el-input v-model="formData.zlj" readonly />
     </el-form-item>
     <el-form-item>
       <template #label>
@@ -141,7 +157,7 @@ const legend_selected = ref({
           泵替累计流量
         </span>
       </template>
-      <el-input v-model="formData.AbDclllj" readonly />
+      <el-input v-model="formData.abdclllj" readonly />
     </el-form-item>
   </el-form>
 </template>

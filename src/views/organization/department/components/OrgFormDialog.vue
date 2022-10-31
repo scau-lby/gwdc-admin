@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { ElNotification, FormInstance } from "element-plus";
-import { getOrgList, editOrg, addOrg } from "/@/api/organization";
+import { getOrgList, updateOrg, addOrg } from "/@/api/org";
 import { handleTree } from "@pureadmin/utils";
 
 const orgProps = {
@@ -43,7 +43,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             .layer + 1;
       }
       if (formData.value.orgId > 0) {
-        editOrg({
+        updateOrg({
           orgId: formData.value.orgId,
           orgName: formData.value.orgName
         }).then(() => {

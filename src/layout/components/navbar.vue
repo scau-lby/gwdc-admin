@@ -116,11 +116,9 @@ function changePwd() {
         <template #dropdown>
           <el-dropdown-menu class="logout">
             <el-dropdown-item @click="changePwd">
-              <IconifyIconOffline
-                icon="lock-password-line"
-                style="margin: 5px"
-              />{{ t("buttons.hsChangePwd") }}</el-dropdown-item
-            >
+              <IconifyIconOffline icon="password" style="margin: 5px" />
+              {{ t("buttons.hsChangePwd") }}
+            </el-dropdown-item>
             <el-dropdown-item divided @click="logout">
               <IconifyIconOffline
                 icon="logout-circle-r-line"
