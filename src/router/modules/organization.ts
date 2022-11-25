@@ -16,7 +16,9 @@ const organizationRouter = {
       name: "User",
       component: () => import("/@/views/organization/user/index.vue"),
       meta: {
-        title: $t("menus.hsUser")
+        title: $t("menus.hsUser"),
+        rid: 86,
+        rids: [72, 70, 111, 82, 86, 64, 110, 81]
       }
     },
     {
@@ -24,7 +26,9 @@ const organizationRouter = {
       name: "Group",
       component: () => import("/@/views/organization/group/index.vue"),
       meta: {
-        title: $t("menus.hsGroup")
+        title: $t("menus.hsGroup"),
+        rid: 73,
+        rids: [84, 69, 67, 76, 113, 80, 73, 78]
       }
     },
     {
@@ -32,7 +36,9 @@ const organizationRouter = {
       name: "Department",
       component: () => import("/@/views/organization/department/index.vue"),
       meta: {
-        title: $t("menus.hsDepartment")
+        title: $t("menus.hsDepartment"),
+        rid: 71,
+        rids: [68, 63, 108, 75, 71, 114, 109, 66]
       }
     }
   ]

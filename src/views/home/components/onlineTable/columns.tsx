@@ -64,11 +64,13 @@ export function useColumns() {
     },
     {
       label: "在线时长",
-      prop: "totalMin"
+      prop: "totalMin",
+      cellRenderer: scope => scope.row.totalMin + " mins"
     },
     {
       label: "关注度",
-      prop: "maxOlAttention"
+      prop: "maxOlAttention",
+      cellRenderer: scope => scope.row.maxOlAttention + " 人"
     },
     {
       label: "施工位置",

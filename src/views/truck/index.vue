@@ -45,7 +45,7 @@ const formRef = ref<FormInstance>();
 
 const pagination = reactive<PaginationProps>({
   total: 0,
-  pageSize: 10,
+  pageSize: 15,
   currentPage: 1,
   background: true
 });
@@ -55,7 +55,6 @@ function onAdd() {
 }
 
 function onEdit(row) {
-  console.log(row);
   truckFormDialogVisible.value = true;
   nextTick(() => {
     truckFormData.value = { ...row };
@@ -200,7 +199,7 @@ const truckFormData = ref({ ...initialData });
       </el-form-item>
     </el-form>
     <TableProBar
-      title="组织机构"
+      title="设备管理"
       :loading="loading"
       :dataList="dataList"
       @refresh="onSearch"

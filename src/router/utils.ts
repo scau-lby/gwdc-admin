@@ -119,7 +119,8 @@ const permissionRouter = {
   meta: {
     title: "menus.hsPermission",
     icon: "lollipop",
-    rank: 11
+    rank: 11,
+    showLink: false
   },
   children: [
     {
@@ -149,7 +150,6 @@ function setDifAuthority(authority, routes) {
 function initRouter() {
   return new Promise(resolve => {
     const resp = [setDifAuthority("v-admin", permissionRouter)];
-    // console.log(router);
     formatFlatteningRoutes(addAsyncRoutes(resp)).map((v: RouteRecordRaw) => {
       // 防止重复添加路由
       if (

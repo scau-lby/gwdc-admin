@@ -31,7 +31,6 @@ const closeDialog = () => {
 };
 
 const submitForm = async (formEl: FormInstance | undefined) => {
-  console.log(formData.value);
   if (!formEl) return;
   await formEl.validate(valid => {
     if (valid) {

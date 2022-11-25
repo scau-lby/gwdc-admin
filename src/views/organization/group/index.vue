@@ -30,7 +30,7 @@ const { columns } = useColumns();
 
 const pagination = reactive<PaginationProps>({
   total: 0,
-  pageSize: 10,
+  pageSize: 15,
   currentPage: 1,
   background: true
 });

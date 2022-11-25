@@ -5,7 +5,7 @@ import { viteBuildInfo } from "./info";
 import svgLoader from "vite-svg-loader";
 import legacy from "@vitejs/plugin-legacy";
 import vueJsx from "@vitejs/plugin-vue-jsx";
-import { viteMockServe } from "vite-plugin-mock";
+// import { viteMockServe } from "vite-plugin-mock";
 import VueI18n from "@intlify/vite-plugin-vue-i18n";
 // import ElementPlus from "unplugin-element-plus/vite";
 import { visualizer } from "rollup-plugin-visualizer";
@@ -50,16 +50,16 @@ export function getPluginsList(command, VITE_LEGACY) {
     svgLoader(),
     // ElementPlus({}),
     // mock支持
-    viteMockServe({
-      mockPath: "mock",
-      localEnabled: command === "serve",
-      prodEnabled: command !== "serve" && prodMock,
-      injectCode: `
-          import { setupProdMockServer } from './mockProdServer';
-          setupProdMockServer();
-        `,
-      logger: false
-    }),
+    // viteMockServe({
+    //   mockPath: "mock",
+    //   localEnabled: command === "serve",
+    //   prodEnabled: command !== "serve" && prodMock,
+    //   injectCode: `
+    //       import { setupProdMockServer } from './mockProdServer';
+    //       setupProdMockServer();
+    //     `,
+    //   logger: false
+    // }),
     // 是否为打包后的文件提供传统浏览器兼容性支持
     VITE_LEGACY
       ? legacy({

@@ -376,7 +376,6 @@ const option = {
             pageNum: 1,
             pageSize
           }).then(({ data }) => {
-            console.log(data);
             const { pages } = data;
             let pageNum = pages;
             getMoreRecords(pageNum, endTime);

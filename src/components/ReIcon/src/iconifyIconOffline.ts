@@ -9,6 +9,7 @@ import Lollipop from "@iconify-icons/ep/lollipop";
 import RefreshRight from "@iconify-icons/ep/refresh-right";
 import Refresh from "@iconify-icons/ep/refresh";
 import ArrowDown from "@iconify-icons/ep/arrow-down";
+import Download from "@iconify-icons/ep/download";
 import CloseBold from "@iconify-icons/ep/close-bold";
 import Bell from "@iconify-icons/ep/bell";
 import Search from "@iconify-icons/ep/search";
@@ -19,10 +20,6 @@ import EditOpen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
 import More from "@iconify-icons/ep/more";
 import Promotion from "@iconify-icons/ep/promotion";
-// import p from "@iconify-icons/ep/p";
-// import Monitor from "@iconify-icons/ep/monitor";
-// import DataAnalysis from "@iconify-icons/ep/data-analysis";
-// import DataLine from "@iconify-icons/ep/data-line";
 import HomeFilled from "@iconify-icons/ep/home-filled";
 import DeleteFilled from "@iconify-icons/ep/delete-filled";
 import Platform from "@iconify-icons/ep/platform";
@@ -52,13 +49,11 @@ addIcon("lollipop", Lollipop);
 addIcon("refresh", Refresh);
 addIcon("refresh-right", RefreshRight);
 addIcon("arrow-down", ArrowDown);
+addIcon("download", Download);
 addIcon("close-bold", CloseBold);
 addIcon("bell", Bell);
 addIcon("search", Search);
-// addIcon("monitor", Monitor);
 addIcon("platform", Platform);
-// addIcon("data-analysis", DataAnalysis);
-// addIcon("data-line", DataLine);
 addIcon("histogram", Histogram);
 addIcon("menu", Menu);
 addIcon("list", List);
@@ -67,6 +62,35 @@ addIcon("question-filled", QuestionFilled);
 addIcon("trend-charts", TrendCharts);
 addIcon("management", Menagement);
 addIcon("van", Van);
+
+// h5player 相关
+import FullScreen from "@iconify-icons/ep/full-screen"; // 整体全屏
+addIcon("full-screen", FullScreen);
+import Microphone from "@iconify-icons/ep/microphone"; // 开始对讲
+addIcon("microphone", Microphone);
+import Mute from "@iconify-icons/ep/mute"; // 停止对讲
+addIcon("mute", Mute);
+import Mic from "@iconify-icons/ep/mic";
+addIcon("mic", Mic);
+import VideoPause from "@iconify-icons/ep/video-pause"; // 停止预览
+addIcon("video-pause", VideoPause);
+import VideoPlay from "@iconify-icons/ep/video-play"; // 开始预览
+addIcon("video-play", VideoPlay);
+
+import CameraFilled from "@iconify-icons/ep/camera-filled"; // 抓取 JPEG
+addIcon("camera-filled", CameraFilled);
+import Camera from "@iconify-icons/ep/camera"; // 抓取 BMP
+addIcon("camera", Camera);
+import VideoCameraFilled from "@iconify-icons/ep/video-camera-filled"; // 录取MP4
+addIcon("video-camera-filled", VideoCameraFilled);
+import VideoCamera from "@iconify-icons/ep/video-camera"; // 录取PS
+addIcon("video-camera", VideoCamera);
+import Film from "@iconify-icons/ep/film"; // 停止录制并保存文件
+addIcon("film", Film);
+import VolumeUpLine from "@iconify-icons/ri/volume-up-line"; // 开启声音
+addIcon("volume-up-line", VolumeUpLine);
+import VolumeMuteLine from "@iconify-icons/ri/volume-mute-line"; // 关闭声音
+addIcon("volume-mute-line", VolumeMuteLine);
 
 // remixicon
 import ArrowRightSLine from "@iconify-icons/ri/arrow-right-s-line";

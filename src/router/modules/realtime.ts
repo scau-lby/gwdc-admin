@@ -16,7 +16,8 @@ const realtimeRouter = {
       name: "LiveData",
       component: () => import("/@/views/realtime/data/index.vue"),
       meta: {
-        title: $t("menus.hsLiveData")
+        title: $t("menus.hsLiveData"),
+        keepAlive: true
       }
     },
     {

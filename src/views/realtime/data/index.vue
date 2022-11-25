@@ -12,14 +12,14 @@ initToDetail();
 // components
 import empty from "/@/views/common/empty.vue";
 // 合并
-import liveFormMixed from "./components/liveFormMixed.vue";
-import liveLineMixed from "./components/liveLineMixed.vue";
+import mixedForm from "/@/components/dataForm/MixedForm.vue";
+import mixedLine from "/@/components/dataLine/MixedLine.vue";
 // 双机车、双机橇
-import liveForm from "./components/LiveForm.vue";
-import liveLine from "./components/LiveLine.vue";
+import dualForm from "/@/components/dataForm/DualForm.vue";
+import dualLine from "/@/components/dataLine/DualLine.vue";
 // 单机车、单机橇
-import liveFormSingle from "./components/liveFormSingle.vue";
-import liveLineSingle from "./components/liveLineSingle.vue";
+import singleForm from "/@/components/dataForm/SingleForm.vue";
+import singleLine from "/@/components/dataLine/SingleLine.vue";
 
 // moreInfo
 import moreInfoDialog from "../../home/components/wellTable/MoreInfoDialog.vue";
@@ -320,7 +320,7 @@ const getType = val => {
           class="live-line"
           :header="task_selected + ' / 作业实时曲线(' + keys + ')'"
         >
-          <liveLineMixed
+          <mixedLine
             ref="chartRef"
             :index="100"
             :plateNum="msgData[0].plateNum"
@@ -333,7 +333,7 @@ const getType = val => {
           class="live-form"
           :header="task_selected + ' / 作业实时数据(' + keys + ')'"
         >
-          <liveFormMixed
+          <mixedForm
             :formData="msgData[0].detail"
             :index="100"
             @type="getType"
@@ -361,7 +361,7 @@ const getType = val => {
               :header="task_selected + ' / ' + keys[index] + ' - 作业实时曲线'"
               style="width: 100%"
             >
-              <liveLineSingle
+              <singleLine
                 ref="chartRef"
                 :data="msgData[index].detail"
                 :index="index"
@@ -375,7 +375,7 @@ const getType = val => {
               class="live-form"
               :header="task_selected + ' / ' + keys[index] + ' - 作业实时数据'"
             >
-              <liveFormSingle
+              <singleForm
                 :formData="msgData[index].detail"
                 :index="index"
                 :key="msgData[index].plateNum + timer"
@@ -389,7 +389,7 @@ const getType = val => {
               :header="task_selected + ' / ' + keys[index] + ' - 作业实时曲线'"
               style="width: 100%"
             >
-              <liveLine
+              <dualLine
                 ref="chartRef"
                 :data="msgData[index].detail"
                 :index="index"
@@ -403,7 +403,7 @@ const getType = val => {
               class="live-form"
               :header="task_selected + ' / ' + keys[index] + ' - 作业实时数据'"
             >
-              <liveForm
+              <dualForm
                 :formData="msgData[index].detail"
                 :index="index"
                 :key="msgData[index].plateNum + timer"

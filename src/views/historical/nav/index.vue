@@ -1,35 +1,41 @@
 <script setup lang="ts">
 import { useColumns } from "./columns";
-import { getOnlineTruckList } from "/@/api/truck";
 import { reactive, ref, onMounted, nextTick } from "vue";
-// import { ElNotification } from "element-plus";
-import { type FormInstance } from "element-plus";
+import { type FormInstance, ElNotification } from "element-plus";
 import { type PaginationProps } from "@pureadmin/table";
 import { TableProBar } from "/@/components/ReTable";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
-import editFormDialog from "./components/EditFormDialog.vue";
+// api
+import { getHistoryList, deleteHistoryByWellId } from "/@/api/history";
+// components
+import updateFormDialog from "./components/UpdateFormDialog.vue";
+// store
+import { useHisDataStoreHook } from "/@/store/modules/hisData";
+// router
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 defineOptions({
-  name: "HisData"
+  name: "HisNav"
 });
 
 const form = reactive({
-  task: "",
+  wellName: "",
   plateNum: ""
 });
 
 const formRef = ref<FormInstance>();
 
 const initialData = {
-  plateNum: "",
-  wellName: "",
-  wellType: "",
-  taskDepartment: "",
-  commander: "",
-  opreatePerson: ""
+  id: 0,
+  wellName: null,
+  wellType: null,
+  belongTo: null,
+  commander: null,
+  opreatePerson: null
 };
-const formDialogVisible = ref(false);
-const formData = ref({ ...initialData });
+const updateFormDialogVisible = ref(false);
+const updateFormData = ref({ ...initialData });
 
 let dataList = ref([]);
 let loading = ref(true);
@@ -37,31 +43,26 @@ const { columns } = useColumns();
 
 const pagination = reactive<PaginationProps>({
   total: 0,
-  pageSize: 10,
+  pageSize: 15,
   currentPage: 1,
   background: true
 });
 
 function onView(row) {
-  console.log(row);
+  useHisDataStoreHook().SET_WELLNAME(row.wellName);
+  useHisDataStoreHook().SET_WELLTYPE(row.wellType);
+  router.push({ name: "HisStatistics" });
 }
 
-function onEdit(row) {
-  const {
-    plateNum,
-    wellName,
-    wellType,
-    taskDepartment,
-    commander,
-    opreatePerson
-  } = row;
-  formDialogVisible.value = true;
+function onUpdate(row) {
+  const { id, wellName, wellType, belongTo, commander, opreatePerson } = row;
+  updateFormDialogVisible.value = true;
   nextTick(() => {
-    formData.value = {
-      plateNum,
+    updateFormData.value = {
+      id,
       wellName,
       wellType,
-      taskDepartment,
+      belongTo,
       commander,
       opreatePerson
     };
@@ -69,25 +70,20 @@ function onEdit(row) {
 }
 
 function onDelete(row) {
-  console.log(row);
-  // deleteRole(row.gid).then(({ status }) => {
-  //   if (status === 200) {
-  //     ElNotification({
-  //       title: "操作成功",
-  //       message: `删除用户组 【${row.groupName}】`,
-  //       type: "success"
-  //     });
-  //     if (dataList.value.length === 1) {
-  //       pagination.currentPage =
-  //         pagination.currentPage > 1 ? pagination.currentPage - 1 : 1;
-  //     }
-  //     onSearch();
-  //   }
-  // });
-}
-
-function onPush(row) {
-  console.log(row);
+  deleteHistoryByWellId(row.id).then(({ status }) => {
+    if (status === 200) {
+      ElNotification({
+        title: "操作成功",
+        message: `删除数据 【${row.wellName}-${row.wellType}】`,
+        type: "success"
+      });
+      if (dataList.value.length === 1) {
+        pagination.currentPage =
+          pagination.currentPage > 1 ? pagination.currentPage - 1 : 1;
+      }
+      onSearch();
+    }
+  });
 }
 
 function onCurrentChange(val: number) {
@@ -102,14 +98,13 @@ function onSizeChange(val: number) {
 
 async function onSearch() {
   loading.value = true;
-  let { data } = await getOnlineTruckList({
+  let { data } = await getHistoryList({
     pageNum: pagination.currentPage,
     pageSize: pagination.pageSize,
-    task: form.task,
-    plateNum: form.plateNum
+    plateNum: form.plateNum,
+    wellName: form.wellName
   });
-  // dataList.value = data.records;
-  dataList.value = data;
+  dataList.value = data.records;
   pagination.total = data.total;
   setTimeout(() => {
     loading.value = false;
@@ -134,15 +129,19 @@ onMounted(() => {
       ref="formRef"
       :inline="true"
       :model="form"
-      class="bg-white w-99/100 pl-4 pt-4"
+      class="bg-white pl-4 pt-4"
     >
-      <el-form-item label="施工任务" prop="task">
-        <el-input v-model="form.task" placeholder="请输入施工任务" clearable />
+      <el-form-item label="作业井号" prop="wellName">
+        <el-input
+          v-model="form.wellName"
+          placeholder="请输入作业井号"
+          clearable
+        />
       </el-form-item>
-      <el-form-item label="设备编号" prop="plateNum">
+      <el-form-item label="作业设备编号" prop="plateNum">
         <el-input
           v-model="form.plateNum"
-          placeholder="请输入设备编号"
+          placeholder="请输入作业设备编号"
           clearable
         />
       </el-form-item>
@@ -160,81 +159,67 @@ onMounted(() => {
         </el-button>
       </el-form-item>
     </el-form>
-    <TableProBar
-      title="作业导航"
-      :loading="loading"
-      :dataList="dataList"
-      @refresh="onSearch"
+    <div
+      style="margin-top: 15px"
+      v-loading="loading"
+      element-loading-text="Loading..."
     >
-      <template #buttons />
-      <template v-slot="{ size, checkList }">
-        <PureTable
-          border
-          align="center"
-          showOverflowTooltip
-          table-layout="auto"
-          :size="size"
-          :checkList="checkList"
-          :data="dataList"
-          :columns="columns"
-          :pagination="pagination"
-          :paginationSmall="size === 'small' ? true : false"
-          :header-cell-style="{
-            backgroundColor: 'rgba(0,21,41,.7)',
-            color: '#d0d0d0'
-          }"
-          @size-change="onSizeChange"
-          @current-change="onCurrentChange"
-        >
-          <template #operation="{ row }">
-            <el-tooltip content="查看作业记录" placement="left">
-              <el-link
-                class="reset-margin"
-                type="primary"
-                :size="size"
-                @click="onView(row)"
-                :icon="useRenderIcon('view')"
-                style="margin-right: 15px"
-              />
-            </el-tooltip>
+      <PureTable
+        border
+        align="center"
+        showOverflowTooltip
+        table-layout="auto"
+        size="medium"
+        :data="dataList"
+        :columns="columns"
+        :pagination="pagination"
+        :paginationSmall="true"
+        :header-cell-style="{
+          backgroundColor: 'rgba(0,21,41,.7)',
+          color: '#d0d0d0'
+        }"
+        @size-change="onSizeChange"
+        @current-change="onCurrentChange"
+      >
+        <template #operation="{ row }">
+          <el-tooltip content="查看作业记录" placement="left">
             <el-link
               class="reset-margin"
               type="primary"
               :size="size"
-              @click="onEdit(row)"
-              :icon="useRenderIcon('edit-open')"
+              @click="onView(row)"
+              :icon="useRenderIcon('view')"
               style="margin-right: 15px"
             />
-            <el-popconfirm
-              title="是否确定删除该作业记录?"
-              @confirm="onDelete(row)"
-            >
-              <template #reference>
-                <el-link
-                  class="reset-margin"
-                  type="primary"
-                  :size="size"
-                  :icon="useRenderIcon('delete')"
-                  style="margin-right: 15px"
-                />
-              </template>
-            </el-popconfirm>
-            <el-tooltip content="数据推送" placement="right">
+          </el-tooltip>
+          <el-link
+            class="reset-margin"
+            type="primary"
+            :size="size"
+            @click="onUpdate(row)"
+            :icon="useRenderIcon('edit-open')"
+            style="margin-right: 15px"
+          />
+          <el-popconfirm
+            title="是否确定删除该作业记录?"
+            @confirm="onDelete(row)"
+          >
+            <template #reference>
               <el-link
                 class="reset-margin"
                 type="primary"
                 :size="size"
-                @click="onPush(row)"
-                :icon="useRenderIcon('promotion')"
+                :icon="useRenderIcon('delete')"
+                style="margin-right: 15px"
               />
-            </el-tooltip>
-          </template>
-        </PureTable>
-      </template>
-    </TableProBar>
-    <editFormDialog
-      v-model:visible="formDialogVisible"
-      :data="formData"
+            </template>
+          </el-popconfirm>
+        </template>
+      </PureTable>
+    </div>
+    <updateFormDialog
+      v-model:visible="updateFormDialogVisible"
+      :data="updateFormData"
       @refresh="onSearch"
     />
   </div>

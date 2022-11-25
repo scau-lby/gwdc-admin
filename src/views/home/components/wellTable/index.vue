@@ -68,7 +68,6 @@ const updateDialogVisible = ref(false);
 const updateData = ref({ ...initialUpdateData });
 
 function onUpdate(row) {
-  // searchWell(row.wellName).then(res => console.log(res));
   updateDialogVisible.value = true;
   nextTick(() => {
     updateData.value = {

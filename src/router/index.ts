@@ -28,23 +28,21 @@ import {
   formatFlatteningRoutes
 } from "./utils";
 
-import homeRouter from "./modules/home";
-// import errorRouter from "./modules/error";
-import remainingRouter from "./modules/remaining";
-import realtimeRouter from "./modules/realtime";
-import historicalRouter from "./modules/historical";
-import trainingRouter from "./modules/training";
-import truckRouter from "./modules/truck";
-import organizationRouter from "./modules/organization";
-import recyclebinRouter from "./modules/recyclebin";
-import recordsRouter from "./modules/records";
-import reportsRouter from "./modules/reports";
-import resourceRouter from "./modules/resource";
+import homeRouter from "./modules/home"; // 首页
+import remainingRouter from "./modules/remaining"; // 登录
+import realtimeRouter from "./modules/realtime"; // 实时监控
+import historicalRouter from "./modules/historical"; // 历史数据
+import trainingRouter from "./modules/training"; // 培训管理
+import truckRouter from "./modules/truck"; // 设备管理
+import organizationRouter from "./modules/organization"; // 组织与角色
+import recyclebinRouter from "./modules/recyclebin"; // 回收站
+import recordsRouter from "./modules/records"; // 操作记录
+import reportsRouter from "./modules/reports"; // 统计报表
+import resourceRouter from "./modules/resource"; // 帮助与资源
 
 // 原始静态路由（未做任何处理）
 const routes = [
   homeRouter,
-  // errorRouter,
   realtimeRouter,
   historicalRouter,
   trainingRouter,
@@ -94,6 +92,7 @@ export const router: Router = createRouter({
 // 路由白名单
 const whiteList = ["/login"];
 
+// 路由前置守卫
 router.beforeEach((to: toRouteType, _from, next) => {
   if (to.meta?.keepAlive) {
     const newMatched = to.matched;
@@ -127,7 +126,7 @@ router.beforeEach((to: toRouteType, _from, next) => {
     } else {
       // 刷新
       if (usePermissionStoreHook().wholeMenus.length === 0)
-        initRouter(name.username).then((router: Router) => {
+        /* initRouter(name.username).then((router: Router) => {
           if (!useMultiTagsStoreHook().getMultiTagsCache) {
             const handTag = (
               path: string,
@@ -195,7 +194,29 @@ router.beforeEach((to: toRouteType, _from, next) => {
             }
           }
           router.push(to.fullPath);
+        });*/
+
+        usePermissionStoreHook().changeSetting([]);
+      if (!useMultiTagsStoreHook().getMultiTagsCache) {
+        const { path } = to;
+        const index = findIndex(remainingRouter, v => {
+          return v.path == path;
         });
+        const routes: any =
+          index === -1
+            ? router.options.routes[0].children
+            : router.options.routes;
+        const route = findRouteByPath(path, routes);
+        // query、params模式路由传参数的标签页不在此处处理
+        if (route && route.meta?.title) {
+          useMultiTagsStoreHook().handleTags("push", {
+            path: route.path,
+            name: route.name,
+            meta: route.meta
+          });
+        }
+      }
+
       next();
     }
   } else {

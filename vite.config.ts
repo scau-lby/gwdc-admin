@@ -53,7 +53,7 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
           ? {
               [VITE_PROXY_DOMAIN]: {
                 target: VITE_PROXY_DOMAIN_REAL,
-                // ws: true,
+                ws: true,
                 changeOrigin: true,
                 rewrite: (path: string) => regExps(path, VITE_PROXY_DOMAIN)
               }

@@ -2,7 +2,6 @@
 import Motion from "./utils/motion";
 import { useRouter } from "vue-router";
 import { loginRules } from "./utils/rule";
-import { initRouter } from "/@/router/utils";
 import { message } from "@pureadmin/components";
 import type { FormInstance } from "element-plus";
 import { ref, reactive, watch } from "vue";
@@ -10,6 +9,8 @@ import { useUserStoreHook } from "/@/store/modules/user";
 import { bg, currentWeek } from "./utils/static";
 import { ReImageVerify } from "/@/components/ReImageVerify";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
+
+import { usePermissionStoreHook } from "/@/store/modules/permission";
 
 import CryptoJS from "crypto-js";
 
@@ -93,7 +94,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
           password: passwordEncryp
         })
         .then(() => {
-          initRouter().then(() => {});
+          usePermissionStoreHook().changeSetting([]);
           message.success("登陆成功");
           router.push("/");
         })

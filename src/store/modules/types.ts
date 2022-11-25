@@ -41,3 +41,14 @@ export type userType = {
   verifyCode?: string;
   currentPage?: number;
 };
+
+export type HisDataType = {
+  wellName: string;
+  wellType: string;
+  mixed: number;
+  plateNums: Array<string>;
+  flag: number;
+  plateNum: string;
+  beginTime: string;
+  endTime: string;
+};

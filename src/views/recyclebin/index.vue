@@ -128,7 +128,7 @@ onMounted(() => {
       </el-form-item>
     </el-form>
     <TableProBar
-      title="组织机构"
+      title="回收站"
       :loading="loading"
       :dataList="dataList"
       @refresh="onSearch"

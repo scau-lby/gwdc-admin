@@ -59,7 +59,6 @@ const option = {
             year = new Date().getFullYear(),
             start = new Date(`${year}-01-01 00:00:00`).getTime();
           const offset = parseInt((now - start) / 1000 / 24 / 60 / 60);
-          console.log(offset);
           getPreviewData(offset);
         }
       }

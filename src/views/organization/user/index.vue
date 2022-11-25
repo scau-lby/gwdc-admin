@@ -45,7 +45,7 @@ const formRef = ref<FormInstance>();
 
 const pagination = reactive<PaginationProps>({
   total: 0,
-  pageSize: 10,
+  pageSize: 15,
   currentPage: 1,
   background: true
 });
@@ -92,7 +92,6 @@ function onEdit(row) {
 }
 
 function onDelete(row) {
-  // console.log(row);
   // return;
   deleteUser(row.userId).then(() => {
     ElNotification({

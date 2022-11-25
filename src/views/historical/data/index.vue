@@ -1,60 +1,29 @@
 <script setup lang="ts">
-import { useColumns } from "./columns";
-import { getOnlineTruckList } from "/@/api/truck";
-import { ref, onMounted } from "vue";
-// import { ElNotification } from "element-plus";
-// import { type FormInstance } from "element-plus";
-// import { type PaginationProps } from "@pureadmin/table";
-// import { TableProBar } from "/@/components/ReTable";
-// import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
+import { onMounted } from "vue";
+// store
+// import { useHisDataStoreHook } from "/@/store/modules/hisData";
+// header
+import multiHeader from "/@/components/HisHeader/MultiHeader.vue";
+// 合并
+// import mixedTable from "/@/components/dataTabel/MixedTable.vue";
+// 双机车、双机橇
+// import dualTable from "/@/components/dataTabel/DualTable.vue";
+// 单机车、单机橇
+// import singleTable from "/@/components/dataTabel/SingleTable.vue";
 
 defineOptions({
   name: "HisData"
 });
 
-let dataList = ref([]);
-let loading = ref(true);
-const { columns } = useColumns();
+// console.log(useHisDataStoreHook().getMixed);
+// console.log(useHisDataStoreHook().getPlateNums);
 
-async function onSearch() {
-  loading.value = true;
-  let { data } = await getOnlineTruckList();
-
-  setTimeout(() => {
-    dataList.value = data;
-    loading.value = false;
-  }, 500);
-}
-
-onMounted(() => {
-  onSearch();
-});
+onMounted(() => {});
 </script>
-
 <template>
-  <PureTable
-    border
-    align="center"
-    row-key="id"
-    table-layout="auto"
-    showOverflowTooltip
-    :data="dataList"
-    :columns="columns"
-    :header-cell-style="{
-      backgroundColor: 'rgba(0,21,41,.7)',
-      color: '#d0d0d0'
-    }"
-  >
-    <template #operation="{ row }">
-      <el-button
-        class="reset-margin"
-        plain
-        round
-        size="small"
-        @click="onLive(row)"
-      >
-        进入实时监控
-      </el-button>
-    </template>
-  </PureTable>
+  <div class="main">
+    <multiHeader />
+  </div>
 </template>
+
+<style scoped lang="scss"></style>

@@ -106,7 +106,6 @@ async function getTrucks() {
     };
   });
   orgOptions.value = handleTree(orgList, "orgId", "pid");
-  console.log(orgOptions.value);
 }
 
 onMounted(() => {

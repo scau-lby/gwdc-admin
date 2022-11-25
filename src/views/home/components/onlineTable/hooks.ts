@@ -14,7 +14,7 @@ export function useDetail() {
       name: "LiveData",
       query: { id: String(index) },
       meta: {
-        title: { zh: `${index} - 作业数据`, en: `${index} - 作业数据` },
+        title: { zh: `作业数据`, en: `作业数据` },
         showLink: false,
         dynamicLevel: 3
       }

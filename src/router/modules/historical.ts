@@ -13,7 +13,7 @@ const historicalRouter = {
   children: [
     {
       path: "/historical/nav",
-      name: "Navigation",
+      name: "HisNav",
       component: () => import("/@/views/historical/nav/index.vue"),
       meta: {
         title: $t("menus.hsHisNavigation")
@@ -21,7 +21,7 @@ const historicalRouter = {
     },
     {
       path: "/historical/statistics",
-      name: "Statistics",
+      name: "HisStatistics",
       component: () => import("/@/views/historical/statistics/index.vue"),
       meta: {
         title: $t("menus.hsHisStatistics")
