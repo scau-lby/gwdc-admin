@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from "vue";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
-
-import * as moment from "moment";
+// import * as moment from "moment";
 
 const props = defineProps({
   urls: {
@@ -173,7 +172,7 @@ function setVolume(value) {
 function recordStart(type) {
   const codeMap = { MP4: 5, PS: 2 },
     curIndex = player.currentWindowIndex,
-    fileName = `${moment().format("YYYYMMDDHHmm")}.mp4`,
+    fileName = new Date().getTime() + `.mp4`,
     typeCode = codeMap[type];
 
   player.JS_StartSaveEx(curIndex, fileName, typeCode).then(

@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from "vue";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
-
-import * as moment from "moment";
+// import * as moment from "moment";
 
 const props = defineProps({
   urls: {
@@ -81,7 +80,6 @@ function realplay(data) {
   if (data.length === 0) return;
   data.forEach((item, index) => {
     // const playURL = "ws://59.47.54.83:7002/media?url=" + item.url;
-    console.log(item.url);
     const playURL = item.url;
     player.JS_Play(playURL, { playURL, mode: 0 }, index).then(
       res => {
@@ -159,7 +157,7 @@ function setVolume(value) {
 function recordStart(type) {
   const codeMap = { MP4: 5, PS: 2 },
     curIndex = player.currentWindowIndex,
-    fileName = `${moment().format("YYYYMMDDHHmm")}.mp4`,
+    fileName = new Date().getTime() + `.mp4`,
     typeCode = codeMap[type];
 
   player.JS_StartSaveEx(curIndex, fileName, typeCode).then(
