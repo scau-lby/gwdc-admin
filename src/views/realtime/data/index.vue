@@ -4,11 +4,6 @@ import { getToken } from "/@/utils/auth";
 import { getOnlineTruckList } from "/@/api/truck";
 import { getWellMoreInfo } from "/@/api/well";
 
-// 动态标签页
-import { useDetail } from "/@/views/home/components/onlineTable/hooks";
-const { initToDetail, id } = useDetail();
-initToDetail();
-
 // components
 import empty from "/@/views/common/empty.vue";
 // 合并
@@ -23,6 +18,11 @@ import singleLine from "/@/components/dataLine/SingleLine.vue";
 
 // moreInfo
 import moreInfoDialog from "../../home/components/wellTable/MoreInfoDialog.vue";
+
+// 动态标签页
+import { useDetail } from "/@/views/home/components/onlineTable/hooks";
+const { initToDetail, id } = useDetail();
+initToDetail();
 
 const chartRef = ref(null);
 
@@ -272,10 +272,9 @@ const getType = val => {
 <template>
   <div class="main">
     <template v-if="taskList.length > 0">
-      <el-card class="source-card">
-        <el-form :inline="true">
-          <el-form-item label="数据来源" />
-          <el-form-item label="施工任务" style="margin-left: 50px">
+      <div class="source-card">
+        <el-card>
+          <el-form-item label="施工任务">
             <el-select
               v-model="task_selected"
               placeholder="请选择施工任务"
@@ -289,12 +288,22 @@ const getType = val => {
               />
             </el-select>
           </el-form-item>
+        </el-card>
+        <el-card>
           <el-form-item label="订阅方式">
             <el-radio-group v-model="mixed" @change="onMixedChange">
               <el-radio :label="0">单机</el-radio>
               <el-radio :label="1" v-if="plateList.length > 1"> 合并 </el-radio>
             </el-radio-group>
           </el-form-item>
+        </el-card>
+        <el-card
+          :body-style="{
+            display: 'flex',
+            justifyContent: 'space-between'
+          }"
+          style="flex-grow: 1; flex-shrink: 1"
+        >
           <el-form-item label="在线设备">
             <el-checkbox-group v-model="plates_checked" @change="onPlateChange">
               <el-checkbox
@@ -304,22 +313,14 @@ const getType = val => {
               />
             </el-checkbox-group>
           </el-form-item>
-          <el-form-item style="float: right">
-            <el-button
-              type="primary"
-              @click="onGetMore"
-              :disabled="!hasMoreInfo"
-            >
-              查看井队作业参数
-            </el-button>
-          </el-form-item>
-        </el-form>
-      </el-card>
+
+          <el-button type="primary" @click="onGetMore" :disabled="!hasMoreInfo">
+            查看井队作业参数
+          </el-button>
+        </el-card>
+      </div>
       <div class="live-container" style="margin-top: 10px" v-if="mixed === 1">
-        <el-card
-          class="live-line"
-          :header="task_selected + ' / 作业实时曲线(' + keys + ')'"
-        >
+        <el-card class="live-line">
           <mixedLine
             ref="chartRef"
             :index="100"
@@ -327,11 +328,12 @@ const getType = val => {
             :wellName="msgData[0].wellName"
             :wellType="msgData[0].wellType"
             :data="msgData[0].detail"
+            :title="task_selected + '（' + keys + '）'"
           />
         </el-card>
         <el-card
           class="live-form"
-          :header="task_selected + ' / 作业实时数据(' + keys + ')'"
+          :header="task_selected + '（ ' + keys + '）'"
         >
           <mixedForm
             :formData="msgData[0].detail"
@@ -356,11 +358,7 @@ const getType = val => {
               msgData[index].equType === '单机车'
             "
           >
-            <el-card
-              class="live-line"
-              :header="task_selected + ' / ' + keys[index] + ' - 作业实时曲线'"
-              style="width: 100%"
-            >
+            <el-card class="live-line" style="width: 100%">
               <singleLine
                 ref="chartRef"
                 :data="msgData[index].detail"
@@ -369,11 +367,12 @@ const getType = val => {
                 :wellName="msgData[index].wellName"
                 :wellType="msgData[index].wellType"
                 :key="msgData[index].plateNum + timer"
+                :title="task_selected + '（' + keys[index] + '）'"
               />
             </el-card>
             <el-card
               class="live-form"
-              :header="task_selected + ' / ' + keys[index] + ' - 作业实时数据'"
+              :header="task_selected + '（' + keys[index] + '）'"
             >
               <singleForm
                 :formData="msgData[index].detail"
@@ -384,11 +383,7 @@ const getType = val => {
             </el-card>
           </template>
           <template v-else>
-            <el-card
-              class="live-line"
-              :header="task_selected + ' / ' + keys[index] + ' - 作业实时曲线'"
-              style="width: 100%"
-            >
+            <el-card class="live-line" style="width: 100%">
               <dualLine
                 ref="chartRef"
                 :data="msgData[index].detail"
@@ -397,11 +392,12 @@ const getType = val => {
                 :wellName="msgData[index].wellName"
                 :wellType="msgData[index].wellType"
                 :key="msgData[index].plateNum + timer"
+                :title="task_selected + '（' + keys[index] + '）'"
               />
             </el-card>
             <el-card
               class="live-form"
-              :header="task_selected + ' / ' + keys[index] + ' - 作业实时数据'"
+              :header="task_selected + '（' + keys[index] + '）'"
             >
               <dualForm
                 :formData="msgData[index].detail"
@@ -428,9 +424,15 @@ const getType = val => {
 
 <style scoped lang="scss">
 .source-card {
+  display: flex;
+
+  .el-card + .el-card {
+    margin-left: 15px;
+  }
+
   ::v-deep(.el-form-item) {
-    margin-right: 40px;
-    margin-bottom: 0px;
+    margin-right: 0;
+    margin-bottom: 0;
   }
 }
 
@@ -450,6 +452,6 @@ const getType = val => {
 }
 
 .live-line {
-  width: calc(100% - 270px);
+  width: calc(100% - 200px);
 }
 </style>

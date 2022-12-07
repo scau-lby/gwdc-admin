@@ -1,9 +1,10 @@
 <script setup lang="ts">
+// import {hasRight} from "/@/"
 import { useColumns } from "./columns";
 import { reactive, ref, onMounted, nextTick } from "vue";
 import { type FormInstance, ElNotification } from "element-plus";
 import { type PaginationProps } from "@pureadmin/table";
-import { TableProBar } from "/@/components/ReTable";
+// import { TableProBar } from "/@/components/ReTable";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 // api
 import { getHistoryList, deleteHistoryByWellId } from "/@/api/history";
@@ -186,7 +187,6 @@ onMounted(() => {
             <el-link
               class="reset-margin"
               type="primary"
-              :size="size"
               @click="onView(row)"
               :icon="useRenderIcon('view')"
               style="margin-right: 15px"
@@ -195,11 +195,11 @@ onMounted(() => {
           <el-link
             class="reset-margin"
             type="primary"
-            :size="size"
             @click="onUpdate(row)"
             :icon="useRenderIcon('edit-open')"
             style="margin-right: 15px"
           />
+          <!-- v-if="hasRight('117')" -->
           <el-popconfirm
             title="是否确定删除该作业记录?"
             @confirm="onDelete(row)"
@@ -208,7 +208,6 @@ onMounted(() => {
               <el-link
                 class="reset-margin"
                 type="primary"
-                :size="size"
                 :icon="useRenderIcon('delete')"
                 style="margin-right: 15px"
               />

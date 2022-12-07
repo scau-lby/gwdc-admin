@@ -133,7 +133,7 @@ onMounted(() => {
     <PureTable
       border
       align="center"
-      row-key="wellName"
+      row-key="id"
       table-layout="auto"
       showOverflowTooltip
       :data="dataList"

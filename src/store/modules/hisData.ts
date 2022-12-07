@@ -8,9 +8,9 @@ export const useHisDataStore = defineStore({
     wellName: "",
     wellType: "",
     mixed: 0,
-    plateNums: [],
     flag: "底盘",
-    plateNum: "",
+    plate: "",
+    plates: [],
     beginTime: "",
     endTime: ""
   }),
@@ -24,14 +24,14 @@ export const useHisDataStore = defineStore({
     getMixed() {
       return this.mixed;
     },
-    getPlateNums() {
-      return this.plateNums;
+    getPlates() {
+      return this.plates;
     },
     getFlag() {
       return this.flag;
     },
-    getPlateNum() {
-      return this.plateNum;
+    getPlate() {
+      return this.plate;
     },
     getBeginTime() {
       return this.beginTime;
@@ -50,14 +50,14 @@ export const useHisDataStore = defineStore({
     SET_MIXED(value) {
       this.mixed = value;
     },
-    SET_PLATENUMS(value) {
-      this.plateNums = value;
+    SET_PLATES(value) {
+      this.plates = value;
     },
     SET_FLAG(value) {
       this.flag = value;
     },
-    SET_PLATENUM(value) {
-      this.plateNum = value;
+    SET_PLATE(value) {
+      this.plate = value;
     },
     SET_BEGINTIME(value) {
       this.beginTime = value;

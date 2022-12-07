@@ -31,6 +31,28 @@ const props = defineProps({
     default: () => {
       return {};
     }
+  },
+  dataList: {
+    type: Array,
+    default: () => {
+      return [];
+    }
+  },
+  legendVisible: {
+    type: Boolean,
+    default: false
+  },
+  myTool1Visible: {
+    type: Boolean,
+    default: true
+  },
+  title: {
+    type: String,
+    default: ""
+  },
+  subtitle: {
+    type: String,
+    default: ""
   }
 });
 
@@ -89,17 +111,64 @@ const dataset_dimensions = [
   "bbdclllj"
 ];
 
+let chartData = [];
+
 const index = ref(props.index);
 watch(
   () => props.index,
   val => {
     index.value = val;
+    chartData = [];
   }
 );
 
-let chartData = [];
+const title = ref(props.title);
+watch(
+  () => props.title,
+  val => {
+    title.value = val;
+    option.title.text = val;
+  }
+);
+const subtitle = ref(props.subtitle);
+watch(
+  () => props.subtitle,
+  val => {
+    subtitle.value = val;
+    option.title.subtext = val;
+  }
+);
+
+const legendVisible = ref(props.legendVisible);
+watch(
+  () => props.legendVisible,
+  val => {
+    legendVisible.value = val;
+  }
+);
+
+const myTool1Visible = ref(props.myTool1Visible);
+watch(
+  () => props.myTool1Visible,
+  val => {
+    myTool1Visible.value = val;
+  }
+);
 
 const option = {
+  title: {
+    show: true,
+    text: title.value + " - 施工曲线",
+    subtext: subtitle.value ? "作业日期：" + subtitle.value : "",
+    left: "center",
+    textStyle: {
+      color: "#d53e42"
+    },
+    subtextStyle: {
+      color: "#f00"
+    }
+  },
+
   tooltip: {
     show: true,
     trigger: "axis",
@@ -118,7 +187,7 @@ const option = {
     ]
   },
   legend: {
-    show: false,
+    show: legendVisible.value,
     top: "15%",
     right: 0,
     orient: "vertical",
@@ -148,29 +217,29 @@ const option = {
   grid: [
     {
       left: 50,
-      top: "7%",
-      right: 25,
+      top: "8%",
+      right: legendVisible.value ? 150 : 25,
       height: "16.5%",
       containLabel: false
     },
     {
       left: 50,
       top: "29.5%",
-      right: 25,
+      right: legendVisible.value ? 150 : 25,
       height: "16.5%",
       containLabel: false
     },
     {
       left: 50,
       top: "56%",
-      right: 25,
+      right: legendVisible.value ? 150 : 25,
       height: "16.5%",
       containLabel: false
     },
     {
       left: 50,
       top: "78%",
-      right: 25,
+      right: legendVisible.value ? 150 : 25,
       height: "16.5%",
       containLabel: false
     }
@@ -445,10 +514,21 @@ const option = {
       },
       dataView: {
         show: true,
+        lang: ["数据视图", "关闭", "导出为excel"],
+        contentToOption: function () {
+          $("#dualTable").table2excel({
+            exclude: ".noExl",
+            name: "Excel Document Name",
+            filename: title.value + subtitle.value,
+            exclude_img: true,
+            exclude_links: true,
+            exclude_inputs: true
+          });
+        },
         optionToContent: function (opt) {
           var dataset = opt.dataset[0].source;
           var series = opt.series;
-          var table = `<table style="width:100%;text-align:center;">
+          var table = `<table id="dualTable" style="width:100%;text-align:center;">
             <thead>
               <tr>
                 <th>时间</th>
@@ -496,7 +576,7 @@ const option = {
       },
 
       myTool1: {
-        show: true,
+        show: myTool1Visible.value,
         title: "获取历史数据",
         icon: "path://M269.05,407.27Q415.66,347.84,477.1,232.91l41.61,9.91q13.83,2-2,11.89l-4,7.92q99.06,95.12,204.09,124.83L701,439q-134.76-53.5-210-148.61-53.5,69.38-101.05,101.05h210V435H376v-31.7Q326.5,437,288.86,450.86Zm340.8,61.43,35.67,23.77q7.89,7.95-5.95,9.91Q598,623.27,564.28,684.67l-47.56-19.82q41.61-73.27,67.37-142.66H330.47V478.6H603.91Z",
         onclick: function () {
@@ -595,6 +675,18 @@ watch(
   { deep: true }
 );
 
+watch(
+  () => props.dataList,
+  val => {
+    if (val.length > 0) {
+      chartData = chartData.concat(val);
+      option.dataset.source = chartData;
+      initEchartInstance();
+    }
+  },
+  { deep: true }
+);
+
 onBeforeMount(() => {
   nextTick(() => {
     initEchartInstance();
@@ -629,5 +721,5 @@ defineExpose({ legend_toggle });
 </script>
 
 <template>
-  <div :class="'live-line' + props.index" style="width: 100%; height: 65vh" />
+  <div :class="'live-line' + props.index" style="width: 100%; height: 73vh" />
 </template>

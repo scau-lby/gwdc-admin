@@ -90,3 +90,100 @@ export const getHistoryReal = (params: object): ResponseType => {
 export const getFixedHistoryReal = (params: object): ResponseType => {
   return http.request("get", `/gjsnccj/well/getfixedHistoryReal`, { params });
 };
+
+// 上传注替计划
+export const setPlanData = (
+  wellName: string,
+  wellType: string,
+  data: object
+): ResponseType => {
+  return http.request(
+    "post",
+    `/gjsnccj/well/setPlanData`,
+    { data },
+    {
+      params: {
+        wellName,
+        wellType
+      }
+    }
+  );
+};
+
+// 获取注替计划
+export const getPlanData = (
+  wellName: string,
+  wellType: string
+): ResponseType => {
+  return http.request(
+    "post",
+    `/gjsnccj/well/getPlanData`,
+    {},
+    {
+      params: {
+        wellName,
+        wellType
+      }
+    }
+  );
+};
+
+// 删除注替计划
+export const delPlanData = (
+  wellName: string,
+  wellType: string
+): ResponseType => {
+  return http.request(
+    "post",
+    `/gjsnccj/well/delPlanData`,
+    {},
+    {
+      params: {
+        wellName,
+        wellType
+      }
+    }
+  );
+};
+
+// 获取注替计划模拟数据
+export const getPlanSimulate = (
+  wellName: string,
+  wellType: string,
+  beginTime: string
+): ResponseType => {
+  return http.request(
+    "post",
+    `/gjsnccj/well/getPlanSimulate`,
+    {},
+    {
+      params: {
+        wellName,
+        wellType,
+        beginTime
+      }
+    }
+  );
+};
+
+// 获取注替计划模拟数据
+export const getPlanSimulateByStep = (
+  wellName: string,
+  wellType: string,
+  beginTime: string,
+  content: string
+): ResponseType => {
+  return http.request(
+    "post",
+    `/gjsnccj/well/getPlanSimulateByStep`,
+    {},
+    {
+      params: {
+        wellName,
+        wellType,
+        beginTime,
+        content
+      }
+    }
+  );
+};

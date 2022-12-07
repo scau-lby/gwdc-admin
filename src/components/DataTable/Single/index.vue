@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useColumns } from "./columns";
+
 import { reactive, ref, watch } from "vue";
 import { type PaginationProps } from "@pureadmin/table";
 
 defineOptions({
-  name: "SideB"
+  name: "SingleTable"
 });
 
 const props = defineProps({

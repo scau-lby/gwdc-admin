@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, onBeforeUnmount } from "vue";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 // store
 import { useHisDataStoreHook } from "/@/store/modules/hisData";
 // api
 import { getHistoryWell, getHistoryList } from "/@/api/history";
 import { getHistoryReal } from "/@/api/well";
+import { ElMessageBox } from "element-plus";
 // excel
 import { utils, writeFile } from "xlsx";
 defineOptions({
@@ -13,10 +14,11 @@ defineOptions({
 });
 
 let wellName = "",
-  wellType = "",
-  task = ref(""),
-  plateList = ref([]), // 当前选中任务对应的设备列表
-  plates_checked = ref(""), // 当前选中设备编号数组
+  wellType = "";
+
+const task = ref(""),
+  plateList = ref([]),
+  plate_checked = ref(""),
   flag = ref("底盘");
 
 const beginTime1 = ref(null),
@@ -24,17 +26,37 @@ const beginTime1 = ref(null),
   beginTime2 = ref(null),
   endTime2 = ref(null);
 
-function onPlateChange(value) {
-  useHisDataStoreHook().SET_BEGINTIME("");
-  useHisDataStoreHook().SET_ENDTIME("");
-  useHisDataStoreHook().SET_PLATENUM(value);
+// 下载中
+const loading = ref(false);
+
+function onFlagChange(value) {
+  useHisDataStoreHook().SET_FLAG(value);
 }
 
 watch(
-  () => plates_checked.value,
+  () => plate_checked.value,
   value => {
     if (value && wellName && wellType) {
-      getTimeRange();
+      beginTime1.value = "";
+      beginTime2.value = "";
+      useHisDataStoreHook().SET_BEGINTIME("");
+      endTime1.value = "";
+      endTime2.value = "";
+      useHisDataStoreHook().SET_ENDTIME("");
+      useHisDataStoreHook().SET_PLATE(value);
+      plateList.value.forEach(item => {
+        if (item.plateNum === value) {
+          beginTime1.value = item.startTime;
+          beginTime2.value = item.startTime;
+          useHisDataStoreHook().SET_BEGINTIME(item.startTime);
+          endTime1.value = item.finishTime;
+          endTime2.value = item.finishTime;
+          useHisDataStoreHook().SET_ENDTIME(item.finishTime);
+          setTimeout(() => {
+            emit("getTableData");
+          }, 500);
+        }
+      });
     }
   },
   {
@@ -43,41 +65,29 @@ watch(
   }
 );
 
-async function getTimeRange() {
-  let { data: data1 } = await getHistoryReal({
-    pageNum: 1,
-    pageSize: 1,
-    plateNum: plates_checked.value,
-    wellName,
-    wellType
-  });
-  beginTime1.value = data1.records[0].sj;
-  beginTime2.value = data1.records[0].sj;
-  let { data: data2 } = await getHistoryReal({
-    pageNum: data1.pages,
-    pageSize: 1,
-    plateNum: plates_checked.value,
-    wellName,
-    wellType
-  });
-  endTime1.value = data2.records[0].sj;
-  endTime2.value = data2.records[0].sj;
+const emit = defineEmits(["getTableData"]);
+
+function emitGetDataListByAll() {
   useHisDataStoreHook().SET_BEGINTIME(beginTime1.value);
   useHisDataStoreHook().SET_ENDTIME(endTime1.value);
+  emit("getTableData");
 }
 
-function onFlagChange(value) {
-  useHisDataStoreHook().SET_FLAG(value);
+function emitGetDataListByPart() {
+  useHisDataStoreHook().SET_BEGINTIME(beginTime2.value);
+  useHisDataStoreHook().SET_ENDTIME(endTime2.value);
+  emit("getTableData");
 }
 
-async function getPlateList() {
+async function getPlatesList() {
   let { data } = await getHistoryWell({
     wellName,
     wellType
   });
   plateList.value = data;
-  plates_checked.value = data[0].plateNum;
-  useHisDataStoreHook().SET_PLATENUM(data[0].plateNum);
+
+  plate_checked.value = data[0].plateNum;
+  useHisDataStoreHook().SET_PLATE(data[0].plateNum);
 }
 
 onMounted(() => {
@@ -94,11 +104,11 @@ onMounted(() => {
       wellName = records[0].wellName;
       wellType = records[0].wellType;
       task.value = wellName + " @ " + wellType;
-      getPlateList();
+      getPlatesList();
     });
   } else {
     task.value = wellName + " @ " + wellType;
-    getPlateList();
+    getPlatesList();
   }
 });
 
@@ -117,8 +127,14 @@ interface Columns {
 const generateColumns = (columns = [], prefix = "", props?: any) =>
   Array.from(columns).map(item => ({
     ...props,
-    key: item.key !== "sj" ? `${prefix}${item.key}` : `${item.key}`,
-    dataKey: item.key !== "sj" ? `${prefix}${item.key}` : `${item.key}`,
+    key:
+      item.key !== "time" && prefix !== "plc"
+        ? `${prefix}${item.key}`
+        : `${item.key}`,
+    dataKey:
+      item.key !== "time" && prefix !== "plc"
+        ? `${prefix}${item.key}`
+        : `${item.key}`,
     title: `${item.value}`,
     width: 500
   }));
@@ -140,7 +156,7 @@ const generateData = (
     );
   });
 const columns_data_1 = [
-  { key: "sj", value: "时间" },
+  { key: "time", value: "时间" },
   { key: "fdjzs", value: "发动机转速" },
   { key: "fdjnj", value: "发动机扭矩" },
   { key: "fdjfz", value: "发动机负载" },
@@ -169,7 +185,7 @@ const columns_data_1 = [
   { key: "bsxdw", value: "实际档位" }
 ];
 const columns_data_2 = [
-  { key: "sj", value: "时间" },
+  { key: "time", value: "时间" },
   { key: "md", value: "混浆密度" },
   { key: "abyl", value: "A泵压力" },
   { key: "bbyl", value: "B泵压力" },
@@ -195,55 +211,120 @@ const columns_data_2 = [
 ];
 
 const columns_chassis = generateColumns(columns_data_1, "ap");
-const columns_plc = generateColumns(columns_data_2, "");
+const columns_plc = generateColumns(columns_data_2, "plc");
 const columns_sideA = generateColumns(columns_data_1, "dp");
 const columns_sideB = generateColumns(columns_data_1, "bp");
 
 let dataList = [];
 // 下载全部数据
 function exportAll() {
-  getDataList(beginTime1.value, endTime1.value);
+  ElMessageBox.confirm(
+    `${wellName} - ${wellType} - ${plate_checked.value}`,
+    "下载全部数据",
+    {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消"
+    }
+  )
+    .then(() => {
+      loading.value = true;
+      getDataList(
+        wellName,
+        wellType,
+        plate_checked.value,
+        beginTime1.value,
+        endTime1.value
+      );
+    })
+    .catch(() => {});
 }
 // 下载施工数据
 function exportPart() {
-  getDataList(beginTime2.value, endTime2.value);
+  ElMessageBox.confirm(
+    `${wellName} - ${wellType} - ${plate_checked.value}`,
+    "下载施工数据",
+    {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消"
+    }
+  )
+    .then(() => {
+      loading.value = true;
+      getDataList(
+        wellName,
+        wellType,
+        plate_checked.value,
+        beginTime2.value,
+        endTime2.value
+      );
+    })
+    .catch(() => {});
 }
 
-function getDataList(beginTime, endTime) {
+function getDataList(
+  curr_wellName,
+  curr_wellType,
+  curr_plate,
+  curr_beginTime,
+  curr_endTime
+) {
   dataList = [];
+
   getHistoryReal({
-    wellName,
-    wellType,
-    plateNum: plates_checked.value,
-    beginTime,
-    endTime,
+    wellName: curr_wellName,
+    wellType: curr_wellType,
+    plateNum: curr_plate,
+    beginTime: curr_beginTime,
+    endTime: curr_endTime,
     pageNum: 1,
     pageSize: 500
   }).then(({ data }) => {
     const { pages } = data;
-    let pageNum = pages;
-    getMoreRecords(beginTime, endTime, pageNum);
+    let curr_pageNum = pages;
+    getMoreRecords(
+      curr_wellName,
+      curr_wellType,
+      curr_plate,
+      curr_beginTime,
+      curr_endTime,
+      curr_pageNum
+    );
 
     const timer = setInterval(() => {
-      if (pageNum > 1) {
-        pageNum = pageNum - 1;
-        getMoreRecords(beginTime, endTime, pageNum);
+      if (curr_pageNum > 1) {
+        curr_pageNum = curr_pageNum - 1;
+        getMoreRecords(
+          curr_wellName,
+          curr_wellType,
+          curr_plate,
+          curr_beginTime,
+          curr_endTime,
+          curr_pageNum
+        );
       } else {
         clearInterval(timer);
-        exportExcel(dataList);
+        loading.value = false;
+        exportExcel(curr_plate, dataList);
       }
     }, 2000);
   });
 }
 
-function getMoreRecords(beginTime = "", endTime = "", pageNum) {
+function getMoreRecords(
+  curr_wellName,
+  curr_wellType,
+  curr_plate = "",
+  curr_beginTime = "",
+  curr_endTime = "",
+  curr_pageNum = 1
+) {
   getHistoryReal({
-    wellName,
-    wellType,
-    plateNum: plates_checked.value,
-    beginTime,
-    endTime,
-    pageNum,
+    wellName: curr_wellName,
+    wellType: curr_wellType,
+    plateNum: curr_plate,
+    beginTime: curr_beginTime,
+    endTime: curr_endTime,
+    pageNum: curr_pageNum,
     pageSize: 500
   }).then(({ data }) => {
     const records = data.records.map(item => clean(item));
@@ -259,6 +340,19 @@ function clean(params: object) {
       if (i === "md" && parseFloat(params[i]) < 0) {
         res[i] = 0;
       }
+    } else if (i === "sj") {
+      res["time"] =
+        params["sj"].slice(0, 4) +
+        "-" +
+        params["sj"].slice(4, 6) +
+        "-" +
+        params["sj"].slice(6, 8) +
+        " " +
+        params["sj"].slice(8, 10) +
+        ":" +
+        params["sj"].slice(10, 12) +
+        ":" +
+        params["sj"].slice(12, 14);
     } else {
       res[i] = params[i];
     }
@@ -266,7 +360,7 @@ function clean(params: object) {
   return res;
 }
 
-function exportExcel(dataList) {
+function exportExcel(plate, dataList) {
   let columns_arr = [
     { key: "底盘", value: columns_chassis },
     { key: "plc", value: columns_plc },
@@ -295,18 +389,16 @@ function exportExcel(dataList) {
 
     utils.book_append_sheet(workBook, workSheet, `${flag}-数据报表`);
   });
-  writeFile(workBook, `${wellName}-${wellType}-${plates_checked.value}.xlsx`);
+  writeFile(workBook, `${wellName} - ${wellType} - ${plate} - 动力参数.xlsx`);
 }
 
-function emitGetDataListByAll() {
-  useHisDataStoreHook().SET_BEGINTIME(beginTime1.value);
-  useHisDataStoreHook().SET_ENDTIME(endTime1.value);
-}
-
-function emitGetDataListByPart() {
-  useHisDataStoreHook().SET_BEGINTIME(beginTime2.value);
-  useHisDataStoreHook().SET_ENDTIME(endTime2.value);
-}
+onBeforeUnmount(() => {
+  useHisDataStoreHook().SET_PLATE("");
+  useHisDataStoreHook().SET_PLATES([]);
+  useHisDataStoreHook().SET_FLAG("底盘");
+  useHisDataStoreHook().SET_BEGINTIME("");
+  useHisDataStoreHook().SET_ENDTIME("");
+});
 </script>
 <template>
   <div class="source-card">
@@ -315,10 +407,10 @@ function emitGetDataListByPart() {
     </el-card>
     <el-card
       header="设备编号"
+      style="flex-grow: 1"
       :body-style="{ padding: '10px 15px' }"
-      style="max-width: 300px"
     >
-      <el-radio-group v-model="plates_checked" @change="onPlateChange">
+      <el-radio-group v-model="plate_checked">
         <el-radio
           v-for="item in plateList"
           :key="item.id"
@@ -339,72 +431,79 @@ function emitGetDataListByPart() {
       </el-radio-group>
     </el-card>
     <el-card style="flex-grow: 1" :body-style="{ padding: '10px 15px' }">
-      <el-row :gutter="10">
-        <el-col :span="9">
-          <el-form-item label="记录开始时间">
-            <el-date-picker
-              v-model="beginTime1"
-              type="datetime"
-              value-format="YYYYMMDDHHmmss"
-              readonly
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="9">
-          <el-form-item label="记录结束时间">
-            <el-date-picker
-              v-model="endTime1"
-              type="datetime"
-              value-format="YYYYMMDDHHmmss"
-              readonly
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-button type="default" @click="emitGetDataListByAll">
-            显示全部数据
-          </el-button>
+      <div style="display: flex">
+        <el-form-item label="记录开始时间">
+          <el-date-picker
+            v-model="beginTime1"
+            type="datetime"
+            value-format="YYYYMMDDHHmmss"
+            readonly
+            :clearable="false"
+          />
+        </el-form-item>
+
+        <el-form-item label="记录结束时间" style="margin-left: 10px">
+          <el-date-picker
+            v-model="endTime1"
+            type="datetime"
+            value-format="YYYYMMDDHHmmss"
+            readonly
+            :clearable="false"
+          />
+        </el-form-item>
+        <el-button
+          type="default"
+          @click="emitGetDataListByAll"
+          style="margin-left: 10px"
+        >
+          显示全部数据
+        </el-button>
+        <el-tooltip content="下载全部数据" placement="top">
           <el-button
             type="default"
             :icon="useRenderIcon('download')"
             @click="exportAll"
-            title="下载全部数据"
+            :loading="loading"
+            style="margin-left: 10px"
           />
-        </el-col>
-      </el-row>
-      <el-row :gutter="10" style="margin-top: 5px">
-        <el-col :span="9">
-          <el-form-item label="施工开始时间">
-            <el-date-picker
-              v-model="beginTime2"
-              type="datetime"
-              value-format="YYYYMMDDHHmmss"
-              :clearable="false"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="9">
-          <el-form-item label="施工结束时间">
-            <el-date-picker
-              v-model="endTime2"
-              type="datetime"
-              value-format="YYYYMMDDHHmmss"
-              :clearable="false"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-button type="default" @click="emitGetDataListByPart">
-            显示施工数据
-          </el-button>
+        </el-tooltip>
+      </div>
+      <div style="display: flex; margin-top: 5px">
+        <el-form-item label="施工开始时间">
+          <el-date-picker
+            v-model="beginTime2"
+            type="datetime"
+            value-format="YYYYMMDDHHmmss"
+            :clearable="false"
+          />
+        </el-form-item>
+
+        <el-form-item label="施工结束时间" style="margin-left: 10px">
+          <el-date-picker
+            v-model="endTime2"
+            type="datetime"
+            value-format="YYYYMMDDHHmmss"
+            :clearable="false"
+          />
+        </el-form-item>
+
+        <el-button
+          type="default"
+          @click="emitGetDataListByPart"
+          style="margin-left: 10px"
+        >
+          显示施工数据
+        </el-button>
+        <el-tooltip content="下载施工数据" placement="bottom">
           <el-button
             type="default"
             :icon="useRenderIcon('download')"
             @click="exportPart"
-            title="下载施工数据"
+            :loading="loading"
+            style="margin-left: 10px"
           />
-        </el-col>
-      </el-row>
+        </el-tooltip>
+      </div>
     </el-card>
   </div>
 </template>

@@ -8,11 +8,8 @@ import { getHistoryWell, getHistoryList } from "/@/api/history";
 import { getHistoryReal } from "/@/api/well";
 import { getPlayBackUrlByPlatenum } from "/@/api/video";
 
-// components
-import h5Player from "./components/H5Player.vue";
-
 defineOptions({
-  name: "HisVideo"
+  name: "videoHeader"
 });
 
 let wellName = "",
@@ -137,27 +134,27 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="main">
-    <div class="source-card">
-      <el-card header="施工任务" :body-style="{ padding: '10px 15px' }">
-        <el-input v-model="task" readonly />
-      </el-card>
-      <el-card
-        header="设备编号"
-        :body-style="{ padding: '10px 15px' }"
-        style="min-width: 240px"
-      >
-        <el-radio-group v-model="plates_checked" @change="onPlateChange">
-          <el-radio
-            v-for="item in plateList"
-            :key="item.id"
-            :label="item.plateNum"
-          />
-        </el-radio-group>
-      </el-card>
+  <div class="source-card">
+    <el-card header="施工任务" :body-style="{ padding: '10px 15px' }">
+      <el-input v-model="task" readonly />
+    </el-card>
+    <el-card
+      header="设备编号"
+      :body-style="{ padding: '10px 15px' }"
+      style="min-width: 240px"
+    >
+      <el-radio-group v-model="plates_checked" @change="onPlateChange">
+        <el-radio
+          v-for="item in plateList"
+          :key="item.id"
+          :label="item.plateNum"
+        />
+      </el-radio-group>
+    </el-card>
 
-      <el-card style="flex-grow: 1" :body-style="{ padding: '10px 15px' }">
-        <el-form :inline="true">
+    <el-card style="flex-grow: 1" :body-style="{ padding: '10px 15px' }">
+      <el-row :gutter="10">
+        <el-col :span="9">
           <el-form-item label="记录开始时间">
             <el-date-picker
               v-model="beginTime"
@@ -166,6 +163,8 @@ onMounted(() => {
               readonly
             />
           </el-form-item>
+        </el-col>
+        <el-col :span="9">
           <el-form-item label="记录结束时间">
             <el-date-picker
               v-model="endTime"
@@ -174,6 +173,8 @@ onMounted(() => {
               readonly
             />
           </el-form-item>
+        </el-col>
+        <el-col :span="6">
           <el-button
             type="default"
             :icon="useRenderIcon('video-play')"
@@ -206,36 +207,9 @@ onMounted(() => {
           >
             恢复
           </el-button>
-        </el-form>
-        <el-form :inline="true" style="margin-top: 5px">
-          <el-form-item>
-            <el-date-picker
-              v-model="beginTime"
-              type="datetime"
-              value-format="YYYY-MM-DD HH:mm:ss"
-              readonly
-            />
-          </el-form-item>
-          <el-button type="default" @click="playbackResume"> 定位 </el-button>
-          <el-button type="default" @click="playbackResume"> 慢放 </el-button>
-          <el-button type="default" @click="playbackResume"> 快放 </el-button>
-          <el-button type="default" @click="playbackResume"> 单帧 </el-button>
-          <el-button type="default" @click="playbackResume">
-            开启电子放大
-          </el-button>
-          <el-button type="default" @click="playbackResume">
-            关闭电子放大
-          </el-button>
-          <el-button type="default" @click="playbackResume">
-            开启智能信息
-          </el-button>
-          <el-button type="default" @click="playbackResume">
-            开闭智能信息
-          </el-button>
-        </el-form>
-      </el-card>
-    </div>
-    <h5Player style="width: 100%; height: 74vh; margin-top: 10px" />
+        </el-col>
+      </el-row>
+    </el-card>
   </div>
 </template>
 

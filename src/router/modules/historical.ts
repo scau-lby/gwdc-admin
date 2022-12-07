@@ -27,14 +27,14 @@ const historicalRouter = {
         title: $t("menus.hsHisStatistics")
       }
     },
-    {
-      path: "/historical/data",
-      name: "HisData",
-      component: () => import("/@/views/historical/data/index.vue"),
-      meta: {
-        title: $t("menus.hsHisData")
-      }
-    },
+    // {
+    //   path: "/historical/data",
+    //   name: "HisData",
+    //   component: () => import("/@/views/historical/data/index.vue"),
+    //   meta: {
+    //     title: $t("menus.hsHisData")
+    //   }
+    // },
     {
       path: "/historical/video",
       name: "Video",

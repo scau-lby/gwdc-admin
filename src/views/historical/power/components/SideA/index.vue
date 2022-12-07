@@ -53,11 +53,13 @@ function onSizeChange(val: number) {
 watch(
   () => props.dataList,
   val => {
-    loading.value = true;
     dataList.value = val;
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
+    if (val.length > 0) {
+      loading.value = true;
+      setTimeout(() => {
+        loading.value = false;
+      }, 500);
+    }
   },
   {
     deep: true,

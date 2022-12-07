@@ -19,15 +19,6 @@ let selected_task = ref(""), // 当前选中任务
   formData4 = ref([]),
   flag_arr = ref(["0", "0", "0", "0"]);
 
-// watch(
-//   () => checked_plateNum.value,
-//   val => {
-//     curr_equType.value = truckList.value.filter(
-//       item => item.plateNum === val
-//     )[0].equType;
-//   }
-// );
-
 const labels1 = ref([
   "发动机转速",
   "发动机扭矩",
@@ -394,12 +385,13 @@ onBeforeUnmount(() => {
 <template>
   <div class="main">
     <template v-if="taskList.length > 0">
-      <el-card class="source-card">
-        <el-form :inline="true">
-          <el-form-item label="数据来源" />
-          <el-form-item label="采集时间" style="margin-left: 50px">
+      <div class="source-card">
+        <el-card>
+          <el-form-item label="采集时间">
             <el-input v-model="nowTime" />
           </el-form-item>
+        </el-card>
+        <el-card>
           <el-form-item label="施工任务">
             <el-select
               v-model="selected_task"
@@ -414,6 +406,8 @@ onBeforeUnmount(() => {
               />
             </el-select>
           </el-form-item>
+        </el-card>
+        <el-card style="flex-grow: 1">
           <el-form-item label="设备编号">
             <el-radio-group v-model="checked_plateNum" @change="onPlateChange">
               <el-radio
@@ -424,8 +418,8 @@ onBeforeUnmount(() => {
               />
             </el-radio-group>
           </el-form-item>
-        </el-form>
-      </el-card>
+        </el-card>
+      </div>
       <el-row :gutter="20" style="margin-top: 20px">
         <el-col :span="12">
           <board
@@ -480,12 +474,15 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .source-card {
-  ::v-deep(.el-form-item) {
-    margin-right: 40px;
-  }
-}
+  display: flex;
 
-::v-deep(.el-form-item) {
-  margin-bottom: 0;
+  .el-card + .el-card {
+    margin-left: 15px;
+  }
+
+  ::v-deep(.el-form-item) {
+    margin-right: 0;
+    margin-bottom: 0;
+  }
 }
 </style>

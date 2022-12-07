@@ -19,11 +19,8 @@ function createPlayer() {
   player = new window.JSPlugin({
     szId: "player",
     szBasePath: "./",
-    // 当容器div#play_window有固定宽高时，可不传iWidth和iHeight，窗口大小将自适应容器宽高
-    // iWidth: 600,
-    // iHeight: 400,
     iMaxSplit: 4,
-    iCurrentSplit: 2,
+    iCurrentSplit: 1,
     openDebug: true,
     oStyle: {
       borderSelect: "#FFCC00"
@@ -67,17 +64,6 @@ function createPlayer() {
   });
 }
 
-function arrangeWindow(splitNum) {
-  player.JS_ArrangeWindow(splitNum).then(
-    () => {
-      console.log(`arrangeWindow to ${splitNum}x${splitNum} success`);
-    },
-    e => {
-      console.error(e);
-    }
-  );
-}
-
 // 整体全屏
 function wholeFullScreen() {
   player.JS_FullScreenDisplay(true).then(
@@ -95,7 +81,7 @@ function realplay(data) {
   if (data.length === 0) return;
   data.forEach((item, index) => {
     // const playURL = "ws://59.47.54.83:7002/media?url=" + item.url;
-    console.log(item);
+    console.log(item.url);
     const playURL = item.url;
     player.JS_Play(playURL, { playURL, mode: 0 }, index).then(
       res => {
@@ -202,30 +188,27 @@ function recordStop() {
 watch(
   () => props.urls,
   val => {
-    if (val.length == 1) {
-      player.JS_ArrangeWindow(1);
-    } else if (val.length > 1 && val.length <= 4) {
-      player.JS_ArrangeWindow(2);
-    } else if (val.length > 4 && val.length <= 9) {
-      player.JS_ArrangeWindow(3);
-    } else if (val.length > 9) {
-      player.JS_ArrangeWindow(4);
-    }
-    if (player !== null) {
-      player.JS_StopRealPlayAll().then(
-        () => {
-          player = null;
-          console.info("JS_StopRealPlayAll success");
-          if (val.length > 0) {
+    if (val.length > 0) {
+      if (val.length == 1) {
+        player.JS_ArrangeWindow(1);
+      } else if (val.length > 1 && val.length <= 4) {
+        player.JS_ArrangeWindow(2);
+      } else if (val.length > 4 && val.length <= 9) {
+        player.JS_ArrangeWindow(3);
+      } else if (val.length > 9) {
+        player.JS_ArrangeWindow(4);
+      }
+      if (player !== null) {
+        player.JS_StopRealPlayAll().then(
+          () => {
+            console.info("JS_StopRealPlayAll success");
             realplay(val);
+          },
+          err => {
+            console.info("JS_StopRealPlayAll failed:", err);
           }
-        },
-        err => {
-          console.info("JS_StopRealPlayAll failed:", err);
-        }
-      );
-    } else {
-      if (val.length > 0) {
+        );
+      } else {
         realplay(val);
       }
     }
@@ -321,38 +304,6 @@ onMounted(() => {
         <div style="min-width: 150px; margin: 0 20px">
           <el-slider @change="setVolume" v-model="volume" size="small" />
         </div>
-        <el-button
-          class="reset-margin"
-          plain
-          @click="arrangeWindow(1)"
-          type="warning"
-        >
-          1×1
-        </el-button>
-        <el-button
-          class="reset-margin"
-          plain
-          @click="arrangeWindow(2)"
-          type="warning"
-        >
-          2×2
-        </el-button>
-        <el-button
-          class="reset-margin"
-          plain
-          @click="arrangeWindow(3)"
-          type="warning"
-        >
-          3×3
-        </el-button>
-        <el-button
-          class="reset-margin"
-          plain
-          @click="arrangeWindow(4)"
-          type="warning"
-        >
-          4×4
-        </el-button>
         <el-button
           class="reset-margin"
           plain

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, watch, ref } from "vue";
+import { watch, ref } from "vue";
 // store
 import { useHisDataStoreHook } from "/@/store/modules/hisData";
 // header
@@ -15,9 +15,9 @@ import sideB from "./components/SideB/index.vue";
 let flag = ref(useHisDataStoreHook().getFlag),
   wellName = useHisDataStoreHook().getWellName,
   wellType = useHisDataStoreHook().getWellType,
-  plateNum = useHisDataStoreHook().getPlateNum,
-  beginTime = useHisDataStoreHook().beginTime,
-  endTime = useHisDataStoreHook().endTime;
+  plateNum = useHisDataStoreHook().getPlate,
+  beginTime = useHisDataStoreHook().getBeginTime,
+  endTime = useHisDataStoreHook().getEndTime;
 
 const dataList = ref([]),
   pageNum = ref(1),
@@ -43,9 +43,6 @@ watch(
   () => useHisDataStoreHook().getWellName,
   value => {
     wellName = value;
-    if (value && wellType && plateNum && beginTime && endTime) {
-      getDataList();
-    }
   },
   {
     deep: true,
@@ -57,9 +54,6 @@ watch(
   () => useHisDataStoreHook().getWellType,
   value => {
     wellType = value;
-    if (value && wellName && plateNum && beginTime && endTime) {
-      getDataList();
-    }
   },
   {
     deep: true,
@@ -68,13 +62,9 @@ watch(
 );
 
 watch(
-  () => useHisDataStoreHook().getPlateNum,
+  () => useHisDataStoreHook().getPlate,
   value => {
     plateNum = value;
-    if (value && wellName && wellType && beginTime && endTime) {
-      pageNum.value = 1;
-      getDataList();
-    }
   },
   {
     deep: true,
@@ -83,13 +73,9 @@ watch(
 );
 
 watch(
-  () => useHisDataStoreHook().beginTime,
+  () => useHisDataStoreHook().getBeginTime,
   value => {
     beginTime = value;
-    if (value && endTime && plateNum && wellName && wellType) {
-      pageNum.value = 1;
-      getDataList();
-    }
   },
   {
     deep: true,
@@ -98,13 +84,9 @@ watch(
 );
 
 watch(
-  () => useHisDataStoreHook().endTime,
+  () => useHisDataStoreHook().getEndTime,
   value => {
     endTime = value;
-    if (value && beginTime && plateNum && wellName && wellType) {
-      pageNum.value = 1;
-      getDataList();
-    }
   },
   {
     deep: true,
@@ -112,7 +94,7 @@ watch(
   }
 );
 
-async function getDataList() {
+async function getTableData() {
   let { data } = await getHistoryReal({
     pageNum: pageNum.value,
     pageSize: pageSize.value,
@@ -143,23 +125,17 @@ function clean(params: object) {
 
 function pageNumChange(val) {
   pageNum.value = val;
-  getDataList();
+  getTableData();
 }
 
 function pageSizeChange(val) {
   pageSize.value = val;
-  getDataList();
+  getTableData();
 }
-
-onBeforeUnmount(() => {
-  useHisDataStoreHook().SET_PLATENUM("");
-  useHisDataStoreHook().SET_BEGINTIME("");
-  useHisDataStoreHook().SET_ENDTIME("");
-});
 </script>
 <template>
   <div class="main">
-    <radioHeader />
+    <radioHeader @getTableData="getTableData" />
     <chassis
       :dataList="dataList"
       :total="total"

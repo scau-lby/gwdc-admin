@@ -89,10 +89,10 @@ watch(
         <el-input v-model="formData.id" />
       </el-form-item>
       <el-form-item label="井号" prop="wellName">
-        <el-input v-model="formData.wellName" readonly />
+        <el-input v-model="formData.wellName" />
       </el-form-item>
       <el-form-item label="固井类型" prop="wellType">
-        <el-input v-model="formData.wellType" readonly />
+        <el-input v-model="formData.wellType" />
       </el-form-item>
       <el-form-item label="作业单位" prop="belongTo">
         <el-input v-model="formData.belongTo" />

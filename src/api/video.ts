@@ -6,11 +6,21 @@ interface ResponseType extends Promise<any> {
   message?: string;
 }
 
-// 获取设备列表
-export const getpreviewUrlByPlatenums = (params?: object): ResponseType => {
+// 获取实时预览地址
+export const getPreviewUrlByPlatenums = (params?: object): ResponseType => {
   return http.request(
     "post",
     "/gjsnccj/video/getpreviewUrlByPlatenums",
+    {},
+    { params }
+  );
+};
+
+// 获取回放视频地址
+export const getPlayBackUrlByPlatenum = (params?: object): ResponseType => {
+  return http.request(
+    "post",
+    "/gjsnccj/video/getplayBackUrlByPlatenum",
     {},
     { params }
   );

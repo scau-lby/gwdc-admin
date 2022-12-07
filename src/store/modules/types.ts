@@ -46,9 +46,9 @@ export type HisDataType = {
   wellName: string;
   wellType: string;
   mixed: number;
-  plateNums: Array<string>;
-  flag: number;
-  plateNum: string;
+  flag: string;
+  plate: string;
+  plates: Array<string>;
   beginTime: string;
   endTime: string;
 };

@@ -10,6 +10,7 @@ import { router } from "./index";
 import { loadEnv } from "../../build";
 import { useTimeoutFn } from "@vueuse/core";
 import { RouteConfigs } from "/@/layout/types";
+import { isString, isIncludeAllChildren } from "@pureadmin/utils";
 import { buildHierarchyTree } from "/@/utils/tree";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
 const Layout = () => import("/@/layout/index.vue");
@@ -315,7 +316,25 @@ function hasPermissions(value: Array<string>): boolean {
   }
 }
 
+/** 获取当前页面按钮级别的权限 */
+function getAuths(): Array<string> {
+  return router.currentRoute.value.meta.auths as Array<string>;
+}
+
+/** 是否有按钮级别的权限 */
+function hasAuth(value: string | Array<string>): boolean {
+  if (!value) return false;
+  /** 从当前路由的`meta`字段里获取按钮级别的所有自定义`code`值 */
+  const metaAuths = getAuths();
+  const isAuths = isString(value)
+    ? metaAuths.includes(value)
+    : isIncludeAllChildren(value, metaAuths);
+  return isAuths ? true : false;
+}
+
 export {
+  hasAuth,
+  getAuths,
   ascending,
   filterTree,
   initRouter,

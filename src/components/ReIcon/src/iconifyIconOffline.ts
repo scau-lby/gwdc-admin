@@ -10,6 +10,7 @@ import RefreshRight from "@iconify-icons/ep/refresh-right";
 import Refresh from "@iconify-icons/ep/refresh";
 import ArrowDown from "@iconify-icons/ep/arrow-down";
 import Download from "@iconify-icons/ep/download";
+import Upload from "@iconify-icons/ep/upload";
 import CloseBold from "@iconify-icons/ep/close-bold";
 import Bell from "@iconify-icons/ep/bell";
 import Search from "@iconify-icons/ep/search";
@@ -50,6 +51,7 @@ addIcon("refresh", Refresh);
 addIcon("refresh-right", RefreshRight);
 addIcon("arrow-down", ArrowDown);
 addIcon("download", Download);
+addIcon("upload", Upload);
 addIcon("close-bold", CloseBold);
 addIcon("bell", Bell);
 addIcon("search", Search);
@@ -72,10 +74,6 @@ import Mute from "@iconify-icons/ep/mute"; // 停止对讲
 addIcon("mute", Mute);
 import Mic from "@iconify-icons/ep/mic";
 addIcon("mic", Mic);
-import VideoPause from "@iconify-icons/ep/video-pause"; // 停止预览
-addIcon("video-pause", VideoPause);
-import VideoPlay from "@iconify-icons/ep/video-play"; // 开始预览
-addIcon("video-play", VideoPlay);
 
 import CameraFilled from "@iconify-icons/ep/camera-filled"; // 抓取 JPEG
 addIcon("camera-filled", CameraFilled);
@@ -91,6 +89,12 @@ import VolumeUpLine from "@iconify-icons/ri/volume-up-line"; // 开启声音
 addIcon("volume-up-line", VolumeUpLine);
 import VolumeMuteLine from "@iconify-icons/ri/volume-mute-line"; // 关闭声音
 addIcon("volume-mute-line", VolumeMuteLine);
+import VideoPlay from "@iconify-icons/ri/play-circle-line"; // 开始预览
+addIcon("video-play", VideoPlay);
+import VideoPause from "@iconify-icons/ri/pause-circle-line"; // 开始预览
+addIcon("video-pause", VideoPause);
+import VideoStop from "@iconify-icons/ri/stop-circle-line"; // 关闭声音
+addIcon("video-stop", VideoStop);
 
 // remixicon
 import ArrowRightSLine from "@iconify-icons/ri/arrow-right-s-line";
@@ -103,6 +107,7 @@ import Bookmark from "@iconify-icons/ri/bookmark-2-line";
 import User from "@iconify-icons/ri/user-3-fill";
 import Lock from "@iconify-icons/ri/lock-fill";
 import Password from "@iconify-icons/ri/lock-password-line";
+import LineChart from "@iconify-icons/ri/line-chart-line";
 addIcon("arrow-right-s-line", ArrowRightSLine);
 addIcon("arrow-left-s-line", ArrowLeftSLine);
 addIcon("logout-circle-r-line", LogoutCircleRLine);
@@ -113,6 +118,7 @@ addIcon("bookmark", Bookmark);
 addIcon("user", User);
 addIcon("lock", Lock);
 addIcon("password", Password);
+addIcon("lineChart", LineChart);
 
 // uil
 import ArrowsShrinkV from "@iconify-icons/uil/arrows-shrink-v";
