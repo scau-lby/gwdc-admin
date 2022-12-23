@@ -7,6 +7,8 @@ type paramsMapType = {
   name: string;
   expires: number;
   accessToken: string;
+  rights: Array<string>;
+  orgName: string;
 };
 
 // 获取token
@@ -18,12 +20,14 @@ export function getToken() {
 // 设置token以及过期时间（cookies、sessionStorage各一份）
 // 后端需要将用户信息和token以及过期时间都返回给前端，过期时间主要用于刷新token
 export function setToken(data) {
-  const { accessToken, expires, name } = data;
+  const { accessToken, expires, name, rights, orgName } = data;
   // 提取关键信息进行存储
   const paramsMap: paramsMapType = {
     name,
     expires: Date.now() + parseInt(expires),
-    accessToken
+    accessToken,
+    rights,
+    orgName
   };
   const dataString = JSON.stringify(paramsMap);
   useUserStoreHook().SET_TOKEN(accessToken);

@@ -139,7 +139,7 @@ onMounted(() => {
     </el-form>
     <template #footer>
       <el-button @click="closeDialog">取消</el-button>
-      <el-button type="primary" @click="submitForm(ruleFormRef)">
+      <el-button type="primary" @click="submitForm(ruleFormRef)" v-auth="'78'">
         确定
       </el-button>
     </template>

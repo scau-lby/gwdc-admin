@@ -38,6 +38,12 @@ const props = defineProps({
       return [];
     }
   },
+  simulateData: {
+    type: Array,
+    default: () => {
+      return [];
+    }
+  },
   legendVisible: {
     type: Boolean,
     default: false
@@ -74,23 +80,16 @@ const legend_data = [
   { name: "泵替累计流量" }
 ];
 
-const dataset_dimensions = [
-  "time",
-  "md",
-  "abyl",
-  "zssll",
-  "abdcll",
-  "zlj",
-  "abdclllj"
-];
-
 let chartData = [];
+let simulateData = [];
+
 const index = ref(props.index);
 watch(
   () => props.index,
   val => {
     index.value = val;
     chartData = [];
+    simulateData = [];
   }
 );
 
@@ -167,7 +166,17 @@ const option = {
       color: "inherit"
     }
   },
-  color: ["#5470c6", "#91cc75", "#fac858", "#ee6666", "#fac858", "#ee6666"],
+  color: [
+    "#5470c6",
+    "#91cc75",
+    "#fac858",
+    "#ee6666",
+    "#fac858",
+    "#ee6666",
+    "#999999",
+    "#999999",
+    "#999999"
+  ],
   grid: [
     {
       left: 50,
@@ -375,6 +384,33 @@ const option = {
       smooth: true,
       xAxisIndex: 3,
       yAxisIndex: 3
+    },
+    {
+      name: "混浆密度（模拟）",
+      type: "line",
+      symbol: "none",
+      smooth: true,
+      xAxisIndex: 0,
+      yAxisIndex: 0,
+      datasetIndex: 1
+    },
+    {
+      name: "流量（模拟）",
+      type: "line",
+      symbol: "none",
+      smooth: true,
+      xAxisIndex: 2,
+      yAxisIndex: 2,
+      datasetIndex: 1
+    },
+    {
+      name: "累计流量（模拟）",
+      type: "line",
+      symbol: "none",
+      smooth: true,
+      xAxisIndex: 3,
+      yAxisIndex: 3,
+      datasetIndex: 1
     }
   ],
   dataZoom: [
@@ -471,10 +507,16 @@ const option = {
       }
     }
   },
-  dataset: {
-    dimensions: dataset_dimensions,
-    source: chartData
-  }
+  dataset: [
+    {
+      dimensions: ["time", "md", "abyl", "zssll", "abdcll", "zlj", "abdclllj"],
+      source: chartData
+    },
+    {
+      dimensions: ["time", "mnmd", "mnabll", "mnabljll"],
+      source: simulateData
+    }
+  ]
 };
 
 function getResult(params: object) {
@@ -530,7 +572,7 @@ watch(
   val => {
     if (val) {
       chartData.push(val);
-      option.dataset.source = chartData;
+      option.dataset[0].source = chartData;
       initEchartInstance();
     }
   },
@@ -542,7 +584,19 @@ watch(
   val => {
     if (val.length > 0) {
       chartData = chartData.concat(val);
-      option.dataset.source = chartData;
+      option.dataset[0].source = chartData;
+      initEchartInstance();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.simulateData,
+  val => {
+    if (val.length > 0) {
+      simulateData = simulateData.concat(val);
+      option.dataset[1].source = simulateData;
       initEchartInstance();
     }
   },

@@ -112,7 +112,7 @@ class GwdcHttp {
 
         if (
           response.data.status !== 200 &&
-          response.data.data !== "请求eiss授权错误"
+          response.data.data !== "查询不到wid参数"
         ) {
           ElNotification({
             title: `${response.data.message}`,
@@ -133,8 +133,8 @@ class GwdcHttp {
         NProgress.done();
         // 所有的响应异常 区分来源为取消请求/非取消请求
         ElNotification({
-          title: `${error.response.data.status}-${error.response.data.error}`,
-          message: `接口："${error.response.data.path}"`,
+          title: `${error.response.data.status}-${error.response.data.data}`,
+          message: `接口："${error.response.data.message}"`,
           type: "error"
         });
         return Promise.reject($error);

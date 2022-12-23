@@ -24,6 +24,12 @@ import "@pureadmin/components/dist/theme.css";
 import "./assets/iconfont/iconfont.js";
 import "./assets/iconfont/iconfont.css";
 
+// trtc
+import TRTC from "trtc-js-sdk";
+import mitt from "mitt";
+import aegis from "/@/utils/aegis";
+TRTC.Logger.setLogLevel(TRTC.Logger.LogLevel.DEBUG);
+
 const app = createApp(App);
 
 // 自定义指令
@@ -41,6 +47,14 @@ import {
 app.component("IconifyIconOffline", IconifyIconOffline);
 app.component("IconifyIconOnline", IconifyIconOnline);
 app.component("FontIcon", FontIcon);
+
+// trtc
+const bus = mitt();
+
+app.provide("$bus", bus);
+app.provide("$aegis", aegis);
+app.config.globalProperties.$bus = bus;
+app.config.globalProperties.$aegis = aegis;
 
 getServerConfig(app).then(async config => {
   app.use(router);

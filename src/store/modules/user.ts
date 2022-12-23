@@ -58,7 +58,9 @@ export const useUserStore = defineStore({
               setToken({
                 accessToken: res?.token,
                 name: res?.userName,
-                expires: res?.expires || 1 * 60 * 60 * 1000
+                expires: res?.expires || 1 * 60 * 60 * 1000,
+                rights: res.rights,
+                orgName: res.orgName
               });
               resolve();
             } else {

@@ -35,11 +35,11 @@ export function useColumns() {
       prop: "dataSimCard",
       width: 200
     },
-    {
-      label: "数据订阅主题",
-      prop: "subject",
-      width: 260
-    },
+    // {
+    //   label: "数据订阅主题",
+    //   prop: "subject",
+    //   width: 260
+    // },
     {
       label: "数据状态",
       prop: "dataState",

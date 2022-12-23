@@ -173,7 +173,12 @@ function onSetRights(row) {
       @refresh="onSearch"
     >
       <template #buttons>
-        <el-button type="primary" :icon="useRenderIcon('plus')" @click="onAdd">
+        <el-button
+          type="primary"
+          :icon="useRenderIcon('plus')"
+          @click="onAdd"
+          v-auth="'84'"
+        >
           新增用户组
         </el-button>
       </template>
@@ -205,6 +210,7 @@ function onSetRights(row) {
                 @click="onSetRights(row)"
                 :icon="useRenderIcon('menu')"
                 style="margin-right: 15px"
+                v-auth="'113'"
               />
             </el-tooltip>
             <el-link
@@ -214,10 +220,12 @@ function onSetRights(row) {
               @click="onEdit(row)"
               :icon="useRenderIcon('edit-open')"
               style="margin-right: 15px"
+              v-auth="'67'"
             />
             <el-popconfirm
               title="是否确定删除该用户组?"
               @confirm="onDelete(row)"
+              v-auth="'69'"
             >
               <template #reference>
                 <el-link

@@ -1,13 +1,19 @@
 <script setup lang="ts">
+import { ref, reactive, onMounted, nextTick } from "vue";
 import { useColumns } from "./columns";
+import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
+
+// import { getToken } from "/@/utils/auth";
+
+// api
 import {
   getWellList,
   addFavorite,
   delFavorite,
   getWellMoreInfo
 } from "/@/api/well";
-import { ref, reactive, onMounted, nextTick } from "vue";
-import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
+
+// components
 import moreInfoDialog from "./MoreInfoDialog.vue";
 import updateDialog from "./UpdateFormDialog.vue";
 
@@ -91,6 +97,7 @@ async function onSearch() {
   let { data } = await getWellList({
     pageSize: pagination.pageSize,
     pageNum: pagination.currentPage
+    // orgName: JSON.parse(getToken()).orgName
   });
 
   const res = data.records.map(item => {
@@ -133,7 +140,7 @@ onMounted(() => {
     <PureTable
       border
       align="center"
-      row-key="id"
+      row-key="index"
       table-layout="auto"
       showOverflowTooltip
       :data="dataList"
@@ -147,12 +154,13 @@ onMounted(() => {
         color: '#d0d0d0'
       }"
     >
-      <template #operation="{ row }">
+      <template #op1="{ row }">
         <el-link
           type="danger"
           :icon="useRenderIcon('heart')"
           @click="onFavoriteDel(row)"
           v-if="row.favorite"
+          v-auth="'95'"
         />
 
         <el-link
@@ -160,6 +168,7 @@ onMounted(() => {
           :icon="useRenderIcon('heart-o')"
           @click="onFavoriteAdd(row)"
           v-else
+          v-auth="'94'"
         />
         <el-button
           class="reset-margin"
@@ -168,11 +177,16 @@ onMounted(() => {
           size="small"
           @click="onUpdate(row)"
           style="margin-left: 15px"
+          v-auth="'98'"
         >
           更新
         </el-button>
       </template>
-      <template #operation1="{ row }">
+      <!-- <template #op2="{ row }">
+        {{ row.push }}
+        <el-switch inline-prompt active-text="已推送" inactive-text="未推送" />
+      </template> -->
+      <template #op3="{ row }">
         <el-button
           class="reset-margin"
           plain
@@ -180,6 +194,7 @@ onMounted(() => {
           size="small"
           @click="onView(row)"
           :disabled="!row.hasMore"
+          v-auth="'100'"
         >
           了解详情
         </el-button>

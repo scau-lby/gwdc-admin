@@ -10,9 +10,16 @@ import { router } from "./index";
 import { loadEnv } from "../../build";
 import { useTimeoutFn } from "@vueuse/core";
 import { RouteConfigs } from "/@/layout/types";
-import { isString, isIncludeAllChildren } from "@pureadmin/utils";
+import {
+  isString,
+  isIncludeAllChildren,
+  cloneDeep,
+  intersection
+} from "@pureadmin/utils";
 import { buildHierarchyTree } from "/@/utils/tree";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
+import { getToken } from "../utils/auth";
+
 const Layout = () => import("/@/layout/index.vue");
 const IFrame = () => import("/@/layout/frameView.vue");
 // https://cn.vitejs.dev/guide/features.html#glob-import
@@ -47,6 +54,38 @@ function filterTree(data: RouteComponent[]) {
     (v: { children }) => v.children && (v.children = filterTree(v.children))
   );
   return newTree;
+}
+
+/** 过滤children长度为0的的目录，当目录下没有菜单时，会过滤此目录，目录没有赋予roles权限，当目录下只要有一个菜单有显示权限，那么此目录就会显示 */
+function filterChildrenTree(data: RouteComponent[]) {
+  const newTree = cloneDeep(data).filter((v: any) => v?.children?.length !== 0);
+  newTree.forEach(
+    (v: { children }) => v.children && (v.children = filterTree(v.children))
+  );
+  return newTree;
+}
+
+/** 判断两个数组彼此是否存在相同值 */
+function isOneOfArray(a: Array<string>, b: Array<string>) {
+  return Array.isArray(a) && Array.isArray(b)
+    ? intersection(a, b).length > 0
+      ? true
+      : false
+    : true;
+}
+
+/** 从sessionStorage里取出当前登陆用户的角色roles，过滤无权限的菜单 */
+function filterNoPermissionTree(data: RouteComponent[]) {
+  const currentRights = JSON.parse(getToken())
+    .rights.replace(/\[/g, "")
+    .replace(/\]/g, "");
+  const newTree = cloneDeep(data).filter((v: any) =>
+    isOneOfArray(v.meta?.rids, currentRights)
+  );
+  newTree.forEach(
+    (v: any) => v.children && (v.children = filterNoPermissionTree(v.children))
+  );
+  return filterChildrenTree(newTree);
 }
 
 // 批量删除缓存路由(keepalive)
@@ -147,7 +186,78 @@ function setDifAuthority(authority, routes) {
   return routes;
 }
 
+// function addPathMatch() {
+//   if (!router.hasRoute("pathMatch")) {
+//     router.addRoute({
+//       path: "/:pathMatch(.*)",
+//       name: "pathMatch",
+//       redirect: "/error/404"
+//     });
+//   }
+// }
+
+/** 处理动态路由（后端返回的路由） */
+// function handleAsyncRoutes(routeList) {
+//   if (routeList.length === 0) {
+//     usePermissionStoreHook().handleWholeMenus(routeList);
+//   } else {
+//     formatFlatteningRoutes(addAsyncRoutes(routeList)).map(
+//       (v: RouteRecordRaw) => {
+//         // 防止重复添加路由
+//         if (
+//           router.options.routes[0].children.findIndex(
+//             value => value.path === v.path
+//           ) !== -1
+//         ) {
+//           return;
+//         } else {
+//           // 切记将路由push到routes后还需要使用addRoute，这样路由才能正常跳转
+//           router.options.routes[0].children.push(v);
+//           // 最终路由进行升序
+//           ascending(router.options.routes[0].children);
+//           if (!router.hasRoute(v?.name)) router.addRoute(v);
+//           const flattenRouters: any = router
+//             .getRoutes()
+//             .find(n => n.path === "/");
+//           router.addRoute(flattenRouters);
+//         }
+//       }
+//     );
+//     usePermissionStoreHook().handleWholeMenus(routeList);
+//   }
+//   addPathMatch();
+// }
+
 // 初始化路由
+/*
+function initRouter() {
+  console.log("initRouter");
+  if (getConfig()?.CachingAsyncRoutes) {
+    // 开启动态路由缓存本地sessionStorage
+    const key = "async-routes";
+    const asyncRouteList = storageSession().getItem(key) as any;
+    if (asyncRouteList && asyncRouteList?.length > 0) {
+      console.log(asyncRouteList);
+      return new Promise(resolve => {
+        handleAsyncRoutes(asyncRouteList);
+        resolve(router);
+      });
+    } else {
+      console.log(constantRoutes.concat(...remainingRouter));
+      return new Promise(resolve => {
+        storageSession().setItem(key, routes);
+        handleAsyncRoutes(cloneDeep(routes));
+        resolve(router);
+      });
+    }
+  } else {
+    return new Promise(resolve => {
+      handleAsyncRoutes(cloneDeep(routes));
+      resolve(router);
+    });
+  }
+}
+*/
 function initRouter() {
   return new Promise(resolve => {
     const resp = [setDifAuthority("v-admin", permissionRouter)];
@@ -322,10 +432,18 @@ function getAuths(): Array<string> {
 }
 
 /** 是否有按钮级别的权限 */
-function hasAuth(value: string | Array<string>): boolean {
+function hasAuth(value: string): boolean {
   if (!value) return false;
   /** 从当前路由的`meta`字段里获取按钮级别的所有自定义`code`值 */
-  const metaAuths = getAuths();
+  // const metaAuths = getAuths();
+  const token = getToken();
+  let rights = "";
+  if (token) {
+    rights = JSON.parse(token).rights.replace(/\[/g, "").replace(/\]/g, "");
+  }
+
+  const metaAuths = rights.split(",");
+  // console.log(metaAuths);
   const isAuths = isString(value)
     ? metaAuths.includes(value)
     : isIncludeAllChildren(value, metaAuths);
@@ -347,5 +465,6 @@ export {
   findRouteByPath,
   handleAliveRoute,
   formatTwoStageRoutes,
-  formatFlatteningRoutes
+  formatFlatteningRoutes,
+  filterNoPermissionTree
 };

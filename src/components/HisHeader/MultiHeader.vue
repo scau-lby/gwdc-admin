@@ -55,7 +55,7 @@ function onMixedChange(value) {
         endTime2.value = item.finishTime;
         useHisDataStoreHook().SET_ENDTIME(item.finishTime);
         setTimeout(() => {
-          emit("getTableData");
+          emits("getTableData");
         }, 500);
       }
     });
@@ -77,7 +77,7 @@ function onMixedChange(value) {
     endTime2.value = time2;
     useHisDataStoreHook().SET_ENDTIME(time2);
     setTimeout(() => {
-      emit("getTableData");
+      emits("getTableData");
     }, 500);
   }
 }
@@ -102,7 +102,7 @@ watch(
           endTime2.value = item.finishTime;
           useHisDataStoreHook().SET_ENDTIME(item.finishTime);
           setTimeout(() => {
-            emit("getTableData");
+            emits("getTableData");
           }, 500);
         }
       });
@@ -140,7 +140,7 @@ watch(
       useHisDataStoreHook().SET_ENDTIME(endTime);
 
       setTimeout(() => {
-        emit("getTableData");
+        emits("getTableData");
       }, 500);
     }
   },
@@ -150,12 +150,12 @@ watch(
   }
 );
 
-const emit = defineEmits(["getTableData"]);
+const emits = defineEmits(["getTableData", "getPlanSimulate"]);
 function emitGetDataListByAll() {
   useHisDataStoreHook().SET_BEGINTIME(beginTime1.value);
   useHisDataStoreHook().SET_ENDTIME(endTime1.value);
   setTimeout(() => {
-    emit("getTableData");
+    emits("getTableData");
   }, 500);
 }
 
@@ -163,7 +163,7 @@ function emitGetDataListByPart() {
   useHisDataStoreHook().SET_BEGINTIME(beginTime2.value);
   useHisDataStoreHook().SET_ENDTIME(endTime2.value);
   setTimeout(() => {
-    emit("getTableData");
+    emits("getTableData");
   }, 500);
 }
 
@@ -573,7 +573,7 @@ const initialForm = {
       usages: 0
     },
     {
-      content: "注中间浆",
+      content: "注中间液",
       maxVal: 0,
       md: 0,
       minVal: 0,
@@ -662,6 +662,10 @@ async function delPlan() {
     uploadForm.value = initialForm;
     uploadDialogVisible.value = false;
   }
+}
+
+function getPlanSimulate() {
+  emits("getPlanSimulate");
 }
 </script>
 <template>
@@ -753,6 +757,7 @@ async function delPlan() {
             type="default"
             :icon="useRenderIcon('upload')"
             @click="uploadPlan"
+            v-auth="'125'"
           />
         </el-tooltip>
       </div>
@@ -786,7 +791,7 @@ async function delPlan() {
           <el-button
             type="default"
             :icon="useRenderIcon('lineChart')"
-            @click="uploadPlan"
+            @click="getPlanSimulate"
           />
         </el-tooltip>
         <!-- <el-tooltip content="下载施工数据" placement="bottom">
@@ -848,7 +853,9 @@ async function delPlan() {
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="resetForm(planForm)">取消</el-button>
-        <el-button type="danger" @click="delPlan"> 删除注替计划 </el-button>
+        <el-button type="danger" @click="delPlan" v-auth="'128'">
+          删除注替计划
+        </el-button>
         <el-button type="primary" @click="submitForm(planForm)">
           提交
         </el-button>

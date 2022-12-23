@@ -4,7 +4,11 @@ import { ref, watch, onBeforeUnmount } from "vue";
 import { useHisDataStoreHook } from "/@/store/modules/hisData";
 // api
 import { getTruckList } from "/@/api/truck";
-import { getHistoryReal, getFixedHistoryReal } from "/@/api/well";
+import {
+  getHistoryReal,
+  getFixedHistoryReal,
+  getPlanSimulateByStep
+} from "/@/api/well";
 // header
 import multiHeader from "/@/components/HisHeader/MultiHeader.vue";
 // 合并
@@ -13,6 +17,7 @@ import mixedLine from "/@/components/dataLine/MixedLine.vue";
 import dualLine from "/@/components/dataLine/DualLine.vue";
 // 单机车、单机橇
 import singleLine from "/@/components/dataLine/SingleLine.vue";
+import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 
 defineOptions({
   name: "HisData"
@@ -22,6 +27,7 @@ let timer = null;
 
 const index = ref(0),
   dataList = ref([]),
+  simulateData = ref([]),
   pageSize = ref(500),
   equType = ref("");
 
@@ -32,6 +38,107 @@ let mixed = ref(0),
   plates = ref(useHisDataStoreHook().getPlates),
   beginTime = ref(useHisDataStoreHook().getBeginTime),
   endTime = ref(useHisDataStoreHook().getEndTime);
+
+const simulateVisible = ref(false);
+
+const initialSteps = [
+  {
+    content: "注前置液",
+    zero: false,
+    timestamp: ""
+  },
+  {
+    content: "注领浆",
+    zero: false,
+    timestamp: ""
+  },
+  {
+    content: "注中间液",
+    zero: false,
+    timestamp: ""
+  },
+  {
+    content: "注尾浆",
+    zero: false,
+    timestamp: ""
+  },
+  {
+    content: "替压塞液",
+    zero: false,
+    timestamp: ""
+  },
+  {
+    content: "替钻井液",
+    zero: false,
+    timestamp: ""
+  },
+  {
+    content: "替清水",
+    zero: false,
+    timestamp: ""
+  }
+];
+const steps = ref(initialSteps);
+
+const curr_step = ref("注前置液");
+
+function getPlanSimulate() {
+  simulateVisible.value = true;
+}
+
+async function getSimulate(i) {
+  const next_i = i + 1;
+  if (next_i < steps.value.length) {
+    const step = steps.value.filter((item, index) => index === i)[0];
+    let { data } = await getPlanSimulateByStep(
+      wellName.value,
+      wellType.value,
+      step.timestamp,
+      step.content
+    );
+    curr_step.value = steps.value[next_i].content;
+    if (data.length > 0) {
+      const sj = data[data.length - 1].sj;
+      steps.value[next_i].timestamp =
+        sj.slice(0, 4) +
+        "-" +
+        sj.slice(4, 6) +
+        "-" +
+        sj.slice(6, 8) +
+        " " +
+        sj.slice(8, 10) +
+        ":" +
+        sj.slice(10, 12) +
+        ":" +
+        sj.slice(12, 14);
+      simulateData.value[0] = {
+        time:
+          data[0].sj.slice(8, 10) +
+          ":" +
+          data[0].sj.slice(10, 12) +
+          ":" +
+          data[0].sj.slice(12, 14),
+        mnmd: parseFloat(data[0].md),
+        mnabll: parseFloat(data[0].abll),
+        mnabljll: parseFloat(data[0].ablj)
+      };
+      simulateData.value[1] = {
+        time:
+          data[data.length - 1].sj.slice(8, 10) +
+          ":" +
+          data[data.length - 1].sj.slice(10, 12) +
+          ":" +
+          data[data.length - 1].sj.slice(12, 14),
+        mnmd: parseFloat(data[data.length - 1].md),
+        mnabll: parseFloat(data[data.length - 1].abll),
+        mnabljll: parseFloat(data[data.length - 1].ablj)
+      };
+      console.log(simulateData.value);
+    }
+  } else {
+    curr_step.value = "";
+  }
+}
 
 watch(
   () => useHisDataStoreHook().getMixed,
@@ -91,8 +198,19 @@ watch(
 watch(
   () => useHisDataStoreHook().getBeginTime,
   value => {
-    console.log(value);
     beginTime.value = value;
+    steps.value[0].timestamp =
+      value.slice(0, 4) +
+      "-" +
+      value.slice(4, 6) +
+      "-" +
+      value.slice(6, 8) +
+      " " +
+      value.slice(8, 10) +
+      ":" +
+      value.slice(10, 12) +
+      ":" +
+      value.slice(12, 14);
   },
   {
     deep: true,
@@ -114,6 +232,12 @@ watch(
 async function getTableData() {
   index.value = new Date().getTime();
   dataList.value = [];
+  simulateData.value = [];
+  curr_step.value = "注前置液";
+
+  steps.value = [];
+  steps.value = initialSteps;
+
   if (timer !== null) {
     clearInterval(timer);
     timer = null;
@@ -221,6 +345,7 @@ function getMoreRecords(
         dataList.value = res.data.records.map(item => clean(item));
       } else {
         index.value = new Date().getTime();
+        simulateData.value = [];
       }
     })
     .catch(() => {
@@ -255,6 +380,7 @@ function getMoreFixedRecords(
         dataList.value = res.data.records.map(item => clean(item));
       } else {
         index.value = new Date().getTime();
+        simulateData.value = [];
       }
     })
     .catch(() => {
@@ -265,21 +391,33 @@ function getMoreFixedRecords(
 
 function clean(params: object) {
   const res = {};
+  const arr = [
+    "jd",
+    "wd",
+    "sj",
+    "flag",
+    "createTime",
+    "id",
+    "inch",
+    "truckId",
+    "unit",
+    "deleted"
+  ];
   for (var i in params) {
-    if (params[i] != 0 && ["jd", "wd", "sj", "flag"].indexOf(i) === -1) {
-      res[i] = parseFloat(params[i]).toFixed(3);
-      if (i === "md" && parseFloat(params[i]) < 0) {
-        res[i] = 0;
-      }
-    } else if (i === "sj") {
+    if (i === "sj") {
       res["time"] =
         params["sj"].slice(8, 10) +
         ":" +
         params["sj"].slice(10, 12) +
         ":" +
         params["sj"].slice(12, 14);
-    } else {
-      res[i] = params[i];
+    }
+    if (arr.indexOf(i) === -1) {
+      if (parseFloat(params[i]) < 0) {
+        res[i] = 0;
+      } else {
+        res[i] = parseFloat(parseFloat(params[i]).toFixed(3));
+      }
     }
   }
   return res;
@@ -291,25 +429,23 @@ onBeforeUnmount(() => {
     timer = null;
   }
 });
+
+function onClose() {
+  simulateVisible.value = false;
+}
 </script>
 <template>
   <div class="main">
-    <multiHeader @getTableData="getTableData" />
-    <!-- :header="
-        equType === '合并'
-          ? wellName +
-            ' @ ' +
-            wellType +
-            ' / 工程曲线（' +
-            plates.join('/') +
-            '）'
-          : wellName + ' @ ' + wellType + ' / 工程曲线（' + plate + '）'
-      " -->
+    <multiHeader
+      @getTableData="getTableData"
+      @getPlanSimulate="getPlanSimulate"
+    />
     <el-card style="margin-top: 15px">
       <singleLine
         v-if="['单机车', '单机橇'].indexOf(equType) > -1"
         :index="index"
         :dataList="dataList"
+        :simulateData="simulateData"
         :plateNum="plate"
         :wellName="wellName"
         :wellType="wellType"
@@ -328,6 +464,7 @@ onBeforeUnmount(() => {
         v-else-if="['双机车', '双机橇'].indexOf(equType) > -1"
         :index="index"
         :dataList="dataList"
+        :simulateData="simulateData"
         :plateNum="plate"
         :wellName="wellName"
         :wellType="wellType"
@@ -346,6 +483,7 @@ onBeforeUnmount(() => {
         v-else-if="equType === '合并'"
         :index="index"
         :dataList="dataList"
+        :simulateData="simulateData"
         :plateNum="plates.join(',')"
         :wellName="wellName"
         :wellType="wellType"
@@ -361,6 +499,58 @@ onBeforeUnmount(() => {
         "
       />
     </el-card>
+    <el-dialog
+      v-model="simulateVisible"
+      title="获取注替计划模拟数据"
+      width="40%"
+      draggable
+      destroy-on-close
+      center
+    >
+      <el-timeline>
+        <el-timeline-item
+          v-for="(step, index) in steps"
+          :key="index"
+          :icon="step.content === curr_step ? useRenderIcon('check') : ''"
+          :type="step.content === curr_step ? 'primary' : ''"
+          :timestamp="step.timestamp"
+          placement="top"
+          size="large"
+        >
+          <el-form :model="step" inline>
+            <el-form-item>
+              <el-input v-model="step.content" readonly />
+            </el-form-item>
+            <el-form-item>
+              <el-date-picker
+                v-model="step.timestamp"
+                type="datetime"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                :clearable="false"
+              />
+            </el-form-item>
+            <el-form-item>
+              <el-checkbox v-model="step.zero" label="是否清零" />
+            </el-form-item>
+            <el-form-item>
+              <el-button
+                :type="step.content === curr_step ? 'primary' : ''"
+                style="margin-left: 10px"
+                @click="getSimulate(index)"
+                :disabled="step.content !== curr_step"
+              >
+                获取
+              </el-button>
+            </el-form-item>
+          </el-form>
+        </el-timeline-item>
+      </el-timeline>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="onClose">关闭</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 

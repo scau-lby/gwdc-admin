@@ -52,3 +52,21 @@ export type HisDataType = {
   beginTime: string;
   endTime: string;
 };
+
+export type trtcType = {
+  sdkAppId: string;
+  userId: string;
+  roomId: string;
+  secretKey: string;
+  userSig: string;
+  audioDeviceId: string;
+  videoDeviceId: string;
+  cameraList: Array<string>;
+  microphoneList: Array<string>;
+  logs: Array<object>;
+  isJoined: boolean;
+  isPublished: boolean;
+  isShared: boolean;
+  remoteStreams: Array<string>;
+  invitedRemoteStreams: Array<string>;
+};

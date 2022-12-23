@@ -314,7 +314,12 @@ const getType = val => {
             </el-checkbox-group>
           </el-form-item>
 
-          <el-button type="primary" @click="onGetMore" :disabled="!hasMoreInfo">
+          <el-button
+            type="primary"
+            @click="onGetMore"
+            :disabled="!hasMoreInfo"
+            v-auth="'100'"
+          >
             查看井队作业参数
           </el-button>
         </el-card>

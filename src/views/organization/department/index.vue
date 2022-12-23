@@ -109,7 +109,12 @@ function onPermit(row) {
       @refresh="onSearch"
     >
       <template #buttons>
-        <el-button type="primary" :icon="useRenderIcon('plus')" @click="onAdd">
+        <el-button
+          type="primary"
+          :icon="useRenderIcon('plus')"
+          @click="onAdd"
+          v-auth="'68'"
+        >
           新增组织机构
         </el-button>
       </template>
@@ -138,6 +143,7 @@ function onPermit(row) {
               @click="onEdit(row)"
               style="margin-right: 20px"
               type="primary"
+              v-auth="'66'"
             />
             <el-popconfirm title="是否确定删除该机构?" @confirm="onDelete(row)">
               <template #reference>
@@ -146,6 +152,7 @@ function onPermit(row) {
                   :size="size"
                   :icon="useRenderIcon('delete')"
                   type="primary"
+                  v-auth="'63'"
                 />
               </template>
             </el-popconfirm>
@@ -157,6 +164,7 @@ function onPermit(row) {
                 @click="onPermit(row)"
                 style="margin-left: 20px"
                 type="primary"
+                v-auth="'109'"
               />
             </el-tooltip>
           </template>

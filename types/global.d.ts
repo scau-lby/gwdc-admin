@@ -98,6 +98,7 @@ declare global {
     EpThemeColor?: string;
     ShowLogo?: boolean;
     ShowModel?: string;
+    CachingAsyncRoutes?: boolean;
     MapConfigure?: {
       amapKey?: string;
       options: {

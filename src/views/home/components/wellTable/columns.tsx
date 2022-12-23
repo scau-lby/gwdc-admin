@@ -9,10 +9,14 @@ export function useColumns() {
   const columns = ref([
     {
       label: "操作",
-      width: 120,
-      slot: "operation",
+      slot: "op1",
       fixed: "left"
     },
+    // {
+    //   label: "推送状态",
+    //   slot: "op2",
+    //   fixed: "left"
+    // },
     {
       label: "推送状态",
       prop: "state",
@@ -26,6 +30,7 @@ export function useColumns() {
           checked-children="已推送"
           un-checked-children="未推送"
           onChange={() => onPushToggle(scope)}
+          v-auth="101"
         />
       )
     },
@@ -80,7 +85,7 @@ export function useColumns() {
     {
       label: "井队作业关键参数",
       width: 140,
-      slot: "operation1",
+      slot: "op3",
       fixed: "right"
     }
   ]);

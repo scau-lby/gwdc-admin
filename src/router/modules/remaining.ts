@@ -13,6 +13,16 @@ const remainingRouter = [
     }
   },
   {
+    path: "/invite",
+    name: "invite",
+    component: () => import("/@/views/invite/index.vue"),
+    meta: {
+      title: $t("menus.hsInvite"),
+      showLink: false,
+      rank: 102
+    }
+  },
+  {
     path: "/redirect",
     component: Layout,
     meta: {

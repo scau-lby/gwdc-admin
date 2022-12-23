@@ -6,6 +6,7 @@ import Check from "@iconify-icons/ep/check";
 import Document from "@iconify-icons/ep/document";
 import Setting from "@iconify-icons/ep/setting";
 import Lollipop from "@iconify-icons/ep/lollipop";
+import RefreshLeft from "@iconify-icons/ep/refresh-left";
 import RefreshRight from "@iconify-icons/ep/refresh-right";
 import Refresh from "@iconify-icons/ep/refresh";
 import ArrowDown from "@iconify-icons/ep/arrow-down";
@@ -15,17 +16,21 @@ import CloseBold from "@iconify-icons/ep/close-bold";
 import Bell from "@iconify-icons/ep/bell";
 import Search from "@iconify-icons/ep/search";
 import Plus from "@iconify-icons/ep/plus";
+import Minus from "@iconify-icons/ep/minus";
 import Edit from "@iconify-icons/ep/edit";
 import View from "@iconify-icons/ep/view";
 import EditOpen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
 import More from "@iconify-icons/ep/more";
+import DocumentCopy from "@iconify-icons/ep/document-copy";
+
 import Promotion from "@iconify-icons/ep/promotion";
 import HomeFilled from "@iconify-icons/ep/home-filled";
 import DeleteFilled from "@iconify-icons/ep/delete-filled";
 import Platform from "@iconify-icons/ep/platform";
 import Histogram from "@iconify-icons/ep/histogram";
 import Menu from "@iconify-icons/ep/menu";
+import Grid from "@iconify-icons/ep/grid";
 import List from "@iconify-icons/ep/list";
 import InfoFilled from "@iconify-icons/ep/info-filled";
 import QuestionFilled from "@iconify-icons/ep/question-filled";
@@ -34,11 +39,14 @@ import Menagement from "@iconify-icons/ep/management";
 import Tools from "@iconify-icons/ep/tools";
 import Van from "@iconify-icons/ep/van";
 addIcon("plus", Plus);
+addIcon("minus", Minus);
 addIcon("edit", Edit);
 addIcon("view", View);
 addIcon("edit-open", EditOpen);
 addIcon("delete", Delete);
 addIcon("more", More);
+addIcon("document-copy", DocumentCopy);
+
 addIcon("promotion", Promotion);
 addIcon("check", Check);
 addIcon("home-filled", HomeFilled);
@@ -48,6 +56,7 @@ addIcon("setting", Setting);
 addIcon("tools", Tools);
 addIcon("lollipop", Lollipop);
 addIcon("refresh", Refresh);
+addIcon("refresh-left", RefreshLeft);
 addIcon("refresh-right", RefreshRight);
 addIcon("arrow-down", ArrowDown);
 addIcon("download", Download);
@@ -58,6 +67,7 @@ addIcon("search", Search);
 addIcon("platform", Platform);
 addIcon("histogram", Histogram);
 addIcon("menu", Menu);
+addIcon("grid", Grid);
 addIcon("list", List);
 addIcon("info-filled", InfoFilled);
 addIcon("question-filled", QuestionFilled);
@@ -89,12 +99,12 @@ import VolumeUpLine from "@iconify-icons/ri/volume-up-line"; // 开启声音
 addIcon("volume-up-line", VolumeUpLine);
 import VolumeMuteLine from "@iconify-icons/ri/volume-mute-line"; // 关闭声音
 addIcon("volume-mute-line", VolumeMuteLine);
-import VideoPlay from "@iconify-icons/ri/play-circle-line"; // 开始预览
-addIcon("video-play", VideoPlay);
-import VideoPause from "@iconify-icons/ri/pause-circle-line"; // 开始预览
-addIcon("video-pause", VideoPause);
-import VideoStop from "@iconify-icons/ri/stop-circle-line"; // 关闭声音
-addIcon("video-stop", VideoStop);
+import PlayFill from "@iconify-icons/ri/play-fill"; // 开始回放
+addIcon("play-fill", PlayFill);
+import PauseFill from "@iconify-icons/ri/pause-fill"; // 暂停回放
+addIcon("pause-fill", PauseFill);
+import StopFill from "@iconify-icons/ri/stop-fill"; // 停止回放
+addIcon("stop-fill", StopFill);
 
 // remixicon
 import ArrowRightSLine from "@iconify-icons/ri/arrow-right-s-line";
@@ -108,6 +118,14 @@ import User from "@iconify-icons/ri/user-3-fill";
 import Lock from "@iconify-icons/ri/lock-fill";
 import Password from "@iconify-icons/ri/lock-password-line";
 import LineChart from "@iconify-icons/ri/line-chart-line";
+import MicLine from "@iconify-icons/ri/mic-line";
+addIcon("mic-line", MicLine);
+import MicOffLine from "@iconify-icons/ri/mic-off-line";
+addIcon("mic-off-line", MicOffLine);
+import CameraLine from "@iconify-icons/ri/camera-line";
+addIcon("camera-line", CameraLine);
+import CameraOffLine from "@iconify-icons/ri/camera-off-line";
+addIcon("camera-off-line", CameraOffLine);
 addIcon("arrow-right-s-line", ArrowRightSLine);
 addIcon("arrow-left-s-line", ArrowLeftSLine);
 addIcon("logout-circle-r-line", LogoutCircleRLine);

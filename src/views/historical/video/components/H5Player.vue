@@ -79,7 +79,6 @@ function wholeFullScreen() {
 function realplay(data) {
   if (data.length === 0) return;
   data.forEach((item, index) => {
-    // const playURL = "ws://59.47.54.83:7002/media?url=" + item.url;
     const playURL = item.url;
     player.JS_Play(playURL, { playURL, mode: 0 }, index).then(
       res => {

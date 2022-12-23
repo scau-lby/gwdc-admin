@@ -23,6 +23,7 @@ buttons:
 menus:
   hsHome: 首页
   hsLogin: 登陆
+  hsInvite: TRTC 实时音视频
   hsError: 错误页面
   hsFourZeroFour: "404"
   hsFourZeroThree: "403"
@@ -52,3 +53,8 @@ menus:
   hsPermissionButton: 按钮权限
 status:
   hsLoad: 加载中...
+trtc:
+  paramsNeed: 请检查参数 SDKAppId, secretKey, userId, roomId 是否输入正确！
+  invite: 复制链接邀请好友加入视频通话，一条链接仅可邀请一人，复制后自动更新链接。
+  inviteUrl: 你被邀请参加视频通话！
+  check: 请重新获取邀请链接！

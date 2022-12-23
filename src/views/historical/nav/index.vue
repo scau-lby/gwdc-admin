@@ -198,8 +198,9 @@ onMounted(() => {
             @click="onUpdate(row)"
             :icon="useRenderIcon('edit-open')"
             style="margin-right: 15px"
+            v-auth="'119'"
           />
-          <!-- v-if="hasRight('117')" -->
+
           <el-popconfirm
             title="是否确定删除该作业记录?"
             @confirm="onDelete(row)"
@@ -210,6 +211,7 @@ onMounted(() => {
                 type="primary"
                 :icon="useRenderIcon('delete')"
                 style="margin-right: 15px"
+                v-auth="'117'"
               />
             </template>
           </el-popconfirm>

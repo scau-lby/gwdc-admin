@@ -27,6 +27,7 @@ export function useColumns() {
           checked-children="已推送"
           un-checked-children="未推送"
           onChange={() => onPushToggle(scope)}
+          v-auth="101"
         />
       )
     },

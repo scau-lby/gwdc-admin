@@ -205,7 +205,12 @@ const truckFormData = ref({ ...initialData });
       @refresh="onSearch"
     >
       <template #buttons>
-        <el-button type="primary" :icon="useRenderIcon('plus')" @click="onAdd">
+        <el-button
+          type="primary"
+          :icon="useRenderIcon('plus')"
+          @click="onAdd"
+          v-auth="'85'"
+        >
           新增设备
         </el-button>
       </template>
@@ -239,6 +244,7 @@ const truckFormData = ref({ ...initialData });
                   type="primary"
                   :size="size"
                   :icon="useRenderIcon('delete')"
+                  v-auth="'65'"
                 />
               </template>
             </el-popconfirm>
@@ -250,6 +256,7 @@ const truckFormData = ref({ ...initialData });
               :icon="useRenderIcon('edit')"
               @click="onEdit(row)"
               style="margin-left: 10px"
+              v-auth="'79'"
             />
           </template>
         </PureTable>

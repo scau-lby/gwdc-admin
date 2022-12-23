@@ -11,6 +11,9 @@ import { TableProBar } from "/@/components/ReTable";
 import { type PaginationProps } from "@pureadmin/table";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 import { handleTree } from "/@/utils/tree";
+import { getToken } from "/@/utils/auth";
+
+const orgName = JSON.parse(getToken()).orgName;
 
 defineOptions({
   name: "User"
@@ -36,6 +39,10 @@ const form = reactive({
   loginName: "",
   state: ""
 });
+
+if (orgName !== "固井公司") {
+  form.belongTo = orgName;
+}
 
 let dataList = ref([]);
 let loading = ref(true);
@@ -189,7 +196,11 @@ const userFormData = ref({ ...initialUFData });
       :model="form"
       class="bg-white w-99/100 pl-4 pt-4"
     >
-      <el-form-item label="所属机构" prop="belongTo">
+      <el-form-item
+        label="所属机构"
+        prop="belongTo"
+        v-if="orgName === '固井公司'"
+      >
         <el-cascader
           v-model="form.belongTo"
           :options="orgOptions"
@@ -239,7 +250,12 @@ const userFormData = ref({ ...initialUFData });
       @refresh="onSearch"
     >
       <template #buttons>
-        <el-button type="primary" :icon="useRenderIcon('plus')" @click="onAdd">
+        <el-button
+          type="primary"
+          :icon="useRenderIcon('plus')"
+          @click="onAdd"
+          v-auth="'72'"
+        >
           新增用户
         </el-button>
       </template>
@@ -270,6 +286,7 @@ const userFormData = ref({ ...initialUFData });
                 :icon="useRenderIcon('password')"
                 @click="onResetPwd(row)"
                 style="margin-right: 15px"
+                v-auth="'64'"
               />
             </el-tooltip>
             <el-link
@@ -279,6 +296,7 @@ const userFormData = ref({ ...initialUFData });
               :icon="useRenderIcon('edit-open')"
               @click="onEdit(row)"
               style="margin-right: 15px"
+              v-auth="'81'"
             />
             <el-popconfirm title="是否确认删除?" @confirm="onDelete(row)">
               <template #reference>
@@ -288,6 +306,7 @@ const userFormData = ref({ ...initialUFData });
                   :size="size"
                   :icon="useRenderIcon('delete')"
                   style="margin-right: 15px"
+                  v-auth="'111'"
                 />
               </template>
             </el-popconfirm>
@@ -298,6 +317,7 @@ const userFormData = ref({ ...initialUFData });
                 :size="size"
                 :icon="useRenderIcon('role')"
                 @click="onSetGroups(row)"
+                v-auth="'110'"
               />
             </el-tooltip>
           </template>

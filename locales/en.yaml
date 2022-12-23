@@ -23,6 +23,7 @@ buttons:
 menus:
   hsHome: Home
   hsLogin: Login
+  hsInvite: TRTC
   hsError: Error Page
   hsFourZeroFour: "404"
   hsFourZeroThree: "403"
@@ -52,3 +53,8 @@ menus:
   hsPermissionButton: Button Permission
 status:
   hsLoad: Loading...
+trtc:
+  paramsNeed: Please enter the correct SDKAppId, secretKey, userId, roomId！
+  invite: Copy the link to invite friends to join the video call, one link can invite only one person, the link will be updated automatically after copying.
+  inviteUrl: You are invited to this video chat room！
+  check: Please reacquire the invitation link!

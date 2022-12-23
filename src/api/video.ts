@@ -25,3 +25,8 @@ export const getPlayBackUrlByPlatenum = (params?: object): ResponseType => {
     { params }
   );
 };
+
+// 摄像头云台控制
+export const setControlCmd = (params?: object): ResponseType => {
+  return http.request("post", "/gjsnccj/video/setControlCmd", {}, { params });
+};

@@ -4,7 +4,7 @@ import { cacheType } from "./types";
 import { constantMenus } from "/@/router";
 import { cloneDeep } from "lodash-unified";
 import { RouteConfigs } from "/@/layout/types";
-import { ascending, filterTree } from "/@/router/utils";
+import { ascending, filterTree, filterNoPermissionTree } from "/@/router/utils";
 
 export const usePermissionStore = defineStore({
   id: "gwdc-permission",
@@ -20,6 +20,11 @@ export const usePermissionStore = defineStore({
     cachePageList: []
   }),
   actions: {
+    handleWholeMenus(routes: any[]) {
+      this.wholeMenus = filterNoPermissionTree(
+        filterTree(ascending(this.constantMenus.concat(routes)))
+      );
+    },
     // 获取异步路由菜单
     asyncActionRoutes(routes) {
       if (this.wholeMenus.length > 0) return;
@@ -63,6 +68,7 @@ export const usePermissionStore = defineStore({
     },
     // 清空缓存页面
     clearAllCachePage() {
+      this.wholeMenus = [];
       this.cachePageList = [];
     }
   }
