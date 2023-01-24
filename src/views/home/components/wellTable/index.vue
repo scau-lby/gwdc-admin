@@ -2,7 +2,8 @@
 import { ref, reactive, onMounted, nextTick } from "vue";
 import { useColumns } from "./columns";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
-
+import { TableProBar } from "/@/components/ReTable";
+const tableRef = ref();
 // import { getToken } from "/@/utils/auth";
 
 // api
@@ -27,6 +28,9 @@ const pagination = reactive<PaginationProps>({
   currentPage: 1,
   background: true
 });
+
+const wellName = ref("");
+const drillTeramNo = ref("");
 
 // 口井 - 添加收藏
 async function onFavoriteAdd(row) {
@@ -96,7 +100,9 @@ async function onSearch() {
   loading.value = true;
   let { data } = await getWellList({
     pageSize: pagination.pageSize,
-    pageNum: pagination.currentPage
+    pageNum: pagination.currentPage,
+    wellName: wellName.value,
+    drillTeramNo: drillTeramNo.value
     // orgName: JSON.parse(getToken()).orgName
   });
 
@@ -136,70 +142,94 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-loading="loading" element-loading-text="Loading...">
-    <PureTable
-      border
-      align="center"
-      row-key="index"
-      table-layout="auto"
-      showOverflowTooltip
-      :data="dataList"
-      :columns="columns"
-      :pagination="pagination"
-      :paginationSmall="true"
-      @size-change="onSizeChange"
-      @current-change="onCurrentChange"
-      :header-cell-style="{
-        backgroundColor: 'rgba(0,21,41,.7)',
-        color: '#d0d0d0'
-      }"
+  <div>
+    <TableProBar
+      title="口井列表"
+      :loading="loading"
+      :tableRef="tableRef?.getTableRef()"
+      :dataList="dataList"
+      @refresh="onSearch"
     >
-      <template #op1="{ row }">
-        <el-link
-          type="danger"
-          :icon="useRenderIcon('heart')"
-          @click="onFavoriteDel(row)"
-          v-if="row.favorite"
-          v-auth="'95'"
+      <template #buttons>
+        <el-input
+          v-model="wellName"
+          placeholder="请输入井号"
+          clearable
+          @keyup.enter="(pagination.currentPage = 1), onSearch()"
+          @clear="(pagination.currentPage = 1), onSearch()"
         />
+        <el-input
+          v-model="drillTeramNo"
+          placeholder="请输入队号"
+          clearable
+          @keyup.enter="(pagination.currentPage = 1), onSearch()"
+          @clear="(pagination.currentPage = 1), onSearch()"
+        />
+      </template>
+      <template v-slot="{}">
+        <PureTable
+          ref="tableRef"
+          border
+          align="center"
+          row-key="index"
+          table-layout="auto"
+          showOverflowTooltip
+          :data="dataList"
+          :columns="columns"
+          :pagination="pagination"
+          :paginationSmall="true"
+          @size-change="onSizeChange"
+          @current-change="onCurrentChange"
+          :header-cell-style="{
+            backgroundColor: 'rgba(0,21,41,.7)',
+            color: '#d0d0d0'
+          }"
+        >
+          <template #op1="{ row }">
+            <el-link
+              type="danger"
+              :icon="useRenderIcon('heart')"
+              @click="onFavoriteDel(row)"
+              v-if="row.favorite"
+              v-auth="'95'"
+            />
 
-        <el-link
-          type="danger"
-          :icon="useRenderIcon('heart-o')"
-          @click="onFavoriteAdd(row)"
-          v-else
-          v-auth="'94'"
-        />
-        <el-button
-          class="reset-margin"
-          plain
-          round
-          size="small"
-          @click="onUpdate(row)"
-          style="margin-left: 15px"
-          v-auth="'98'"
-        >
-          更新
-        </el-button>
+            <el-link
+              type="danger"
+              :icon="useRenderIcon('heart-o')"
+              @click="onFavoriteAdd(row)"
+              v-else
+              v-auth="'94'"
+            />
+            <el-button
+              class="reset-margin"
+              plain
+              round
+              size="small"
+              @click="onUpdate(row)"
+              style="margin-left: 15px"
+              v-auth="'98'"
+            >
+              更新
+            </el-button>
+          </template>
+
+          <template #op3="{ row }">
+            <el-button
+              class="reset-margin"
+              plain
+              round
+              size="small"
+              @click="onView(row)"
+              :disabled="!row.hasMore"
+              v-auth="'100'"
+            >
+              了解详情
+            </el-button>
+          </template>
+        </PureTable>
       </template>
-      <!-- <template #op2="{ row }">
-        {{ row.push }}
-        <el-switch inline-prompt active-text="已推送" inactive-text="未推送" />
-      </template> -->
-      <template #op3="{ row }">
-        <el-button
-          class="reset-margin"
-          plain
-          round
-          size="small"
-          @click="onView(row)"
-          :disabled="!row.hasMore"
-          v-auth="'100'"
-        >
-          了解详情
-        </el-button>
-      </template>
-    </PureTable>
+    </TableProBar>
     <moreInfoDialog
       v-model:visible="formDialogVisible"
       :wellName="curr_wellName"

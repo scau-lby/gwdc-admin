@@ -225,7 +225,6 @@ function onSetRights(row) {
             <el-popconfirm
               title="是否确定删除该用户组?"
               @confirm="onDelete(row)"
-              v-auth="'69'"
             >
               <template #reference>
                 <el-link
@@ -233,6 +232,7 @@ function onSetRights(row) {
                   type="primary"
                   :size="size"
                   :icon="useRenderIcon('delete')"
+                  v-auth="'69'"
                 />
               </template>
             </el-popconfirm>

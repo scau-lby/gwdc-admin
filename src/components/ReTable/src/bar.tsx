@@ -144,6 +144,32 @@ export default defineComponent({
                   <el-divider direction="vertical" />
                 </>
               ) : undefined}
+              {props.tableRef?.size ? (
+                <>
+                  <el-tooltip effect="dark" content="密度" placement="top">
+                    <el-dropdown v-slots={dropdown} trigger="click">
+                      <IconifyIconOffline
+                        class="cursor-pointer outline-none"
+                        icon="density"
+                        width="16"
+                        color="#606266"
+                      />
+                    </el-dropdown>
+                  </el-tooltip>
+                  <el-divider direction="vertical" />
+                </>
+              ) : undefined}
+              {props.tableRef?.checkList ? (
+                <>
+                  <el-popover v-slots={reference} width="200" trigger="click">
+                    <el-checkbox-group v-model={checkList.value}>
+                      <el-checkbox label="序号列" />
+                      {/* <el-checkbox label="勾选列" /> */}
+                    </el-checkbox-group>
+                  </el-popover>
+                  <el-divider direction="vertical" />
+                </>
+              ) : undefined}
               <el-tooltip effect="dark" content="刷新" placement="top">
                 <IconifyIconOffline
                   class="cursor-pointer outline-none"
@@ -153,26 +179,6 @@ export default defineComponent({
                   onClick={() => emit("refresh")}
                 />
               </el-tooltip>
-              <el-divider direction="vertical" />
-
-              <el-tooltip effect="dark" content="密度" placement="top">
-                <el-dropdown v-slots={dropdown} trigger="click">
-                  <IconifyIconOffline
-                    class="cursor-pointer outline-none"
-                    icon="density"
-                    width="16"
-                    color="#606266"
-                  />
-                </el-dropdown>
-              </el-tooltip>
-              <el-divider direction="vertical" />
-
-              <el-popover v-slots={reference} width="200" trigger="click">
-                <el-checkbox-group v-model={checkList.value}>
-                  <el-checkbox label="序号列" />
-                  {/* <el-checkbox label="勾选列" /> */}
-                </el-checkbox-group>
-              </el-popover>
             </div>
 
             <el-tooltip
