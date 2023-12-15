@@ -8,7 +8,7 @@ interface ResponseType extends Promise<any> {
 
 // 登录
 export const userLogin = (data?: object): ResponseType => {
-  return http.request("post", "/gjsnccj/login", { data });
+  return http.request("post", "/api/gjsnccj/login", { data });
 };
 
 // 刷新token
@@ -20,7 +20,7 @@ export const refreshToken = (data: object): ResponseType => {
 export const changeUserPwd = (data?: object): ResponseType => {
   return http.request(
     "post",
-    "/gjsnccj/users/changepwd",
+    "/api/gjsnccj/users/changepwd",
     {},
     {
       params: data
@@ -30,12 +30,12 @@ export const changeUserPwd = (data?: object): ResponseType => {
 
 // 获取用户列表
 export const getUserList = (params?: object): ResponseType => {
-  return http.request("get", "/gjsnccj/users/list", { params });
+  return http.request("get", "/api/gjsnccj/users/list", { params });
 };
 
 // 用户-通过id查询用户
 export const getUserById = (id?: number): ResponseType => {
-  return http.request("get", "/gjsnccj/users/get", {
+  return http.request("get", "/api/gjsnccj/users/get", {
     params: {
       id
     }
@@ -44,19 +44,19 @@ export const getUserById = (id?: number): ResponseType => {
 
 // 新增用户
 export const addUser = (data: object): ResponseType => {
-  return http.request("post", "/gjsnccj/users/add", { data });
+  return http.request("post", "/api/gjsnccj/users/add", { data });
 };
 
 // 编辑用户
 export const updateUser = (data: object): ResponseType => {
-  return http.request("post", "/gjsnccj/users/update", { data });
+  return http.request("post", "/api/gjsnccj/users/update", { data });
 };
 
 // 管理员重置用户密码
 export const setUserPwd = (params?: object): ResponseType => {
   return http.request(
     "post",
-    "/gjsnccj/users/setpasswd",
+    "/api/gjsnccj/users/setpasswd",
     {},
     {
       params
@@ -68,7 +68,7 @@ export const setUserPwd = (params?: object): ResponseType => {
 export const deleteUser = (userId: number): ResponseType => {
   return http.request(
     "post",
-    "/gjsnccj/users/delete",
+    "/api/gjsnccj/users/delete",
     {},
     {
       params: {
@@ -80,7 +80,7 @@ export const deleteUser = (userId: number): ResponseType => {
 
 // 用户-设置分组
 export const setUserToken = (userId: number, gids: string): ResponseType => {
-  return http.request("post", `/gjsnccj/users/setToken?userId=${userId}`, {
+  return http.request("post", `/api/gjsnccj/users/setToken?userId=${userId}`, {
     params: {
       userId,
       gids

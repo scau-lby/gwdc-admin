@@ -8,22 +8,22 @@ interface ResponseType extends Promise<any> {
 
 // 获取用户组列表
 export const getRoleList = (params: object): ResponseType => {
-  return http.request("get", "/gjsnccj/roles/roleList", { params });
+  return http.request("get", "/api/gjsnccj/roles/roleList", { params });
 };
 
 // 新增用户组
 export const addRole = (data: object): ResponseType => {
-  return http.request("post", "/gjsnccj/roles/add", { data });
+  return http.request("post", "/api/gjsnccj/roles/add", { data });
 };
 
 // 编辑用户组
 export const editRole = (data: object): ResponseType => {
-  return http.request("post", "/gjsnccj/roles/edit", { data });
+  return http.request("post", "/api/gjsnccj/roles/edit", { data });
 };
 
 // 删除用户组
 export const deleteRole = (gid: number): ResponseType => {
-  return http.request("get", "/gjsnccj/roles/delete", {
+  return http.request("get", "/api/gjsnccj/roles/delete", {
     params: {
       gid
     }
@@ -32,14 +32,14 @@ export const deleteRole = (gid: number): ResponseType => {
 
 // 角色-查看权限列表
 export const getRightList = (): ResponseType => {
-  return http.request("get", "/gjsnccj/roles/rightList");
+  return http.request("get", "/api/gjsnccj/roles/rightList");
 };
 
 // 角色- 保存角色权限
 export const saveRoleRights = (gid: number, rids: string): ResponseType => {
   return http.request(
     "post",
-    "/gjsnccj/roles/saveRoleRights",
+    "/api/gjsnccj/roles/saveRoleRights",
     {},
     {
       params: {
@@ -52,7 +52,7 @@ export const saveRoleRights = (gid: number, rids: string): ResponseType => {
 
 // 角色- 获取角色权限
 export const getRoleRights = (gid: number): ResponseType => {
-  return http.request("get", "/gjsnccj/roles/getRoleRights", {
+  return http.request("get", "/api/gjsnccj/roles/getRoleRights", {
     params: { gid }
   });
 };

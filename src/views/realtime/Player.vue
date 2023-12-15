@@ -47,16 +47,15 @@ const $bus = inject("$bus");
 <style lang="scss" scoped>
 .player-container {
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
 }
 
 .remote {
-  width: 300px;
-  height: 300px;
-  margin: 0 10px 0 0;
+  min-width: 150px;
+  flex: 1;
+  margin: 0 5px 0 0;
   position: relative;
 }
 </style>

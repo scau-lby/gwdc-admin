@@ -8,7 +8,7 @@ interface ResponseType extends Promise<any> {
 
 // 口井-获取口井列表
 export const getWellList = (params?: object): ResponseType => {
-  return http.request("get", "/gjsnccj/well/get", { params });
+  return http.request("get", "/api/gjsnccj/well/get", { params });
 };
 
 // 口井-添加收藏
@@ -18,7 +18,7 @@ export const addFavorite = (
 ): ResponseType => {
   return http.request(
     "post",
-    `/gjsnccj/well/addfavorite`,
+    `/api/gjsnccj/well/addfavorite`,
     {},
     {
       params: {
@@ -36,7 +36,7 @@ export const delFavorite = (
 ): ResponseType => {
   return http.request(
     "post",
-    `/gjsnccj/well/delfavorite`,
+    `/api/gjsnccj/well/delfavorite`,
     {},
     {
       params: {
@@ -55,7 +55,7 @@ export const setWellPush = (
 ): ResponseType => {
   return http.request(
     "post",
-    `/gjsnccj/well/setpush`,
+    `/api/gjsnccj/well/setpush`,
     {},
     {
       params: {
@@ -69,7 +69,7 @@ export const setWellPush = (
 
 // 口井-获取实时的施工详情数据
 export const getWellMoreInfo = (wellName: string): ResponseType => {
-  return http.request("get", `/gjsnccj/well/moreinfo`, {
+  return http.request("get", `/api/gjsnccj/well/moreinfo`, {
     params: {
       wellName
     }
@@ -78,17 +78,19 @@ export const getWellMoreInfo = (wellName: string): ResponseType => {
 
 // 口井-更新口井信息
 export const updateWell = (data: object): ResponseType => {
-  return http.request("post", `/gjsnccj/well/update`, { data });
+  return http.request("post", `/api/gjsnccj/well/update`, { data });
 };
 
 // 口井-获取口井历史实时数据
 export const getHistoryReal = (params: object): ResponseType => {
-  return http.request("get", `/gjsnccj/well/gethistoryreal`, { params });
+  return http.request("get", `/api/gjsnccj/well/gethistoryreal`, { params });
 };
 
 // 口井-查询口井历史实时数据（多车混合）
 export const getFixedHistoryReal = (params: object): ResponseType => {
-  return http.request("get", `/gjsnccj/well/getfixedHistoryReal`, { params });
+  return http.request("get", `/api/gjsnccj/well/getfixedHistoryReal`, {
+    params
+  });
 };
 
 // 上传注替计划
@@ -99,7 +101,7 @@ export const setPlanData = (
 ): ResponseType => {
   return http.request(
     "post",
-    `/gjsnccj/well/setPlanData`,
+    `/api/gjsnccj/well/setPlanData`,
     { data },
     {
       params: {
@@ -117,7 +119,7 @@ export const getPlanData = (
 ): ResponseType => {
   return http.request(
     "post",
-    `/gjsnccj/well/getPlanData`,
+    `/api/gjsnccj/well/getPlanData`,
     {},
     {
       params: {
@@ -135,7 +137,7 @@ export const delPlanData = (
 ): ResponseType => {
   return http.request(
     "post",
-    `/gjsnccj/well/delPlanData`,
+    `/api/gjsnccj/well/delPlanData`,
     {},
     {
       params: {
@@ -154,7 +156,7 @@ export const getPlanSimulate = (
 ): ResponseType => {
   return http.request(
     "post",
-    `/gjsnccj/well/getPlanSimulate`,
+    `/api/gjsnccj/well/getPlanSimulate`,
     {},
     {
       params: {
@@ -175,7 +177,7 @@ export const getPlanSimulateByStep = (
 ): ResponseType => {
   return http.request(
     "post",
-    `/gjsnccj/well/getPlanSimulateByStep`,
+    `/api/gjsnccj/well/getPlanSimulateByStep`,
     {},
     {
       params: {

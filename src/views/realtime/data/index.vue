@@ -16,6 +16,9 @@ import dualLine from "/@/components/dataLine/DualLine.vue";
 import singleForm from "/@/components/dataForm/SingleForm.vue";
 import singleLine from "/@/components/dataLine/SingleLine.vue";
 
+// 语音
+import trtcComp from "../trtc.vue";
+
 // moreInfo
 import moreInfoDialog from "../../home/components/wellTable/MoreInfoDialog.vue";
 
@@ -27,7 +30,7 @@ initToDetail();
 const chartRef = ref(null);
 
 let onlineList = [], // 在线设备列表
-  plateList = ref(null), // 当前选中任务对应的设备列表
+  plateList = ref([]), // 当前选中任务对应的设备列表
   taskList = ref([]), // 任务列表
   task_selected = ref(""), // 当前任务
   plates_checked = ref([]), // 当前选中设备编号数组
@@ -84,7 +87,7 @@ async function getOnline() {
       };
     });
 
-    initWebSocket();
+    // initWebSocket();
   }
 }
 
@@ -147,7 +150,7 @@ function onPlateChange(value) {
   });
 
   ws.close();
-  initWebSocket();
+  // initWebSocket();
 }
 
 watch(
@@ -200,7 +203,7 @@ function initWebSocket() {
   if (token) {
     accessToken = JSON.parse(token).accessToken;
   }
-  let url = `ws://59.47.54.83:7002/truck/real/ws?token=${accessToken}`;
+  let url = `wss://cemrm.gwdc.com.cn:7002/truck/real/ws?token=${accessToken}`;
   ws = new WebSocket(url);
   ws.onopen = () => {
     connected.value = true;
@@ -268,10 +271,41 @@ const getType = val => {
     chartRef.value[idx].legend_toggle(type);
   }
 };
+const trtcRef = ref(null);
+function handleJoin() {
+  trtcRef.value.handleJoin();
+}
+function handleLeave() {
+  trtcRef.value.handleLeave();
+}
+// const value = ref([]);
+
+// const props = {
+//   multiple: true,
+//   expandTrigger: "hover" as const
+// };
+
+// const handleCascaderChange = value => {
+//   console.log(value);
+// };
+
+// const options = ref([]);
 </script>
 <template>
   <div class="main">
     <template v-if="taskList.length > 0">
+      <!-- <el-card>
+        <el-form-item label="施工任务/井号">
+          <el-cascader
+            popper-class="last-check"
+            v-model="value"
+            :options="options"
+            :props="props"
+            @change="handleCascaderChange"
+            clearable
+          />
+        </el-form-item>
+      </el-card> -->
       <div class="source-card">
         <el-card>
           <el-form-item label="施工任务">
@@ -322,9 +356,15 @@ const getType = val => {
           >
             查看井队作业参数
           </el-button>
+          <el-button type="primary" @click="handleJoin">
+            发起语音对讲
+          </el-button>
+          <el-button type="primary" @click="handleLeave">
+            关闭语音对讲
+          </el-button>
         </el-card>
       </div>
-      <div class="live-container" style="margin-top: 10px" v-if="mixed === 1">
+      <div class="live-container" style="margin-top: 5px" v-if="mixed === 1">
         <el-card class="live-line">
           <mixedLine
             ref="chartRef"
@@ -348,7 +388,7 @@ const getType = val => {
         </el-card>
       </div>
       <div
-        style="margin-top: 10px; display: flex; justify-content: space-between"
+        style="margin-top: 5px; display: flex; justify-content: space-between"
         v-else
       >
         <div
@@ -414,6 +454,7 @@ const getType = val => {
           </template>
         </div>
       </div>
+      <trtcComp ref="trtcRef" />
     </template>
 
     <el-card v-else>
@@ -427,6 +468,15 @@ const getType = val => {
   </div>
 </template>
 
+<style lang="scss">
+.last-check {
+  li[aria-haspopup="true"] {
+    .el-checkbox {
+      display: none;
+    }
+  }
+}
+</style>
 <style scoped lang="scss">
 .source-card {
   display: flex;
@@ -444,7 +494,7 @@ const getType = val => {
 .live-form {
   min-width: 260px;
   max-width: 260px;
-  margin-left: 10px;
+  margin-left: 5px;
 
   ::v-deep(.el-form-item) {
     margin-bottom: 0px;

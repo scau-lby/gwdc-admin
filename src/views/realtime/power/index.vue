@@ -208,7 +208,7 @@ function initWebSocket() {
   if (token) {
     accessToken = JSON.parse(token).accessToken;
   }
-  let url = `ws://59.47.54.83:7002/truck/real/ws?token=${accessToken}`;
+  let url = `wss://cemrm.gwdc.com.cn:7002/truck/real/ws?token=${accessToken}`;
   ws = new WebSocket(url);
   ws.onopen = () => {
     connected.value = true;

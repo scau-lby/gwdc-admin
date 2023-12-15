@@ -23,6 +23,8 @@ import EditOpen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
 import More from "@iconify-icons/ep/more";
 import DocumentCopy from "@iconify-icons/ep/document-copy";
+import CaretTop from "@iconify-icons/ep/caret-top";
+import CaretBottom from "@iconify-icons/ep/caret-bottom";
 
 import Promotion from "@iconify-icons/ep/promotion";
 import HomeFilled from "@iconify-icons/ep/home-filled";
@@ -46,6 +48,8 @@ addIcon("edit-open", EditOpen);
 addIcon("delete", Delete);
 addIcon("more", More);
 addIcon("document-copy", DocumentCopy);
+addIcon("caret-top", CaretTop);
+addIcon("caret-bottom", CaretBottom);
 
 addIcon("promotion", Promotion);
 addIcon("check", Check);
@@ -137,6 +141,8 @@ addIcon("user", User);
 addIcon("lock", Lock);
 addIcon("password", Password);
 addIcon("lineChart", LineChart);
+import DashScreen from "@iconify-icons/ri/dashboard-3-fill";
+addIcon("dashScreen", DashScreen);
 
 // uil
 import ArrowsShrinkV from "@iconify-icons/uil/arrows-shrink-v";

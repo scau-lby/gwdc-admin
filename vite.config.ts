@@ -26,13 +26,8 @@ const __APP_INFO__ = {
 };
 
 export default ({ command, mode }: ConfigEnv): UserConfigExport => {
-  const {
-    VITE_PORT,
-    VITE_LEGACY,
-    VITE_PUBLIC_PATH,
-    VITE_PROXY_DOMAIN,
-    VITE_PROXY_DOMAIN_REAL
-  } = warpperEnv(loadEnv(mode, root));
+  const { VITE_PORT, VITE_LEGACY, VITE_PUBLIC_PATH, VITE_PROXY_DOMAIN_REAL } =
+    warpperEnv(loadEnv(mode, root));
   return {
     base: VITE_PUBLIC_PATH,
     root,
@@ -42,7 +37,7 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
     // 服务端渲染
     server: {
       // 是否开启 https
-      https: false,
+      https: true,
       // 端口号
       port: VITE_PORT,
       host: "0.0.0.0",
@@ -51,12 +46,19 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
       proxy:
         VITE_PROXY_DOMAIN_REAL.length > 0
           ? {
-              [VITE_PROXY_DOMAIN]: {
+              "/api": {
                 target: VITE_PROXY_DOMAIN_REAL,
                 secure: false,
                 ws: true,
                 changeOrigin: true,
-                rewrite: (path: string) => regExps(path, VITE_PROXY_DOMAIN)
+                rewrite: (path: string) => regExps(path, "/api")
+              },
+              "/rtc": {
+                target: "https://eq.fxsh1314.com/index.php/trtc",
+                secure: false,
+                ws: true,
+                changeOrigin: true,
+                rewrite: (path: string) => regExps(path, "/rtc")
               }
             }
           : null

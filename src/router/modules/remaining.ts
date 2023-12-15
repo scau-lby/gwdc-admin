@@ -13,6 +13,17 @@ const remainingRouter = [
     }
   },
   {
+    path: "/dataScreen",
+    name: "dataScreen",
+    component: () => import("/@/views/dataScreen/index.vue"),
+    meta: {
+      icon: "dashScreen",
+      title: $t("menus.hsDataScreen"),
+      showLink: true,
+      rank: 105
+    }
+  },
+  {
     path: "/invite",
     name: "invite",
     component: () => import("/@/views/invite/index.vue"),

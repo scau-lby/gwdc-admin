@@ -23,6 +23,7 @@ buttons:
 menus:
   hsHome: 首页
   hsLogin: 登陆
+  hsDataScreen: 数据大屏
   hsInvite: TRTC 实时音视频
   hsError: 错误页面
   hsFourZeroFour: "404"

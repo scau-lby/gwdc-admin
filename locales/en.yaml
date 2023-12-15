@@ -23,6 +23,7 @@ buttons:
 menus:
   hsHome: Home
   hsLogin: Login
+  hsDataScreen: DataScreen
   hsInvite: TRTC
   hsError: Error Page
   hsFourZeroFour: "404"

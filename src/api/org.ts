@@ -8,22 +8,22 @@ interface ResponseType extends Promise<any> {
 
 // 机构-获取组织机构列表
 export const getOrgList = (data?: object): ResponseType => {
-  return http.request("get", "/gjsnccj/org/getlist", { data });
+  return http.request("get", "/api/gjsnccj/org/getlist", { data });
 };
 
 // 机构-新增机构
 export const addOrg = (data: object): ResponseType => {
-  return http.request("post", "/gjsnccj/org/add", { data });
+  return http.request("post", "/api/gjsnccj/org/add", { data });
 };
 
 // 机构-编辑机构
 export const updateOrg = (params: object): ResponseType => {
-  return http.request("get", "/gjsnccj/org/update", { params });
+  return http.request("get", "/api/gjsnccj/org/update", { params });
 };
 
 // 机构-删除机构
 export const deleteOrg = (orgId: number): ResponseType => {
-  return http.request("get", "/gjsnccj/org/delete", {
+  return http.request("get", "/api/gjsnccj/org/delete", {
     params: {
       orgId
     }
@@ -32,7 +32,7 @@ export const deleteOrg = (orgId: number): ResponseType => {
 
 // 机构-获取机构信息
 export const getOrgByName = (orgName: string): ResponseType => {
-  return http.request("get", "/gjsnccj/org/get", {
+  return http.request("get", "/api/gjsnccj/org/get", {
     params: {
       orgName
     }
@@ -43,7 +43,7 @@ export const getOrgByName = (orgName: string): ResponseType => {
 export const getOrgPermit = (orgId: number): ResponseType => {
   return http.request(
     "post",
-    "/gjsnccj/org/getOrgPermit",
+    "/api/gjsnccj/org/getOrgPermit",
     {},
     {
       params: {
@@ -60,7 +60,7 @@ export const setOrgPermit = (
 ): ResponseType => {
   return http.request(
     "post",
-    "/gjsnccj/org/setOrgPermit",
+    "/api/gjsnccj/org/setOrgPermit",
     {},
     {
       params: {
@@ -75,7 +75,7 @@ export const setOrgPermit = (
 export const delOrgPermit = (orgId: number): ResponseType => {
   return http.request(
     "post",
-    "/gjsnccj/org/delOrgPermit",
+    "/api/gjsnccj/org/delOrgPermit",
     {},
     {
       params: {

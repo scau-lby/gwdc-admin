@@ -10,7 +10,7 @@ interface ResponseType extends Promise<any> {
 export const getPreviewUrlByPlatenums = (params?: object): ResponseType => {
   return http.request(
     "post",
-    "/gjsnccj/video/getpreviewUrlByPlatenums",
+    "/api/gjsnccj/video/getpreviewUrlByPlatenums",
     {},
     { params }
   );
@@ -20,7 +20,7 @@ export const getPreviewUrlByPlatenums = (params?: object): ResponseType => {
 export const getPlayBackUrlByPlatenum = (params?: object): ResponseType => {
   return http.request(
     "post",
-    "/gjsnccj/video/getplayBackUrlByPlatenum",
+    "/api/gjsnccj/video/getplayBackUrlByPlatenum",
     {},
     { params }
   );
@@ -28,5 +28,10 @@ export const getPlayBackUrlByPlatenum = (params?: object): ResponseType => {
 
 // 摄像头云台控制
 export const setControlCmd = (params?: object): ResponseType => {
-  return http.request("post", "/gjsnccj/video/setControlCmd", {}, { params });
+  return http.request(
+    "post",
+    "/api/gjsnccj/video/setControlCmd",
+    {},
+    { params }
+  );
 };
