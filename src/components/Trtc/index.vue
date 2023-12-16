@@ -388,7 +388,7 @@ defineExpose({
 <template>
   <div>
     <div class="share-link" v-if="store.isJoined">
-      <div class="alert" v-text="t('trtc.invite')" />
+      <div class="alert">{{ t("trtc.invite") }}</div>
       <div class="invite">
         <el-button
           :icon="useRenderIcon('document-copy')"
@@ -435,10 +435,14 @@ defineExpose({
   color: #084298;
   background-color: #cfe2ff;
   border-color: #b6d4fe;
-  padding: 10px 20px;
+  padding: 5px 10px;
   font-size: 14px;
   border-radius: 4px;
-  margin-top: 15px;
+
+  .alert {
+    width: 100%;
+    overflow-x: hidden;
+  }
 }
 
 .invite {
@@ -461,24 +465,24 @@ defineExpose({
 .pusher {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .local {
   position: relative;
-  width: 300px;
-  height: 300px;
-}
+  min-width: 150px;
+  min-height: 150px;
 
-.tag {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 40px;
-  z-index: 999;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  padding: 0 4px;
-  flex-direction: row-reverse;
+  .tag {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    padding: 0 4px;
+    flex-direction: row-reverse;
+  }
 }
 </style>

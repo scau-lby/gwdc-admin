@@ -194,7 +194,7 @@ const userFormData = ref({ ...initialUFData });
       ref="formRef"
       :inline="true"
       :model="form"
-      class="bg-white w-99/100 pl-4 pt-4"
+      class="bg-white w-100/100 pl-2 pt-4"
     >
       <el-form-item
         label="所属机构"

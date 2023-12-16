@@ -141,7 +141,7 @@ export function useColumns() {
     {
       label: "请求档位",
       prop: "apbsxqqdw",
-      width: 90
+      width: 100
     },
     {
       label: "实际档位",

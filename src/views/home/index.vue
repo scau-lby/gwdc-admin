@@ -45,7 +45,7 @@ onMounted(() => {
 
 <template>
   <div class="main">
-    <el-row :gutter="20" v-auth="'88'">
+    <el-row :gutter="5" v-auth="'88'">
       <el-col :span="6">
         <HCard
           :icon="monitor"
@@ -71,11 +71,14 @@ onMounted(() => {
         />
       </el-col>
     </el-row>
+
     <!-- 口井 -->
-    <WellTable style="margin-top: 10px" v-auth="'91'" />
+    <WellTable v-auth="'91'" />
+
     <!-- 在线设备 -->
-    <OnlineTable style="margin-top: 10px" v-auth="'87'" />
-    <el-row :gutter="20" style="margin-top: 10px" v-auth="'88'">
+    <OnlineTable style="margin-top: 5px" v-auth="'87'" />
+
+    <el-row :gutter="5" style="margin-top: 5px" v-auth="'88'">
       <el-col :span="12">
         <el-card>
           <HPie :pieLegend="pieLegend" :pieData="pieData" />

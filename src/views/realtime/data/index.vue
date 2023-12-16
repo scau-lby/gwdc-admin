@@ -17,7 +17,7 @@ import singleForm from "/@/components/dataForm/SingleForm.vue";
 import singleLine from "/@/components/dataLine/SingleLine.vue";
 
 // 语音
-import trtcComp from "../trtc.vue";
+import trtcComp from "/@/components/Trtc/index.vue";
 
 // moreInfo
 import moreInfoDialog from "../../home/components/wellTable/MoreInfoDialog.vue";
