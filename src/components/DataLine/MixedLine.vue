@@ -2,7 +2,7 @@
 import { ECharts } from "echarts";
 import echarts from "/@/plugins/echarts";
 import { onBeforeMount, onMounted, nextTick, ref, watch } from "vue";
-import { useEventListener, tryOnUnmounted, useTimeoutFn } from "@vueuse/core";
+import { tryOnUnmounted } from "@vueuse/core";
 import { getFixedHistoryReal } from "/@/api/well";
 
 const pageSize = 500;
@@ -59,6 +59,10 @@ const props = defineProps({
   subtitle: {
     type: String,
     default: ""
+  },
+  height: {
+    type: Number,
+    default: 80
   }
 });
 
@@ -123,6 +127,15 @@ watch(
   () => props.myTool1Visible,
   val => {
     myTool1Visible.value = val;
+  }
+);
+
+const height = ref(props.height);
+watch(
+  () => props.height,
+  val => {
+    height.value = val;
+    echartInstance.resize();
   }
 );
 
@@ -573,7 +586,7 @@ watch(
     if (val) {
       chartData.push(val);
       option.dataset[0].source = chartData;
-      initEchartInstance();
+      echartInstance.setOption(option);
     }
   },
   { deep: true }
@@ -585,7 +598,7 @@ watch(
     if (val.length > 0) {
       chartData = chartData.concat(val);
       option.dataset[0].source = chartData;
-      initEchartInstance();
+      echartInstance.setOption(option);
     }
   },
   { deep: true }
@@ -597,7 +610,7 @@ watch(
     if (val.length > 0) {
       simulateData = simulateData.concat(val);
       option.dataset[1].source = simulateData;
-      initEchartInstance();
+      echartInstance.setOption(option);
     }
   },
   { deep: true }
@@ -611,12 +624,16 @@ onBeforeMount(() => {
 
 onMounted(() => {
   nextTick(() => {
-    useEventListener("resize", () => {
-      if (!echartInstance) return;
-      useTimeoutFn(() => {
+    const echartDom = document.querySelector(".live-line" + props.index);
+    var ro = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        console.log(entry);
         echartInstance.resize();
-      }, 150);
+      }
     });
+
+    // 观察一个或多个元素
+    ro.observe(echartDom);
   });
 });
 
@@ -630,12 +647,15 @@ function legend_toggle(value) {
   const bool = legend_selected[value];
   legend_selected[value] = !bool;
   option.legend.selected = legend_selected;
-  initEchartInstance();
+  echartInstance.setOption(option);
 }
 
 defineExpose({ legend_toggle });
 </script>
 
 <template>
-  <div :class="'live-line' + props.index" style="width: 100%; height: 73vh" />
+  <div
+    :class="'live-line' + props.index"
+    :style="{ width: '100%', height: height + 'vh' }"
+  />
 </template>

@@ -25,6 +25,7 @@ import More from "@iconify-icons/ep/more";
 import DocumentCopy from "@iconify-icons/ep/document-copy";
 import CaretTop from "@iconify-icons/ep/caret-top";
 import CaretBottom from "@iconify-icons/ep/caret-bottom";
+import CaretRight from "@iconify-icons/ep/caret-right";
 
 import Promotion from "@iconify-icons/ep/promotion";
 import HomeFilled from "@iconify-icons/ep/home-filled";
@@ -50,6 +51,7 @@ addIcon("more", More);
 addIcon("document-copy", DocumentCopy);
 addIcon("caret-top", CaretTop);
 addIcon("caret-bottom", CaretBottom);
+addIcon("caret-right", CaretRight);
 
 addIcon("promotion", Promotion);
 addIcon("check", Check);

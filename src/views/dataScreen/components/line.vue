@@ -2,7 +2,7 @@
 import { ECharts } from "echarts";
 import echarts from "/@/plugins/echarts";
 import { onBeforeMount, onMounted, nextTick, ref, watch } from "vue";
-import { useEventListener, tryOnUnmounted, useTimeoutFn } from "@vueuse/core";
+import { tryOnUnmounted } from "@vueuse/core";
 
 let echartInstance: ECharts;
 
@@ -21,17 +21,21 @@ const props = defineProps({
       return {};
     }
   },
-  xAxis_data: {
-    type: String,
-    default: ""
+  series: {
+    type: Array,
+    default: () => []
   },
-  series_data: {
+  dataset: {
     type: Array,
     default: () => []
   }
 });
+const index = ref(props.index),
+  legend_data = ref(props.legend_data),
+  legend_selected = ref(props.legend_selected),
+  series_data = ref(props.series),
+  dataset_data = ref(props.dataset);
 
-const index = ref(props.index);
 watch(
   () => props.index,
   val => {
@@ -40,69 +44,83 @@ watch(
 );
 
 watch(
-  () => props.xAxis_data,
+  () => props.series,
   val => {
     if (val) {
-      console.log(val);
-      xAxis_data.value.push(val);
-      option.xAxis.data = xAxis_data.value;
-      // chartData.push(val);
-      // option.dataset[0].source = chartData;
-      initEchartInstance();
-    }
-  },
-  { deep: true }
-);
-watch(
-  () => props.series_data,
-  val => {
-    if (val) {
-      console.log(val);
-      series_data.value.push(val);
-      option.series = xAxis_data.value;
-      // chartData.push(val);
-      // option.dataset[0].source = chartData;
-      initEchartInstance();
+      series_data.value = val;
+      option.series = series_data.value;
+      echartInstance.setOption(option);
     }
   },
   { deep: true }
 );
 
-let legend_data = ref(props.legend_data),
-  legend_selected = ref(props.legend_selected),
-  xAxis_data = ref([]),
-  series_data = ref([]);
+watch(
+  () => props.dataset,
+  val => {
+    if (val) {
+      dataset_data.value = val;
+      option.dataset.source = val;
+      echartInstance.setOption(option);
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.legend_selected,
+  val => {
+    if (val) {
+      legend_selected.value = val;
+      option.legend.selected = val;
+      echartInstance.setOption(option);
+    }
+  },
+  { deep: true }
+);
+
+function legend_toggle(value) {
+  const bool = legend_selected[value];
+  legend_selected[value] = !bool;
+  option.legend.selected = legend_selected;
+  echartInstance.setOption(option);
+}
+
+defineExpose({ legend_toggle });
 
 const option = {
   tooltip: {
     trigger: "axis"
   },
   legend: {
-    show: true,
+    show: false,
     selected: legend_selected.value,
     data: legend_data.value
   },
-  color: ["#ff0000", "#00ff00", "#ffff00", "#ff00ff", "#00ffff", "#ee6666"],
+  // color: ["#ff0000", "#00ff00", "#ffff00", "#ff00ff", "#00ffff", "#ee6666"],
   grid: {
-    left: 0,
-    right: "5%",
+    left: 15,
+    right: 15,
     bottom: "2%",
     containLabel: true
   },
-  toolbox: {
-    feature: {
-      saveAsImage: {}
-    }
-  },
   xAxis: {
     type: "category",
-    boundaryGap: false,
-    data: []
+    axisTick: {
+      alignWithLabel: true
+    }
   },
   yAxis: {
-    type: "value"
+    type: "value",
+    splitLine: {
+      //网格线
+      show: false
+    }
   },
-  series: []
+  series: series_data.value,
+  dataset: {
+    source: dataset_data.value
+  }
 };
 
 function initEchartInstance() {
@@ -126,11 +144,11 @@ onBeforeMount(() => {
 
 onMounted(() => {
   nextTick(() => {
-    useEventListener("resize", () => {
-      if (!echartInstance) return;
-      useTimeoutFn(() => {
+    new ResizeObserver(entries => {
+      for (let entry of entries) {
+        console.log(entry);
         echartInstance.resize();
-      }, 150);
+      }
     });
   });
 });
@@ -143,8 +161,5 @@ tryOnUnmounted(() => {
 </script>
 
 <template>
-  <div
-    :class="'line' + props.index"
-    style="width: 100%; height: calc(100% - 80px)"
-  />
+  <div :class="'line' + props.index" style="width: 100%; height: 100%" />
 </template>

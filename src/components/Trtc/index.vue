@@ -384,6 +384,15 @@ defineExpose({
   handleJoin,
   handleLeave
 });
+
+const props = defineProps({
+  width: {
+    type: Number,
+    default: 260
+  }
+});
+
+const width = ref(props.width);
 </script>
 <template>
   <div>
@@ -398,9 +407,13 @@ defineExpose({
         <el-input v-model="inviteLink" />
       </div>
     </div>
-    <div class="pusher">
-      <!-- v-if="store.isJoined" -->
-      <div class="local" id="local" v-if="store.isJoined">
+    <div class="pusher" v-if="store.isJoined">
+      <div
+        class="local"
+        id="local"
+        v-if="store.isJoined"
+        :style="{ width: width + 'px', height: width + 'px' }"
+      >
         <div class="tag">
           <el-link
             :underline="false"
@@ -426,7 +439,7 @@ defineExpose({
           />
         </div>
       </div>
-      <Player />
+      <Player :width="width" />
     </div>
   </div>
 </template>
@@ -470,8 +483,7 @@ defineExpose({
 
 .local {
   position: relative;
-  min-width: 150px;
-  min-height: 150px;
+  width: 260px;
 
   .tag {
     position: absolute;

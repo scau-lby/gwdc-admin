@@ -1,13 +1,17 @@
 <template>
   <div class="player-container">
-    <template v-for="item in store.remoteStreams" :key="item.getId()">
-      <div class="remote" :id="item.getId()" />
-    </template>
+    <div
+      v-for="item in store.remoteStreams"
+      :key="item.getId()"
+      class="remote"
+      :id="item.getId()"
+      :style="{ width: width + 'px', height: width + 'px' }"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { inject, nextTick } from "vue";
+import { inject, nextTick, ref } from "vue";
 import { useTrtcStoreHook } from "/@/store/modules/trtc";
 
 const store = useTrtcStoreHook();
@@ -42,20 +46,27 @@ const $bus = inject("$bus");
     (stream: any) => stream.getId() !== id
   );
 });
+
+const props = defineProps({
+  width: {
+    type: Number,
+    default: 260
+  }
+});
+
+const width = ref(props.width);
 </script>
 
 <style lang="scss" scoped>
 .player-container {
-  width: 100%;
+  margin-left: 5px;
+  height: 260px;
   display: flex;
-  flex-direction: row;
   flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 .remote {
-  min-width: 150px;
-  flex: 1;
-  margin: 0 5px 0 0;
-  position: relative;
+  margin-right: 5px;
 }
 </style>

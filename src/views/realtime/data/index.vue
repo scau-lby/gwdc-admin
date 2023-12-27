@@ -3,6 +3,7 @@ import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { getToken } from "/@/utils/auth";
 import { getOnlineTruckList } from "/@/api/truck";
 import { getWellMoreInfo } from "/@/api/well";
+import { useTrtcStoreHook } from "/@/store/modules/trtc";
 
 // components
 import empty from "/@/views/common/empty.vue";
@@ -15,10 +16,8 @@ import dualLine from "/@/components/dataLine/DualLine.vue";
 // 单机车、单机橇
 import singleForm from "/@/components/dataForm/SingleForm.vue";
 import singleLine from "/@/components/dataLine/SingleLine.vue";
-
 // 语音
 import trtcComp from "/@/components/Trtc/index.vue";
-
 // moreInfo
 import moreInfoDialog from "../../home/components/wellTable/MoreInfoDialog.vue";
 
@@ -26,6 +25,8 @@ import moreInfoDialog from "../../home/components/wellTable/MoreInfoDialog.vue";
 import { useDetail } from "/@/views/home/components/onlineTable/hooks";
 const { initToDetail, id } = useDetail();
 initToDetail();
+
+const store = useTrtcStoreHook();
 
 const chartRef = ref(null);
 
@@ -87,12 +88,13 @@ async function getOnline() {
       };
     });
 
-    // initWebSocket();
+    initWebSocket();
   }
 }
 
 // 切换施工任务
 function onTaskChange(val) {
+  task_selected.value = val;
   mixed.value = 0;
   plateList.value = onlineList.filter(item => item.task === val);
 
@@ -150,7 +152,7 @@ function onPlateChange(value) {
   });
 
   ws.close();
-  // initWebSocket();
+  initWebSocket();
 }
 
 watch(
@@ -308,6 +310,14 @@ function handleLeave() {
       </el-card> -->
       <div class="source-card">
         <el-card>
+          <el-button type="danger" @click="handleLeave" v-if="store.isJoined">
+            关闭语音对讲
+          </el-button>
+          <el-button type="success" @click="handleJoin" v-else>
+            发起语音对讲
+          </el-button>
+        </el-card>
+        <el-card>
           <el-form-item label="施工任务">
             <el-select
               v-model="task_selected"
@@ -347,21 +357,16 @@ function handleLeave() {
               />
             </el-checkbox-group>
           </el-form-item>
-
-          <el-button
-            type="primary"
-            @click="onGetMore"
-            :disabled="!hasMoreInfo"
-            v-auth="'100'"
-          >
-            查看井队作业参数
-          </el-button>
-          <el-button type="primary" @click="handleJoin">
-            发起语音对讲
-          </el-button>
-          <el-button type="primary" @click="handleLeave">
-            关闭语音对讲
-          </el-button>
+          <el-form-item>
+            <el-button
+              type="primary"
+              @click="onGetMore"
+              :disabled="!hasMoreInfo"
+              v-auth="'100'"
+            >
+              查看井队作业参数
+            </el-button>
+          </el-form-item>
         </el-card>
       </div>
       <div class="live-container" style="margin-top: 5px" v-if="mixed === 1">
@@ -373,13 +378,11 @@ function handleLeave() {
             :wellName="msgData[0].wellName"
             :wellType="msgData[0].wellType"
             :data="msgData[0].detail"
-            :title="task_selected + '（' + keys + '）'"
+            :title="task_selected + '(' + keys + ')'"
+            :height="store.isJoined ? 45 : 80"
           />
         </el-card>
-        <el-card
-          class="live-form"
-          :header="task_selected + '（ ' + keys + '）'"
-        >
+        <el-card class="live-form" :header="task_selected + '(' + keys + ')'">
           <mixedForm
             :formData="msgData[0].detail"
             :index="100"
@@ -412,12 +415,13 @@ function handleLeave() {
                 :wellName="msgData[index].wellName"
                 :wellType="msgData[index].wellType"
                 :key="msgData[index].plateNum + timer"
-                :title="task_selected + '（' + keys[index] + '）'"
+                :title="task_selected + '(' + keys[index] + ')'"
+                :height="store.isJoined ? 45 : 80"
               />
             </el-card>
             <el-card
               class="live-form"
-              :header="task_selected + '（' + keys[index] + '）'"
+              :header="task_selected + '(' + keys[index] + ')'"
             >
               <singleForm
                 :formData="msgData[index].detail"
@@ -437,12 +441,13 @@ function handleLeave() {
                 :wellName="msgData[index].wellName"
                 :wellType="msgData[index].wellType"
                 :key="msgData[index].plateNum + timer"
-                :title="task_selected + '（' + keys[index] + '）'"
+                :title="task_selected + '(' + keys[index] + ')'"
+                :height="store.isJoined ? 55 : 80"
               />
             </el-card>
             <el-card
               class="live-form"
-              :header="task_selected + '（' + keys[index] + '）'"
+              :header="task_selected + '(' + keys[index] + ')'"
             >
               <dualForm
                 :formData="msgData[index].detail"
@@ -454,7 +459,9 @@ function handleLeave() {
           </template>
         </div>
       </div>
-      <trtcComp ref="trtcRef" />
+      <div style="margin-top: 5px">
+        <trtcComp ref="trtcRef" />
+      </div>
     </template>
 
     <el-card v-else>
@@ -482,7 +489,7 @@ function handleLeave() {
   display: flex;
 
   .el-card + .el-card {
-    margin-left: 15px;
+    margin-left: 5px;
   }
 
   ::v-deep(.el-form-item) {
@@ -491,9 +498,16 @@ function handleLeave() {
   }
 }
 
+::v-deep(.el-card__header) {
+  padding: 10px 20px !important;
+}
+
+::v-deep(.el-card__body) {
+  padding: 10px 20px !important;
+}
+
 .live-form {
-  min-width: 260px;
-  max-width: 260px;
+  width: 450px;
   margin-left: 5px;
 
   ::v-deep(.el-form-item) {
