@@ -1,26 +1,30 @@
 <script lang="ts" setup>
-import { ref, watch } from "vue";
-
+import { ref, watch, nextTick } from "vue";
+import { gsap } from "gsap";
+let tl = null;
+nextTick(() => {
+  tl = gsap.timeline();
+});
 const props = defineProps({
   abdcll: {
-    type: Number,
-    default: 0
+    type: String,
+    default: ""
   },
   abdclllj: {
-    type: Number,
-    default: 0
+    type: String,
+    default: ""
   },
   qsll: {
-    type: Number,
-    default: 0
+    type: String,
+    default: ""
   },
   qslj: {
-    type: Number,
-    default: 0
+    type: String,
+    default: ""
   },
   yw: {
-    type: String,
-    default: "100%"
+    type: Number,
+    default: 100
   }
 });
 const abdcll = ref(props.abdcll);
@@ -59,13 +63,13 @@ watch(
     }
   }
 );
-const yw = ref(props.yw);
+const yw = ref("0");
 watch(
   () => props.yw,
   val => {
-    if (val) {
-      yw.value = val;
-    }
+    console.log(val);
+    yw.value = val.toFixed(3);
+    tl.to("#yw3", { scaleY: val / 100, duration: 1 });
   }
 );
 </script>
@@ -937,10 +941,10 @@ watch(
       <text transform="matrix(1 0 0 1 748 350)" class="st22 st29">A罐</text>
       <text
         id="混浆罐液位_1_"
-        transform="matrix(1 0 0 1 1105 400)"
+        transform="matrix(1 0 0 1 1100 400)"
         class="st22 st29"
       >
-        {{ yw }}
+        {{ yw + "%" }}
       </text>
       <g id="hand_x5F_valve_x5F_2_9_">
         <polygon class="st24" points="542.2,568 537.8,578.5 546.6,578.5" />
@@ -1361,13 +1365,13 @@ watch(
       <path class="st44" d="M938.7,540c0,0,8.7,11.8,19.6,0H938.7z" />
     </g>
     <g id="清水流量计计量">
-      <rect x="1380" y="530" class="st49" width="100" height="30" />
+      <rect x="1380" y="530" class="st49" width="120" height="30" />
       <g>
-        <rect x="1380" y="560" class="st45" width="100" height="50" />
-        <line class="st45" x1="1380" y1="585" x2="1480" y2="585" />
-        <line class="st45" x1="1430" y1="560" x2="1430" y2="610" />
+        <rect x="1380" y="560" class="st45" width="120" height="50" />
+        <line class="st45" x1="1380" y1="585" x2="1500" y2="585" />
+        <line class="st45" x1="1450" y1="560" x2="1450" y2="610" />
       </g>
-      <text transform="matrix(1 0 0 1 1400 550)" class="st1 st46 st47">
+      <text transform="matrix(1 0 0 1 1410 550)" class="st1 st46 st47">
         清水流量
       </text>
       <text transform="matrix(1 0 0 1 1390 580)" class="st1 st46 st48">
@@ -1376,19 +1380,19 @@ watch(
       <text transform="matrix(1 0 0 1 1390 602)" class="st1 st46 st48">
         {{ qslj }}
       </text>
-      <text transform="matrix(1 0 0 1 1440 580)" class="st1 st46 st48">m³</text>
-      <text transform="matrix(1 0 0 1 1440 602)" class="st1 st46 st48">
+      <text transform="matrix(1 0 0 1 1460 580)" class="st1 st46 st48">m³</text>
+      <text transform="matrix(1 0 0 1 1460 602)" class="st1 st46 st48">
         LPM
       </text>
     </g>
     <g id="电磁流量计计量">
-      <rect x="740" y="490" class="st49" width="100" height="30" />
+      <rect x="740" y="490" class="st49" width="120" height="30" />
       <g>
-        <rect x="740" y="520" class="st45" width="100" height="50" />
-        <line class="st45" x1="740" y1="545" x2="840" y2="545" />
-        <line class="st45" x1="790" y1="520" x2="790" y2="570" />
+        <rect x="740" y="520" class="st45" width="120" height="50" />
+        <line class="st45" x1="740" y1="545" x2="860" y2="545" />
+        <line class="st45" x1="810" y1="520" x2="810" y2="570" />
       </g>
-      <text transform="matrix(1 0 0 1 755 510)" class="st1 st46 st47">
+      <text transform="matrix(1 0 0 1 765 510)" class="st1 st46 st47">
         泵替流量
       </text>
       <text transform="matrix(1 0 0 1 748 537)" class="st1 st46 st48">
@@ -1397,13 +1401,17 @@ watch(
       <text transform="matrix(1 0 0 1 748 562)" class="st1 st46 st48">
         {{ abdclllj }}
       </text>
-      <text transform="matrix(1 0 0 1 800 537)" class="st1 st46 st48">m³</text>
-      <text transform="matrix(1 0 0 1 800 562)" class="st1 st46 st48">LPM</text>
+      <text transform="matrix(1 0 0 1 820 537)" class="st1 st46 st48">m³</text>
+      <text transform="matrix(1 0 0 1 820 562)" class="st1 st46 st48">LPM</text>
     </g>
   </svg>
 </template>
 
 <style lang="scss" scoped>
+#yw3 {
+  transform-origin: 0 80px;
+}
+
 .st0 {
   fill: #e71f19;
 }

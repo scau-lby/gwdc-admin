@@ -9,29 +9,28 @@ import { getPreviewUrlByPlatenums } from "/@/api/video";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 // components
 import trtcComp from "/@/components/Trtc/index.vue";
-import tableComp from "./components/table.vue";
-import lineChart from "./components/line.vue";
+
+import lineboxComp from "./components/linebox.vue";
+
 import svgComp from "./components/svg.vue";
 import gaugeChart from "./components/gauge.vue";
 import pumpChart from "./components/pump.vue";
 import prefixComp from "./components/prefix.vue";
-import settingComp from "./components/setting.vue";
 import fwComp from "./components/fw.vue";
+import adjustComp from "./components/adjust.vue";
 
-function onAdd(row) {
-  console.log(row);
-}
+const index = ref(new Date().getTime());
 
 const router = useRouter();
 function goBack() {
   router.go(-1);
 }
 
-const abdcll = ref(0),
-  abdclllj = ref(0),
-  qslj = ref(0),
-  qsll = ref(0),
-  yw = ref(""),
+const abdcll = ref(""),
+  abdclllj = ref(""),
+  qslj = ref(""),
+  qsll = ref(""),
+  yw = ref(100),
   sjdw = ref(0),
   qqdw = ref(0),
   tszs = ref(0),
@@ -49,11 +48,6 @@ function onWellChange(e) {
     .filter(item => item.wellName == well_selected.value)
     .map(item => item.plateNum);
   plate_selected.value = plateList.value[0];
-  if (ws !== null) {
-    ws.close();
-    ws = null;
-  }
-  initWebSocket();
 }
 
 function onPlateChange(e) {
@@ -65,327 +59,71 @@ async function getOnline() {
   if (data.length > 0) {
     basicList = data;
     data.forEach(({ wellName }) => {
-      if (!wellList.value.includes(wellName)) wellList.value.push(wellName);
+      if (wellList.value.indexOf(wellName) == -1) wellList.value.push(wellName);
     });
     well_selected.value = wellList.value[0];
     plateList.value = data
       .filter(item => item.wellName == well_selected.value)
       .map(item => item.plateNum);
     plate_selected.value = plateList.value[0];
-
-    setTimeout(() => {
-      initWebSocket();
-    }, 3000);
   }
 }
 
-const t1 = ref([]),
-  t2 = ref([]),
-  t3 = ref([]),
-  t4 = ref([]),
-  legend_data = ref([]),
-  legend_checked_1 = ref([]),
-  legend_checked_2 = ref([]),
-  legend_checked_3 = ref([]),
-  legend_checked_4 = ref([]),
-  legend_selected = ref({}),
-  series_data = ref([]),
+const line_data = ref([]),
   dataset_data_1 = ref([]),
   dataset_data_2 = ref([]),
   dataset_data_3 = ref([]),
   dataset_data_4 = ref([]);
-let basic_data = [];
 watch(
   () => plateList.value,
   val => {
-    basic_data = [];
-    basic_data.push("井口监测");
-    basic_data.push("合并");
-    t1.value = [];
-    t1.value.push({
-      key: "md",
-      label: "井口监测",
-      value: 0,
-      show: false,
-      color: "#FF0000"
-    });
-    t1.value.push({
-      key: "zmd",
-      label: "合并",
-      value: 0,
-      show: false,
-      color: "#00FF00"
-    });
-    t2.value = [];
-    t2.value.push({
-      key: "zl",
-      label: "井口监测",
-      value: 0,
-      show: false,
-      color: "#FF0000"
-    });
-    t2.value.push({
-      key: "zzl",
-      label: "合并",
-      value: 0,
-      show: false,
-      color: "#00FF00"
-    });
-    t3.value = [];
-    t3.value.push({
-      key: "yl",
-      label: "井口监测",
-      value: 0,
-      show: false,
-      color: "#FF0000"
-    });
-    t3.value.push({
-      key: "zyl",
-      label: "合并",
-      value: 0,
-      show: false,
-      color: "#00FF00"
-    });
-    t4.value = [];
-    t4.value.push({
-      key: "pl",
-      label: "井口监测",
-      value: 0,
-      show: false,
-      color: "#FF0000"
-    });
-    t4.value.push({
-      key: "zpl",
-      label: "合并",
-      value: 0,
-      show: false,
-      color: "#00FF00"
+    console.log(val);
+    index.value = new Date().getTime();
+    line_data.value = [];
+    line_data.value.push("井口监测");
+    line_data.value.push("合并");
+
+    val.forEach(item => {
+      line_data.value.push(item);
     });
 
-    legend_data.value = [];
-    legend_data.value.push({ name: "井口监测", color: "#FF0000" });
-    legend_data.value.push({ name: "合并", color: "#00FF00" });
-
-    legend_checked_1.value = [];
-    // legend_checked_1.value.push("井口监测");
-    // legend_checked_1.value.push("合并");
-
-    legend_checked_2.value = [];
-    // legend_checked_2.value.push("井口监测");
-    // legend_checked_2.value.push("合并");
-
-    legend_checked_3.value = [];
-    // legend_checked_3.value.push("井口监测");
-    // legend_checked_3.value.push("合并");
-
-    legend_checked_4.value = [];
-    // legend_checked_4.value.push("井口监测");
-    // legend_checked_4.value.push("合并");
-
-    series_data.value = [];
-    series_data.value.push({
-      name: "井口监测",
-      type: "line",
-      seriesLayoutBy: "row",
-      smooth: true,
-      symbol: "none"
-    });
-    series_data.value.push({
-      name: "合并",
-      type: "line",
-      seriesLayoutBy: "row",
-      smooth: true,
-      symbol: "none"
-    });
-
-    dataset_data_1.value = [];
-    dataset_data_1.value.push(["时间"]);
-    dataset_data_1.value.push(["井口监测"]);
-    dataset_data_1.value.push(["合并"]);
-
-    dataset_data_2.value = [];
-    dataset_data_2.value.push(["时间"]);
-    dataset_data_2.value.push(["井口监测"]);
-    dataset_data_2.value.push(["合并"]);
-
-    dataset_data_3.value = [];
-    dataset_data_3.value.push(["时间"]);
-    dataset_data_3.value.push(["井口监测"]);
-    dataset_data_3.value.push(["合并"]);
-
-    dataset_data_4.value = [];
-    dataset_data_4.value.push(["时间"]);
-    dataset_data_4.value.push(["井口监测"]);
-    dataset_data_4.value.push(["合并"]);
-
-    legend_selected.value = {};
-    legend_selected.value["井口监测"] = false;
-    legend_selected.value["合并"] = false;
-    val.forEach((item, index) => {
-      const randomColor = rdmRgbaColor(index);
-      basic_data.push(item);
-      t1.value.push({
-        key: `s_${index}`,
-        label: `${item}`,
-        value: 0,
-        show: true,
-        color: randomColor
-      });
-      t2.value.push({
-        key: `s_${index}`,
-        label: `${item}`,
-        value: 0,
-        show: true,
-        color: randomColor
-      });
-      t3.value.push({
-        key: `s_${index}`,
-        label: `${item}`,
-        value: 0,
-        show: true,
-        color: randomColor
-      });
-      t4.value.push({
-        key: `s_${index}`,
-        label: `${item}`,
-        value: 0,
-        show: true,
-        color: randomColor
-      });
-      legend_data.value.push({
-        name: item,
-        color: randomColor
-      });
-      legend_checked_1.value.push(item);
-      legend_checked_2.value.push(item);
-      legend_checked_3.value.push(item);
-      legend_checked_4.value.push(item);
-      series_data.value.push({
-        name: item,
-        type: "line",
-        seriesLayoutBy: "row",
-        smooth: true,
-        symbol: "none"
-      });
-      dataset_data_1.value.push([item]);
-      dataset_data_2.value.push([item]);
-      dataset_data_3.value.push([item]);
-      dataset_data_4.value.push([item]);
-      legend_selected.value[item] = true;
-    });
+    if (ws !== null) {
+      ws.close();
+      ws = null;
+    }
+    setTimeout(() => {
+      initWebSocket();
+    }, 2000);
   },
   { deep: true }
 );
 
-function rdmRgbaColor(index) {
-  const rgbaList = [
-    [1, 0, 1, 1],
-    [0, 1, 1, 1],
-    [1, 1, 0, 1],
-    [0, 0, 1, 1],
-    [1, 0, 0, 1],
-    [0, 1, 0, 1]
-  ];
-  let r = rgbaList[index][0];
-  let g = rgbaList[index][1];
-  let b = rgbaList[index][2];
-  let a = rgbaList[index][3];
-  var rgb = 155;
-  var c = Math.floor(Math.random() * (255 - rgb) + rgb);
-  if (r * g * b == 1) {
-    r = Math.floor(Math.random() * 255);
-    g = Math.floor(Math.random() * 255);
-    b = Math.floor(Math.random() * 255);
-  } else if (r + g + b == 0) {
-    var t = Math.floor(Math.random() * 255);
-    r = t;
-    g = t;
-    b = t;
-  } else {
-    r =
-      r == 1
-        ? Math.floor(Math.random() * (255 - rgb) + rgb)
-        : Math.floor(Math.random() * (c / 2));
-    g =
-      g == 1
-        ? Math.floor(Math.random() * (255 - rgb) + rgb)
-        : Math.floor(Math.random() * (c / 2));
-    b =
-      b == 1
-        ? Math.floor(Math.random() * (255 - rgb) + rgb)
-        : Math.floor(Math.random() * (c / 2));
-  }
-  return "rgba(" + r + "," + g + "," + b + "," + a + ")";
-}
+watch(
+  () => plate_selected.value,
+  () => {
+    // svgComp
+    abdcll.value = "";
+    abdclllj.value = "";
+    qslj.value = "";
+    qsll.value = "";
+    yw.value = 100;
+    console.log("yw:", yw.value);
+    // 档位及转速表
+    sjdw.value = 0;
+    qqdw.value = 0;
+    tszs.value = 0;
+    dpzs.value = 0;
+    // 灰水阀调整
+    tableData4.value[0].kd = "0";
+    tableData4.value[1].kd = "0";
 
-function onLegendCheckedChange(e) {
-  const type = e[0], // 1 legend_checked 改变 2 color 改变
-    index = e[1][0],
-    value = e[1][1];
-  let data;
-  if (type == 1) {
-    switch (index) {
-      case 1:
-        legend_checked_1.value = value;
-        data = t1.value;
-        t1.value = data.map(item => {
-          if (value.includes(item.label)) {
-            item.show = true;
-            return item;
-          } else {
-            item.show = false;
-            return item;
-          }
-        });
-        break;
-      case 2:
-        legend_checked_2.value = value;
-        data = t2.value;
-        t2.value = data.map(item => {
-          if (value.includes(item.label)) {
-            item.show = true;
-            return item;
-          } else {
-            item.show = false;
-            return item;
-          }
-        });
-        break;
-      case 3:
-        legend_checked_3.value = value;
-        data = t3.value;
-        t3.value = data.map(item => {
-          if (value.includes(item.label)) {
-            item.show = true;
-            return item;
-          } else {
-            item.show = false;
-            return item;
-          }
-        });
-        break;
-      case 4:
-        legend_checked_4.value = value;
-        data = t4.value;
-        t4.value = data.map(item => {
-          if (value.includes(item.label)) {
-            item.show = true;
-            return item;
-          } else {
-            item.show = false;
-            return item;
-          }
-        });
-        break;
-    }
-  } else if (type == 2) {
-    legend_data.value[index].color = value;
-    t1.value[index].color = value;
-    t2.value[index].color = value;
-    t3.value[index].color = value;
-    t4.value[index].color = value;
+    // 作业参数调整
+    tableData2.value[0].jcz = "";
+    tableData2.value[1].jcz = "";
+    tableData2.value[2].jcz = "";
+    tableData2.value[3].jcz = "";
   }
-}
+);
 
 // 和服务端连接的socket对象
 let ws = null,
@@ -420,102 +158,51 @@ function initWebSocket() {
   ws.onmessage = msg => {
     const res = JSON.parse(msg.data);
     const data = res.data;
-    if (data.sj) {
+    if (res.plateNum && data.sj) {
       if (res.plateNum == plate_selected.value) {
         // svg
-        abdcll.value = data.abdcll;
-        abdclllj.value = data.abdclllj;
-        qsll.value = data.qsll;
-        qslj.value = data.qslj;
-        yw.value = data.yw > 0 ? data.yw.toFixed(0) + "%" : "0%";
+        abdcll.value = data.abdcll.toFixed(3);
+        abdclllj.value = data.abdclllj.toFixed(3);
+        qsll.value = data.qsll.toFixed(3);
+        qslj.value = data.qslj.toFixed(3);
+        yw.value = data.yw > 0 ? data.yw : 0;
         // 档位表
-        sjdw.value = data.apbsxdw;
-        qqdw.value = data.apbsxqqdw;
+        sjdw.value = data.dpbsxdw;
+        qqdw.value = data.dpbsxqqdw;
         // 转速表
-        tszs.value = data.apfdjzs;
-        dpzs.value = data.dpfdjzs;
+        tszs.value = data.dpfdjzs;
+        dpzs.value = data.apfdjzs;
         // 灰水阀调整
-        tableData5.value[0].kd =
-          data.hffw > 0 ? data.hffw.toFixed(0) + "%" : "0";
-        tableData5.value[1].kd =
-          data.sffw > 0 ? data.sffw.toFixed(0) + "%" : "0";
-      }
+        tableData4.value[0].kd =
+          data.hffw > 0 ? data.hffw.toFixed(3) + "%" : "0";
+        tableData4.value[1].kd =
+          data.sffw > 0 ? data.sffw.toFixed(3) + "%" : "0";
 
-      const basic_index = basic_data.findIndex(item => item == res.plateNum);
-      t1.value[basic_index].value = data.md;
-      t2.value[basic_index].value = data.zlj;
-      t3.value[basic_index].value = data.abyl;
-      t4.value[basic_index].value = data.zssll;
-
-      const sj_index = dataset_data_1.value[0].findIndex(
-        item => item == data.sj
-      );
-      console.log(sj_index);
-      console.log(res.plateNum, data.md);
-      if (sj_index == -1) {
-        const sj = data.sj.slice(10, 12) + ":" + data.sj.slice(12, 14);
-        dataset_data_1.value[0].push(sj);
-        dataset_data_2.value[0].push(sj);
-        dataset_data_3.value[0].push(sj);
-        dataset_data_4.value[0].push(sj);
-        basic_data.forEach((item, i) => {
-          if (i == basic_index) {
-            dataset_data_1.value[i + 1].push(data.md);
-            dataset_data_2.value[i + 1].push(data.zlj);
-            dataset_data_3.value[i + 1].push(data.abyl);
-            dataset_data_4.value[i + 1].push(data.zssll);
-          } else {
-            const length = dataset_data_1.value[i + 1].length;
-            dataset_data_1.value[i + 1].push(
-              dataset_data_1.value[i + 1][length - 1]
-            );
-            dataset_data_2.value[i + 1].push(
-              dataset_data_2.value[i + 1][length - 1]
-            );
-            dataset_data_3.value[i + 1].push(
-              dataset_data_3.value[i + 1][length - 1]
-            );
-            dataset_data_4.value[i + 1].push(
-              dataset_data_4.value[i + 1][length - 1]
-            );
-          }
-        });
-      } else {
-        basic_data.forEach((item, i) => {
-          if (i == basic_index) {
-            dataset_data_1.value[i + 1] = data.md;
-            dataset_data_2.value[i + 1] = data.zlj;
-            dataset_data_3.value[i + 1] = data.abyl;
-            dataset_data_4.value[i + 1] = data.zssll;
-          }
-        });
+        // 作业参数调整
+        tableData2.value[0].jcz = data.md.toFixed(3);
+        tableData2.value[1].jcz = data.zssll.toFixed(3);
+        tableData2.value[2].jcz = data.zlj.toFixed(3);
+        tableData2.value[3].jcz = data.abyl.toFixed(3);
       }
+      dataset_data_1.value = [];
+      dataset_data_2.value = [];
+      dataset_data_3.value = [];
+      dataset_data_4.value = [];
+      dataset_data_1.value[0] = data.sj;
+      dataset_data_1.value[1] = res.plateNum;
+      dataset_data_1.value[2] = data.md.toFixed(3);
+      dataset_data_2.value[0] = data.sj;
+      dataset_data_2.value[1] = res.plateNum;
+      dataset_data_2.value[2] = data.zlj.toFixed(3);
+      dataset_data_3.value[0] = data.sj;
+      dataset_data_3.value[1] = res.plateNum;
+      dataset_data_3.value[2] = data.abyl.toFixed(3);
+      dataset_data_4.value[0] = data.sj;
+      dataset_data_4.value[1] = res.plateNum;
+      dataset_data_4.value[2] = data.zssll.toFixed(3);
     }
   };
 }
-// function clean(params: object) {
-//   const res = {};
-//   for (var i in params) {
-//     if (params[i] != 0 && ["jd", "wd", "sj", "flag"].indexOf(i) === -1) {
-//       if (i === "md" && parseFloat(params[i]) < 0) {
-//         res[i] = 0;
-//       } else {
-//         res[i] = parseFloat(params[i]).toFixed(3);
-//       }
-//     } else if (i === "sj") {
-//       // res[i] =
-//       //   params[i].slice(8, 10) +
-//       //   ":" +
-//       //   params[i].slice(10, 12) +
-//       //   ":" +
-//       //   params[i].slice(12, 14);
-//       res[i] = params[i].slice(10, 12) + ":" + params[i].slice(12, 14);
-//     } else {
-//       res[i] = params[i];
-//     }
-//   }
-//   return res;
-// }
 
 // h5player
 let player = null,
@@ -675,23 +362,23 @@ const tableData2 = ref([]);
 tableData2.value = [
   {
     name: "密度",
-    jcz: 1.352,
-    sjz: 1.35
+    jcz: "",
+    sjz: ""
   },
   {
     name: "瞬时排量",
-    jcz: 1.201,
-    sjz: 1.2
+    jcz: "",
+    sjz: ""
   },
   {
     name: "累计排量",
-    jcz: 13.32,
-    sjz: 20
+    jcz: "",
+    sjz: ""
   },
   {
     name: "压力/超压保护",
-    jcz: 13.12,
-    sjz: 20
+    jcz: "",
+    sjz: ""
   }
 ];
 
@@ -707,30 +394,6 @@ tableData3.value = [
 
 const tableData4 = ref([]);
 tableData4.value = [
-  {
-    name: "喷射泵",
-    kd: "50%",
-    yy: "3.2MPa"
-  },
-  {
-    name: "循环泵",
-    kd: "50%",
-    yy: "3.2MPa"
-  },
-  {
-    name: "供水泵",
-    kd: "50%",
-    yy: "3.2MPa"
-  },
-  {
-    name: "搅拌器",
-    kd: "65%",
-    yy: "3.7MPa"
-  }
-];
-
-const tableData5 = ref([]);
-tableData5.value = [
   {
     name: "灰阀",
     kd: "0"
@@ -754,7 +417,6 @@ function handleJoin() {
 function handleLeave() {
   trtcRef.value.handleLeave();
 }
-const index = new Date().getTime();
 </script>
 <template>
   <div class="databoard-container">
@@ -773,43 +435,20 @@ const index = new Date().getTime();
     <div class="page-content">
       <div class="page-aside">
         <div class="line-container">
-          <settingComp
-            :index="1"
-            :data="legend_data"
-            :checked="legend_checked_1"
-            @change="onLegendCheckedChange"
+          <lineboxComp
+            :index="index + 1"
+            :title="'水泥浆密度监控曲线(g/cm³)'"
+            :data="line_data"
+            :dataset="dataset_data_1"
           />
-          <div class="line-title">水泥浆密度监控曲线(g/cm³)</div>
-
-          <tableComp :data="t1" />
-          <div style="width: 100%; height: calc(100% - 90px)">
-            <lineChart
-              :index="index + 1"
-              :legend_data="legend_data"
-              :legend_selected="legend_selected"
-              :series="series_data"
-              :dataset="dataset_data_1"
-            />
-          </div>
         </div>
         <div class="line-container">
-          <settingComp
-            :index="2"
-            :data="legend_data"
-            :checked="legend_checked_2"
-            @change="onLegendCheckedChange"
+          <lineboxComp
+            :index="index + 2"
+            :title="'累计排量监控曲线(m³)'"
+            :data="line_data"
+            :dataset="dataset_data_2"
           />
-          <div class="line-title">累计排量监控曲线(m³)</div>
-          <tableComp :data="t2" />
-          <div style="width: 100%; height: calc(100% - 90px)">
-            <lineChart
-              :index="index + 2"
-              :legend_data="legend_data"
-              :legend_selected="legend_selected"
-              :series="series_data"
-              :dataset="dataset_data_2"
-            />
-          </div>
         </div>
         <div class="bottom">
           <div id="player" style="width: 100%; height: calc(100% - 30px)" />
@@ -889,7 +528,7 @@ const index = new Date().getTime();
         <el-carousel type="card" height="260px" :autoplay="false">
           <el-carousel-item>
             <div class="gauge-container">
-              <gaugeChart :index="index" :data1="tszs" :data2="dpzs" />
+              <gaugeChart :index="index" :tszs="tszs" :dpzs="dpzs" />
               <div class="adjust-op" style="margin-left: calc(22% - 100px)">
                 <IconifyIconOffline icon="caret-top" />
                 台上转速
@@ -940,9 +579,6 @@ const index = new Date().getTime();
             </div>
           </el-carousel-item>
           <el-carousel-item>
-            <prefixComp :data="tableData3" />
-          </el-carousel-item>
-          <el-carousel-item>
             <el-scrollbar max-height="260px">
               <h5 class="table-title">固井作业设计</h5>
               <el-table
@@ -970,99 +606,35 @@ const index = new Date().getTime();
                   width="105"
                 />
               </el-table>
-              <h5 class="table-title">预混参数设置</h5>
-              <el-table
-                :data="tableData3"
-                size="small"
-                border
-                fit
-                style="width: 100%"
-                :header-cell-style="{
-                  background: '#009f6b',
-                  color: '#ffffff'
-                }"
-              >
-                <el-table-column prop="yhmd" label="预混密度" />
-                <el-table-column prop="yhyw" label="预混液位" />
-                <el-table-column prop="sfkd" label="水阀开度" />
-                <el-table-column prop="hfkd" label="灰阀开度" />
-              </el-table>
             </el-scrollbar>
           </el-carousel-item>
           <el-carousel-item>
-            <div style="width: 100%">
-              <h5 class="table-title">作业参数调整</h5>
-              <el-table
-                :data="tableData2"
-                size="small"
-                border
-                fit
-                style="width: 100%"
-                :header-cell-style="{
-                  background: '#009f6b',
-                  color: '#ffffff'
-                }"
-              >
-                <el-table-column prop="name" label="项目" width="110" />
-                <el-table-column prop="sjz" label="设计值" />
-                <el-table-column prop="jcz" label="监测值" />
-                <el-table-column label="调整" align="center" width="60">
-                  <template #default="scope">
-                    <div class="flex-around">
-                      <IconifyIconOffline
-                        icon="caret-top"
-                        @click="onAdd(scope.row)"
-                      />
-                      <IconifyIconOffline icon="caret-bottom" />
-                    </div>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
+            <adjustComp :index="index" :data="tableData2" />
           </el-carousel-item>
           <el-carousel-item>
-            <fwComp :data="tableData5" />
+            <prefixComp :data="tableData3" />
+          </el-carousel-item>
+          <el-carousel-item>
+            <fwComp :data="tableData4" />
           </el-carousel-item>
         </el-carousel>
       </div>
       <div class="page-aside">
         <div class="line-container">
-          <settingComp
-            :index="3"
-            :data="legend_data"
-            :checked="legend_checked_3"
-            @change="onLegendCheckedChange"
+          <lineboxComp
+            :index="index + 3"
+            :title="'施工压力监控曲线(Mpa)'"
+            :data="line_data"
+            :dataset="dataset_data_3"
           />
-          <div class="line-title">施工压力监控曲线(MPa)</div>
-          <tableComp :data="t3" />
-          <div style="width: 100%; height: calc(100% - 90px)">
-            <lineChart
-              :index="index + 3"
-              :legend_data="legend_data"
-              :legend_selected="legend_selected"
-              :series="series_data"
-              :dataset="dataset_data_3"
-            />
-          </div>
         </div>
         <div class="line-container">
-          <settingComp
-            :index="4"
-            :data="legend_data"
-            :checked="legend_checked_4"
-            @change="onLegendCheckedChange"
+          <lineboxComp
+            :index="index + 4"
+            :title="'瞬时排量监控曲线(m³/min)'"
+            :data="line_data"
+            :dataset="dataset_data_4"
           />
-          <div class="line-title">瞬时排量监控曲线(m³/min)</div>
-          <tableComp :data="t4" />
-          <div style="width: 100%; height: calc(100% - 90px)">
-            <lineChart
-              :index="index + 4"
-              :legend_data="legend_data"
-              :legend_selected="legend_selected"
-              :series="series_data"
-              :dataset="dataset_data_4"
-            />
-          </div>
         </div>
         <div class="bottom" style="background: #000">
           <div

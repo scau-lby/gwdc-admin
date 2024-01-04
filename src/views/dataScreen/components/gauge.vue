@@ -11,11 +11,11 @@ const props = defineProps({
     type: Number,
     default: 0
   },
-  data1: {
+  tszs: {
     type: Number,
     default: 0
   },
-  data2: {
+  dpzs: {
     type: Number,
     default: 0
   }
@@ -29,21 +29,21 @@ watch(
   }
 );
 
-const data1 = ref(props.data1);
+const tszs = ref(props.tszs);
 watch(
-  () => props.data1,
+  () => props.tszs,
   val => {
-    data1.value = val;
+    tszs.value = val;
     option.series[0].data[0].value = val;
     echartInstance.setOption(option);
   }
 );
 
-const data2 = ref(props.data2);
+const dpzs = ref(props.dpzs);
 watch(
-  () => props.data2,
+  () => props.dpzs,
   val => {
-    data2.value = val;
+    dpzs.value = val;
     option.series[1].data[0].value = val;
     echartInstance.setOption(option);
   }
@@ -131,13 +131,13 @@ const option = {
       },
       data: [
         {
-          value: data1.value
+          value: tszs.value
           // name: "台上转速"
         }
       ],
       detail: {
         valueAnimation: true,
-        width: "40%",
+        width: "60%",
         lineHeight: 15,
         borderRadius: 5,
         borderColor: "#ffffff",
@@ -222,13 +222,13 @@ const option = {
       },
       data: [
         {
-          value: data2.value
+          value: dpzs.value
           // name: "底盘转速"
         }
       ],
       detail: {
         valueAnimation: true,
-        width: "40%",
+        width: "60%",
         lineHeight: 15,
         borderRadius: 5,
         borderColor: "#ffffff",

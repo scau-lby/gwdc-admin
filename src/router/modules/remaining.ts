@@ -19,7 +19,7 @@ const remainingRouter = [
     meta: {
       icon: "dashScreen",
       title: $t("menus.hsDataScreen"),
-      showLink: true,
+      showLink: false,
       rank: 105
     }
   },
