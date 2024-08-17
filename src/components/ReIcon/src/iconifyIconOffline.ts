@@ -84,6 +84,8 @@ addIcon("van", Van);
 // h5player 相关
 import FullScreen from "@iconify-icons/ep/full-screen"; // 整体全屏
 addIcon("full-screen", FullScreen);
+import ZoomIn from "@iconify-icons/ep/zoom-in"; // 整体全屏
+addIcon("zoom-in", ZoomIn);
 import Microphone from "@iconify-icons/ep/microphone"; // 开始对讲
 addIcon("microphone", Microphone);
 import Mute from "@iconify-icons/ep/mute"; // 停止对讲

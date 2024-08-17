@@ -9,15 +9,23 @@
       <div style="padding-top: 10px">
         <el-button type="primary" @click="handleJoin"> 进入房间 </el-button>
         <el-button type="primary" @click="handleLeave"> 离开房间 </el-button>
+        <!-- <el-button type="primary" @click="switchDevice"> 切换摄像头 </el-button> -->
       </div>
-      <div id="local" style="max-width: 640px; margin-top: 20px" />
-      <div class="remote-container">
-        <template
-          v-for="item in store.invitedRemoteStreams"
-          :key="item.getId()"
+      <div style="padding-top: 10px">
+        <el-button
+          type="primary"
+          v-for="item in cameras"
+          :key="item.deviceId"
+          @click="switchDevice(item.deviceId)"
         >
-          <div :id="item.getId()" style="max-width: 640px; margin-top: 20px" />
-        </template>
+          {{ item.label }}
+        </el-button>
+      </div>
+      <div id="local" style="width: 300px; margin-top: 20px" />
+      <div class="remote-container">
+        <div v-for="item in store.invitedRemoteStreams" :key="item.getId()">
+          <div :id="item.getId()" style="width: 300px; margin-top: 20px" />
+        </div>
       </div>
     </el-col>
   </el-row>
@@ -25,10 +33,11 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { ElMessage } from "element-plus";
-import { nextTick } from "vue";
+import { nextTick, ref } from "vue";
 import { getParamKey } from "/@/utils/utils";
 import Client from "/@/utils/client";
 import { useTrtcStoreHook } from "/@/store/modules/trtc";
+import TRTC from "trtc-js-sdk";
 
 const store = useTrtcStoreHook();
 const { t } = useI18n({ useScope: "global" });
@@ -45,6 +54,7 @@ if (!sdkAppId || !userId || !userSig || !roomId) {
   ElMessage.error(t("trtc.check"));
 }
 let localClient: any;
+let cameras = ref(null);
 
 async function handleJoin() {
   try {
@@ -65,6 +75,15 @@ async function handleJoin() {
 
     await nextTick();
     localStream.play("local");
+    TRTC.getCameras().then(devices => {
+      cameras.value = devices;
+      // devices.forEach(dev => {
+      // ElMessage({
+      //   message: "camera label: " + dev.label + " deviceId: " + dev.deviceId,
+      //   type: "success"
+      // });
+      // });
+    });
   } catch (error: any) {
     ElMessage({
       message: error.message_,
@@ -77,7 +96,6 @@ async function handleSubscribed(event: any) {
   const remoteStream = event.stream;
   const id = remoteStream.getId();
   const remoteId = `${id}`;
-  console.log(1212, event);
   store.invitedRemoteStreams.push(remoteStream);
   await nextTick();
   remoteStream
@@ -102,6 +120,26 @@ async function handleRemoved(event: any) {
 
 async function handleLeave() {
   await localClient.leave();
+}
+function switchDevice(cameraId) {
+  // 假设本地流 localStream 已经被发布
+  // 切换到第二个摄像头
+  // ElMessage({
+  //   message: store.videoDeviceId + "----" + cameraId.value,
+  //   type: "success"
+  // });
+  // ElMessage({
+  //   message: cameraId.value,
+  //   type: "success"
+  // });
+  const localStream = localClient.getLocalStream();
+  localStream.switchDevice("video", cameraId).then(() => {
+    // ElMessage({
+    //   message: "switch camera success",
+    //   type: "success"
+    // });
+    // console.log("switch camera success");
+  });
 }
 </script>
 <style lang="scss" scoped>

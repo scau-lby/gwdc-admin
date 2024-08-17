@@ -380,6 +380,26 @@ function uninstallEventHandlers() {
   localClient.off("unmute-video", handleUnmuteVideo);
   localClient.off("unmute-audio", handleUnmuteAudio);
 }
+// let cameras = ref(null);
+// function switchDevice() {
+//   TRTC.getCameras().then(devices => {
+//     cameras.value = devices;
+//     devices.forEach(dev => {
+//       console.log("camera label: " + dev.label + " deviceId: " + dev.deviceId);
+//     });
+//   });
+//   // 假设本地流 localStream 已经被发布
+//   // 切换到第二个摄像头
+//   let cameraId = cameras.value[1].deviceId;
+//   const localStream = localClient.getLocalStream();
+//   localStream.switchDevice("video", cameraId).then(() => {
+//     ElMessage({
+//       message: "switch camera success",
+//       type: "success"
+//     });
+//     console.log("switch camera success");
+//   });
+// }
 defineExpose({
   handleJoin,
   handleLeave
@@ -437,6 +457,12 @@ const width = ref(props.width);
             @click="muteVideo"
             style="font-size: 20px; margin-right: 5px"
           />
+          <!-- <el-link
+            :underline="false"
+            :icon="useRenderIcon('camera-line')"
+            @click="switchDevice"
+            style="font-size: 20px; margin-right: 5px"
+          /> -->
         </div>
       </div>
       <Player :width="width" />
@@ -467,7 +493,7 @@ const width = ref(props.width);
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid #d5d5d5;
+    // border: 1px solid #d5d5d5;
     border-radius: 3px;
     padding: 6px 12px;
     cursor: pointer;

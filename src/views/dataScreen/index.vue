@@ -5,7 +5,6 @@ import { useRouter } from "vue-router";
 import { getToken } from "/@/utils/auth";
 // api
 import { getOnlineTruckList } from "/@/api/truck";
-import { getPreviewUrlByPlatenums } from "/@/api/video";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 // components
 import trtcComp from "/@/components/Trtc/index.vue";
@@ -18,6 +17,7 @@ import pumpChart from "./components/pump.vue";
 import prefixComp from "./components/prefix.vue";
 import fwComp from "./components/fw.vue";
 import adjustComp from "./components/adjust.vue";
+import h5Player from "./components/player.vue";
 
 const index = ref(new Date().getTime());
 
@@ -74,10 +74,10 @@ const line_data = ref([]),
   dataset_data_2 = ref([]),
   dataset_data_3 = ref([]),
   dataset_data_4 = ref([]);
+
 watch(
   () => plateList.value,
   val => {
-    console.log(val);
     index.value = new Date().getTime();
     line_data.value = [];
     line_data.value.push("井口监测");
@@ -107,7 +107,6 @@ watch(
     qslj.value = "";
     qsll.value = "";
     yw.value = 100;
-    console.log("yw:", yw.value);
     // 档位及转速表
     sjdw.value = 0;
     qqdw.value = 0;
@@ -138,7 +137,9 @@ function initWebSocket() {
   if (token) {
     accessToken = JSON.parse(token).accessToken;
   }
-  let url = `wss://cemrm.gwdc.com.cn:7002/truck/real/ws?token=${accessToken}`;
+  const isSecure = window.location.protocol === "https:";
+  const wsProtocol = isSecure ? "wss" : "ws";
+  let url = `${wsProtocol}://cemrm.gwdc.com.cn:7002/truck/real/ws?token=${accessToken}`;
   ws = new WebSocket(url);
   ws.onopen = () => {
     connected.value = true;
@@ -204,49 +205,6 @@ function initWebSocket() {
   };
 }
 
-// h5player
-let player = null,
-  playing = ref(true);
-function init() {
-  window.addEventListener("resize", () => {
-    player.JS_Resize();
-  });
-}
-function createPlayer() {
-  player = new window.JSPlugin({
-    szId: "player",
-    szBasePath: "./",
-    iMaxSplit: 4,
-    iCurrentSplit: 1,
-    openDebug: true,
-    oStyle: {
-      borderSelect: "#FFCC00"
-    }
-  });
-}
-// 开始播放
-function startPlay() {
-  getPreviewUrlByPlatenums({
-    plateNums: plateList.value.join(","),
-    wellName: well_selected.value,
-    wellType: basicList.filter(item => item.wellName == well_selected.value)[0]
-      .wellType
-  }).then(({ data }) => {
-    console.log(data);
-  });
-}
-// 停止播放
-function stopPlay() {}
-// 整体全屏
-function wholeFullScreen() {
-  player.JS_FullScreenDisplay(true).then(
-    () => {},
-    e => {
-      console.error(e);
-    }
-  );
-}
-
 const timer = ref(null),
   curr_time = ref("");
 
@@ -272,8 +230,6 @@ onMounted(() => {
   timer.value = setInterval(() => {
     getCurrTime();
   }, 1000);
-  init();
-  createPlayer();
 });
 onBeforeUnmount(() => {
   timer.value = null;
@@ -451,28 +407,7 @@ function handleLeave() {
           />
         </div>
         <div class="bottom">
-          <div id="player" style="width: 100%; height: calc(100% - 30px)" />
-          <div class="player-footer">
-            <el-link
-              :underline="false"
-              :icon="useRenderIcon('play-fill')"
-              @click="startPlay"
-              v-if="playing"
-            />
-            <el-link
-              :underline="false"
-              :icon="useRenderIcon('stop-fill')"
-              @click="stopPlay"
-              v-else
-            />
-            <el-tooltip effect="light" content="整体全屏">
-              <el-link
-                :underline="false"
-                :icon="useRenderIcon('full-screen')"
-                @click="wholeFullScreen"
-              />
-            </el-tooltip>
-          </div>
+          <h5Player :index="index" :data="plateList" />
         </div>
       </div>
       <div class="page-main">
@@ -636,14 +571,8 @@ function handleLeave() {
             :dataset="dataset_data_4"
           />
         </div>
-        <div class="bottom" style="background: #000">
-          <div
-            style="
-              width: 100%;
-              height: calc(100% - 30px);
-              border: 1px solid rgb(255, 204, 0);
-            "
-          >
+        <div class="bottom">
+          <div style="width: 100%; height: calc(100% - 32px); background: #000">
             <trtcComp ref="trtcRef" :width="120" />
           </div>
           <div class="player-footer">
@@ -726,7 +655,6 @@ function handleLeave() {
   flex-direction: column;
 
   .line-container {
-    // border: 1px solid #021fd3;
     padding: 0 5px;
     min-height: 275px;
     flex: 1;
@@ -741,25 +669,7 @@ function handleLeave() {
     margin-top: 5px;
     width: 100%;
     position: relative;
-    min-height: 300px;
-  }
-
-  .player-footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0 5px;
-    height: 30px;
-    line-height: 30px;
-    background: #0f0f0f;
-    color: #ffffff;
-    display: flex;
-    justify-content: space-between;
-    z-index: 9999;
-    border: 1px solid rgb(255, 204, 0);
-    border-top: none;
+    height: 300px;
   }
 
   .el-link {
@@ -878,9 +788,32 @@ function handleLeave() {
   }
 }
 
+.player-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 5px;
+  height: 30px;
+  line-height: 30px;
+  background: #0f0f0f;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  z-index: 9999;
+  // border: 1px solid rgb(255, 204, 0);
+  border-top: none;
+  margin-top: 2px;
+}
+
 .table-title {
   line-height: 30px;
   text-align: center;
+}
+
+.el-carousel__item {
+  height: 100%;
 }
 
 .el-carousel__item.is-active {

@@ -11,6 +11,19 @@ import sensor from "/@/assets/home/sensor.png";
 import online from "/@/assets/home/online.png";
 import deactivate from "/@/assets/home/deactivate.png";
 
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+function goTruck() {
+  router.push({
+    path: "/truck",
+    query: {
+      videoState: 1
+    }
+  });
+}
+
 defineOptions({
   name: "Home"
 });
@@ -58,6 +71,7 @@ onMounted(() => {
           :icon="sensor"
           title="视频传输装置安装"
           :data="videoDepInstall"
+          @click="goTruck"
         />
       </el-col>
       <el-col :span="6">

@@ -55,10 +55,7 @@ watch(
   val => {
     if (val.length !== 0) {
       getPreviewUrlByPlatenums({
-        plateNums: val.join(","),
-        // plateNums: "Camera 01",
-        wellName: task_selected.value.split(" @ ")[0],
-        wellType: task_selected.value.split(" @ ")[1]
+        plateNums: val.join(",")
       }).then(({ data }) => {
         urls.value = data;
         if (urls.value.length == 1) {
@@ -154,6 +151,17 @@ function createPlayer() {
 // 整体全屏
 function wholeFullScreen() {
   player.JS_FullScreenDisplay(true).then(
+    () => {},
+    e => {
+      console.error(e);
+    }
+  );
+}
+
+// 单窗口全屏
+function singleFullScreen() {
+  const curIndex = player.currentWindowIndex;
+  player.JS_FullScreenSingle(curIndex).then(
     () => {},
     e => {
       console.error(e);
@@ -339,19 +347,6 @@ function setSpeed(curr_speed) {
               @click="closeSound"
               v-else
             />
-            <!-- <div style="min-width: 150px; margin: 0 20px">
-            <el-slider @change="setVolume" v-model="volume" size="small" />
-          </div> -->
-            <el-link
-              :underline="false"
-              :icon="useRenderIcon('microphone')"
-              @click="handleJoin"
-            />
-            <el-link
-              :underline="false"
-              :icon="useRenderIcon('mute')"
-              @click="handleLeave"
-            />
           </div>
           <div>
             <el-tooltip effect="light" content="抓取 JPEG">
@@ -397,10 +392,17 @@ function setSpeed(curr_speed) {
               />
             </el-tooltip>
             <!-- <el-link
-          :underline="false"
-          :icon="useRenderIcon('grid')"
-          @click="arrangeWindow(4)"
-        /> -->
+              :underline="false"
+              :icon="useRenderIcon('grid')"
+              @click="arrangeWindow(4)"
+            /> -->
+            <el-tooltip effect="light" content="单窗口全屏">
+              <el-link
+                :underline="false"
+                :icon="useRenderIcon('zoom-in')"
+                @click="singleFullScreen"
+              />
+            </el-tooltip>
             <el-tooltip effect="light" content="整体全屏">
               <el-link
                 :underline="false"
